@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from itertools import zip_longest
 from pathlib import Path
-from typing import List, Dict
+from typing import Dict, List
 from urllib import parse
 
 import httpx
@@ -9,19 +9,18 @@ import overpy
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
-from configuration import OVERPASS_URL, WARSAW_ID, cache
+from configuration import OVERPASS_URL, WARSAW_ID, cacheOverpass, cacheWTP
 
 overpassApi = overpy.Overpass(url=OVERPASS_URL)
 
 
-@cache.memoize()
+@cacheOverpass.memoize()
 def getRelationDataFromOverpass():
     areaId = 3600000000 + WARSAW_ID
     query = f"""
     [out:json][timeout:250];
     (
-        relation(area:{areaId})[route=bus][network="ZTM Warszawa"][url];
-        relation(area:{areaId})[route=bus][network="ZTM Warszawa"][website];
+        relation(area:{areaId})[route][network="ZTM Warszawa"][url];
     );
     (._;>>;);
     out body;
@@ -29,7 +28,7 @@ def getRelationDataFromOverpass():
     return overpassApi.query(query)
 
 
-@cache.memoize()
+@cacheWTP.memoize()
 def fetchWtpWebsite(link: str):
     return httpx.get(link, follow_redirects=True).text
 
@@ -58,10 +57,10 @@ for route in tqdm(getRelationDataFromOverpass().relations):
     ref = tags["ref"]
     if "type" not in tags or "route" not in tags or tags["type"] != "route":
         continue
-    if "url" not in tags and "website" not in tags:
-        print(f"Missing url/website tag for {route}")
+    if "url" not in tags:
+        print(f"Missing url tag for {route}")
         continue
-    link = tags["website"] if "website" in tags else tags["url"]
+    link = tags["url"]
     if "wtp.waw.pl" not in link:
         print(f"Unexpected link {link} for {route}")
         continue
@@ -81,7 +80,7 @@ for route in tqdm(getRelationDataFromOverpass().relations):
                 print(f"Missing name or ref for {element}")
                 continue
             stop = StopData(name=element.tags["name"], ref=element.tags["ref"])
-            if len(osmStops) == 0 or osmStops[-1] != stop:
+            if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
                 osmStops.append(stop)
     if ref not in results:
         results[ref] = []
