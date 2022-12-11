@@ -77,6 +77,9 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         role: str = member.role
         if role.startswith("platform") or role.startswith("stop"):
             element = member.resolve()
+            if "name" not in element.tags or "ref" not in element.tags:
+                print(f"Missing name or ref for {element}")
+                continue
             stop = StopData(name=element.tags["name"], ref=element.tags["ref"])
             if len(osmStops) == 0 or osmStops[-1] != stop:
                 osmStops.append(stop)
