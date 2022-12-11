@@ -97,8 +97,10 @@ for route in tqdm(getRelationDataFromOverpass().relations):
     )
 
 with Path("../osm-wtp/index.html").open("w") as f:
+
     def writeLine(line: str):
         f.write(line + "\n")
+
     refs = sorted(results.keys())
     for ref in refs:
         writeLine(f"<a href='#{ref}'>{ref}</a>")
@@ -139,3 +141,6 @@ with Path("../osm-wtp/index.html").open("w") as f:
                 success = False
         if success:
             writeLine("Wszystko ok!\n")
+    writeLine(
+        '<iframe style="display:none" id="hiddenIframe" name="hiddenIframe"></iframe>'
+    )
