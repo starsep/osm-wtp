@@ -105,6 +105,10 @@ for route in tqdm(getRelationDataFromOverpass().relations):
                     print(f"Missing name or ref for {url}")
                     printedMissingRefName.add(url)
                 continue
+            if len(element.tags["ref"]) != 6:
+                if "network" in element.tags and element.tags["network"] == "ZTM Warszawa":
+                    print(f"Bad ref={element.tags['ref']} format for {elementUrl(element)}")
+                continue
             stop = StopData(name=element.tags["name"], ref=element.tags["ref"])
             if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
                 osmStops.append(stop)
