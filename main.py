@@ -54,6 +54,18 @@ results: Dict[str, List[RouteResult]] = {}
 
 MISSING_REF = "-"
 
+
+def elementUrl(element: overpy.Element) -> str:
+    if type(element) == overpy.Node:
+        return f"https://osm.org/node/{element.id}"
+    elif type(element) == overpy.Way:
+        return f"https://osm.org/way/{element.id}"
+    elif type(element) == overpy.Relation:
+        return f"https://osm.org/relation/{element.id}"
+    else:
+        print(f"Unexpected overpy type: {type(element)}")
+
+
 for route in tqdm(getRelationDataFromOverpass().relations):
     wtpStops = []
     tags = route.tags
@@ -86,7 +98,7 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         if role.startswith("platform") or role.startswith("stop"):
             element = member.resolve()
             if "name" not in element.tags or "ref" not in element.tags:
-                print(f"Missing name or ref for {element}")
+                print(f"Missing name or ref for {elementUrl(element)}")
                 continue
             stop = StopData(name=element.tags["name"], ref=element.tags["ref"])
             if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
