@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from difflib import SequenceMatcher
 from itertools import zip_longest
 from pathlib import Path
 from typing import Dict, List
@@ -51,6 +52,8 @@ class RouteResult:
 
 results: Dict[str, List[RouteResult]] = {}
 
+MISSING_REF = "-"
+
 for route in tqdm(getRelationDataFromOverpass().relations):
     wtpStops = []
     tags = route.tags
@@ -76,7 +79,7 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         print(f"Unexpected number of last stops: {lastStop}")
     for stopLink in lastStop:
         stopName = stopLink.text.strip()
-        wtpStops.append(StopData(name=stopName, ref="?"))
+        wtpStops.append(StopData(name=stopName, ref=MISSING_REF))
     osmStops = []
     for member in route.members:
         role: str = member.role
@@ -132,16 +135,52 @@ with Path("../osm-wtp/index.html").open("w") as f:
                 writeLine(
                     f"<thead><tr><th>OSM ref</th><th>OSM name</th><th>WTP ref</th><th>WTP name</th></thead>"
                 )
-                for ((refOSM, nameOSM), (refOperator, nameOperator)) in zip_longest(
-                    zip(osmRefs, osmNames),
-                    zip(wtpRefs, wtpNames),
-                    fillvalue=("-", "-"),
-                ):
-                    match = refOSM == refOperator or (refOperator == "?" and nameOSM == nameOperator)
-                    errorStyle = ' style="color:red;"' if not match else ""
-                    writeLine(
-                        f"<tr{errorStyle}><td>{refOSM}</td><td>{nameOSM}</td><td>{refOperator}</td><td>{nameOperator}</td>"
+                matcher = SequenceMatcher(None, osmRefs, wtpRefs)
+
+                def writeTableRow(refOSM: str, refOperator: str):
+                    nameOSM = osmNames[refOSM] if refOSM != MISSING_REF else MISSING_REF
+                    nameOperator = (
+                        wtpNames[refOperator]
+                        if refOperator != MISSING_REF
+                        else MISSING_REF
                     )
+                    if refOSM == osmRefs[-1] and refOperator == MISSING_REF:
+                        nameOperator = wtpNames[wtpRefs[-1]]
+                    style = ""
+                    if refOSM == refOperator:
+                        style = ""
+                    elif refOSM == MISSING_REF:
+                        style = "color: green;"
+                    elif refOSM != MISSING_REF and refOperator != MISSING_REF:
+                        style = "color: yellow;"
+                    elif refOperator == MISSING_REF and nameOperator == MISSING_REF:
+                        style = "color: red;"
+                    elif refOperator == MISSING_REF and nameOperator != MISSING_REF:
+                        style = "color: yellow;" if nameOSM != nameOperator else ""
+                    writeLine(
+                        f"<tr style='{style}'><td>{refOSM}</td><td>{nameOSM}</td><td>{refOperator}</td><td>{nameOperator}</td>"
+                    )
+
+                for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+                    if tag == "equal":
+                        for i, j in zip(range(i1, i2), range(j1, j2)):
+                            writeTableRow(refOSM=osmRefs[i], refOperator=wtpRefs[j])
+                    elif tag == "delete":
+                        for i in range(i1, i2):
+                            writeTableRow(refOSM=osmRefs[i], refOperator=MISSING_REF)
+                    elif tag == "insert":
+                        for j in range(j1, j2):
+                            writeTableRow(refOSM=MISSING_REF, refOperator=wtpRefs[j])
+                    elif tag == "replace":
+                        for i, j in zip_longest(
+                            range(i1, i2), range(j1, j2), fillvalue=None
+                        ):
+                            writeTableRow(
+                                refOSM=osmRefs[i] if i is not None else MISSING_REF,
+                                refOperator=wtpRefs[j]
+                                if j is not None
+                                else MISSING_REF,
+                            )
                 writeLine("</table>")
                 writeLine("<br/>")
                 success = False
