@@ -71,6 +71,12 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         stopLinkArgs = parse.parse_qs(parse.urlparse(stopLink).query)
         stopRef = stopLinkArgs["wtp_st"][0] + stopLinkArgs["wtp_pt"][0]
         wtpStops.append(StopData(name=stopName, ref=stopRef))
+    lastStop = content.select("div.timetable-route-point.name.active.follow.disabled")
+    if len(lastStop) != 1:
+        print(f"Unexpected number of last stops: {lastStop}")
+    for stopLink in lastStop:
+        stopName = stopLink.text.strip()
+        wtpStops.append(StopData(name=stopName, ref="?"))
     osmStops = []
     for member in route.members:
         role: str = member.role
@@ -100,7 +106,7 @@ with Path("../osm-wtp/index.html").open("w") as f:
     def writeLine(line: str):
         f.write(line + "\n")
 
-    refs = sorted(results.keys())
+    refs = sorted(results.keys(), key=lambda x: (len(x), x))
     for ref in refs:
         writeLine(f"<a href='#{ref}'>{ref}</a>")
     for ref in refs:
@@ -109,9 +115,9 @@ with Path("../osm-wtp/index.html").open("w") as f:
         for route in results[ref]:
             osmRefs = [stop.ref for stop in route.osmStops]
             wtpRefs = [stop.ref for stop in route.wtpStops]
-            osmNames = [stop.name for stop in route.osmStops]
-            wtpNames = [stop.name for stop in route.wtpStops]
-            if osmRefs[:-1] != wtpRefs:
+            osmNames = {stop.ref: stop.name for stop in route.osmStops}
+            wtpNames = {stop.ref: stop.name for stop in route.wtpStops}
+            if osmRefs[:-1] != wtpRefs[:-1]:
                 writeLine(
                     f"""
                     <h3>
@@ -131,7 +137,8 @@ with Path("../osm-wtp/index.html").open("w") as f:
                     zip(wtpRefs, wtpNames),
                     fillvalue=("-", "-"),
                 ):
-                    errorStyle = ' style="color:red;"' if refOSM != refOperator else ""
+                    match = refOSM == refOperator or (refOperator == "?" and nameOSM == nameOperator)
+                    errorStyle = ' style="color:red;"' if not match else ""
                     writeLine(
                         f"<tr{errorStyle}><td>{refOSM}</td><td>{nameOSM}</td><td>{refOperator}</td><td>{nameOperator}</td>"
                     )
