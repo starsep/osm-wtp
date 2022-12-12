@@ -66,6 +66,8 @@ def elementUrl(element: overpy.Element) -> str:
         print(f"Unexpected overpy type: {type(element)}")
 
 
+printedMissingRefName = set()
+
 for route in tqdm(getRelationDataFromOverpass().relations):
     wtpStops = []
     tags = route.tags
@@ -98,7 +100,10 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         if role.startswith("platform") or role.startswith("stop"):
             element = member.resolve()
             if "name" not in element.tags or "ref" not in element.tags:
-                print(f"Missing name or ref for {elementUrl(element)}")
+                url = elementUrl(element)
+                if url not in printedMissingRefName:
+                    print(f"Missing name or ref for {url}")
+                    printedMissingRefName.add(url)
                 continue
             stop = StopData(name=element.tags["name"], ref=element.tags["ref"])
             if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
