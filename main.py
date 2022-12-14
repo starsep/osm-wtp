@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import datetime
 from difflib import SequenceMatcher
 from itertools import zip_longest
 from pathlib import Path
@@ -13,6 +14,7 @@ from tqdm import tqdm
 from configuration import OVERPASS_URL, WARSAW_ID, cacheOverpass, cacheWTP
 
 overpassApi = overpy.Overpass(url=OVERPASS_URL)
+startTime = datetime.now()
 
 
 @cacheOverpass.memoize()
@@ -207,6 +209,9 @@ with Path("../osm-wtp/index.html").open("w") as f:
                 success = False
         if success:
             writeLine("Wszystko ok!\n")
+    endTime = datetime.now()
+    generationSeconds = int((endTime - startTime).total_seconds())
+    writeLine(f"Początek generowania: {startTime.isoformat(timespec='seconds')}. Zajęło {generationSeconds} sekund")
     writeLine(
         '<iframe style="display:none" id="hiddenIframe" name="hiddenIframe"></iframe>'
     )
