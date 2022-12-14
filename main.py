@@ -173,11 +173,11 @@ with Path("../osm-wtp/index.html").open("w") as f:
                     elif refOSM == MISSING_REF:
                         style = "color: green;"
                     elif refOSM != MISSING_REF and refOperator != MISSING_REF:
-                        style = "color: yellow;"
+                        style = "color: orange;"
                     elif refOperator == MISSING_REF and nameOperator == MISSING_REF:
                         style = "color: red;"
                     elif refOperator == MISSING_REF and nameOperator != MISSING_REF:
-                        style = "color: yellow;" if nameOSM != nameOperator else ""
+                        style = "color: orange;" if nameOSM != nameOperator else ""
                     writeLine(
                         f"<tr style='{style}'><td>{refOSM}</td><td>{nameOSM}</td><td>{refOperator}</td><td>{nameOperator}</td>"
                     )
