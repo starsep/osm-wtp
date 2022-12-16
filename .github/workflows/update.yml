@@ -1,0 +1,31 @@
+name: Update data
+on:
+  schedule:
+    - cron:  "0 0,18,21 * * *" 
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          repository: starsep/osm-wtp
+          path: osm-wtp
+      - name: checkout
+        uses: actions/checkout@v2
+        with:
+          repository: starsep/osm-wtp-compare
+          path: osm-wtp-compare
+      - name: install dependencies and run
+        run: |
+          cd osm-wtp-compare
+          pip install -r requirements.txt
+          python main.py
+      - name: commit and push update
+        run: |
+          cd osm-wtp
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          git add index.html
+          git commit -m "Update $(date +"%Y-%m-%d")"
+          git push origin main
