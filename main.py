@@ -11,7 +11,7 @@ import overpy
 from bs4 import BeautifulSoup
 from tqdm import tqdm
 
-from configuration import OVERPASS_URL, WARSAW_ID, cacheOverpass, cacheWTP
+from configuration import OVERPASS_URL, cacheOverpass, cacheWTP, WARSAW_PUBLIC_TRANSPORT_ID
 
 overpassApi = overpy.Overpass(url=OVERPASS_URL)
 startTime = datetime.now()
@@ -19,11 +19,10 @@ startTime = datetime.now()
 
 @cacheOverpass.memoize()
 def getRelationDataFromOverpass():
-    areaId = 3600000000 + WARSAW_ID
     query = f"""
     [out:json][timeout:250];
     (
-        relation(area:{areaId})[route][network="ZTM Warszawa"][url];
+        relation(id:{WARSAW_PUBLIC_TRANSPORT_ID});
     );
     (._;>>;);
     out body;
@@ -73,12 +72,14 @@ printedMissingRefName = set()
 for route in tqdm(getRelationDataFromOverpass().relations):
     wtpStops = []
     tags = route.tags
+    if "type" not in tags or "route" not in tags or tags["type"] != "route" or "ref" not in tags:
+        continue
     ref = tags["ref"]
-    if "type" not in tags or "route" not in tags or tags["type"] != "route":
-        continue
     if "url" not in tags:
-        print(f"Missing url tag for {route}")
+        print(f"Missing url tag for {elementUrl(route)}")
         continue
+    if "network" in tags and tags["network"] != "ZTM Warszawa":
+        print(f"Unexpected network={tags['network']} for {route}")
     link = tags["url"]
     if "wtp.waw.pl" not in link:
         print(f"Unexpected link {link} for {route}")
