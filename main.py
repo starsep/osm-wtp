@@ -92,7 +92,8 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         wtpStops.append(StopData(name=stopName, ref=stopRef))
     lastStop = content.select("div.timetable-route-point.name.active.follow.disabled")
     if len(lastStop) != 1:
-        print(f"Unexpected number of last stops: {lastStop}")
+        print(f"Unexpected number of last stops: {lastStop}. Link: {link}")
+        continue
     for stopLink in lastStop:
         stopName = stopLink.text.strip()
         wtpStops.append(StopData(name=stopName, ref=MISSING_REF))
