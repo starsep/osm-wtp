@@ -80,6 +80,7 @@ def elementUrl(element: overpy.Element) -> str:
         print(f"Unexpected overpy type: {type(element)}")
 
 
+disusedStop = set()
 manyLastStops = set()
 missingLastStop = set()
 missingName = set()
@@ -131,6 +132,9 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         role: str = member.role
         if role.startswith("platform") or role.startswith("stop"):
             element = member.resolve()
+            for tag in element.tags:
+                if "disused" in tag:
+                    disusedStop.add(elementUrl(element))
             if "name" not in element.tags:
                 missingName.add(elementUrl(element))
                 if "ref" not in element.tags:
@@ -259,6 +263,7 @@ with Path("../osm-wtp/index.html").open("w") as f:
             startTime=startTime.isoformat(timespec="seconds"),
             generationSeconds=generationSeconds,
             renderResults=renderResults,
+            disusedStop=disusedStop,
             manyLastStops=manyLastStops,
             missingLastStop=missingLastStop,
             missingName=missingName,

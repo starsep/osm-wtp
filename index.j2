@@ -35,6 +35,13 @@
     {% endfor %}
     <h1>Inne błędy</h1>
 
+    {% if disusedStop %}
+        <h2>Przystanek z disused w tagu</h2>
+        {% for link in disusedStop %}
+            <a href="{{ link }}">{{ link }}</a><br/>
+        {% endfor %}
+    {% endif %}
+
     {% if manyLastStops %}
         <h2>WTP: Wiele przystanków końcowych</h2>
         {% for (link, stops) in manyLastStops %}
