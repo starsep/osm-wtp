@@ -118,7 +118,7 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         wtpStops.append(StopData(name=stopName, ref=stopRef))
     lastStop = content.select("div.timetable-route-point.name.active.follow.disabled")
     if len(lastStop) == 0:
-        missingLastStop.add(link)
+        missingLastStop.add((elementUrl(route), link))
         continue
     if len(lastStop) > 1:
         manyLastStops.add((link, lastStop))

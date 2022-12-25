@@ -44,8 +44,8 @@
 
     {% if missingLastStop %}
         <h2>WTP: Brakujący przystanek końcowy</h2>
-        {% for link in missingLastStop %}
-            <a href="{{ link }}">{{ link }}</a><br/>
+        {% for (osmUrl, wtpUrl) in missingLastStop %}
+            <a href="{{ osmUrl }}">{{ osmUrl }}</a>: <a href="{{ wtpUrl }}">{{ wtpUrl }}</a><br/>
         {% endfor %}
     {% endif %}
 
