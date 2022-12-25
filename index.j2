@@ -33,6 +33,64 @@
             Wszystko ok!
         {% endif %}
     {% endfor %}
+    <h1>Inne błędy</h1>
+
+    {% if manyLastStops %}
+        <h2>WTP: Wiele przystanków końcowych</h2>
+        {% for (link, stops) in manyLastStops %}
+            <a href="{{ link }}">{{ stops }}</a><br/>
+        {% endfor %}
+    {% endif %}
+
+    {% if missingLastStop %}
+        <h2>WTP: Brakujący przystanek końcowy</h2>
+        {% for link in missingLastStop %}
+            <a href="{{ link }}">{{ link }}</a><br/>
+        {% endfor %}
+    {% endif %}
+
+    {% if missingName %}
+        <h2>Brakująca nazwa</h2>
+        {% for link in missingName %}
+            <a href="{{ link }}">{{ link }}</a><br/>
+        {% endfor %}
+    {% endif %}
+
+    {% if missingRef %}
+        <h2>Brakujący ref</h2>
+        {% for link in missingRef %}
+            <a href="{{ link }}">{{ link }}</a><br/>
+        {% endfor %}
+    {% endif %}
+
+    {% if missingRouteUrl %}
+        <h2>Brakujący url dla trasy</h2>
+        {% for link in missingRouteUrl %}
+            <a href="{{ link }}">{{ link }}</a><br/>
+        {% endfor %}
+    {% endif %}
+
+    {% if unexpectedLink %}
+        <h2>Niespodziewany link dla trasy</h2>
+        {% for (link, value) in unexpectedLink %}
+            <a href="{{ link }}">{{ value }}</a><br/>
+        {% endfor %}
+    {% endif %}
+
+    {% if unexpectedNetwork %}
+        <h2>Niespodziewany network dla trasy</h2>
+        {% for (link, network) in unexpectedNetwork %}
+            <a href="{{ link }}">{{ network }}</a><br/>
+        {% endfor %}
+    {% endif %}
+
+    {% if unexpectedRef %}
+        <h2>Niespodziewany ref</h2>
+        {% for (link, ref) in unexpectedRef %}
+            <a href="{{ link }}">{{ ref }}</a><br/>
+        {% endfor %}
+    {% endif %}
+
     Początek generowania: {{ startTime }}. Zajęło {{ generationSeconds }} sekund
     <iframe style="display:none;" id="hiddenIframe" name="hiddenIframe"></iframe>
 </body>

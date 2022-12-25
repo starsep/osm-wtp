@@ -9,7 +9,14 @@ from urllib import parse
 import httpx
 import overpy
 from bs4 import BeautifulSoup
-from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoader, Undefined, StrictUndefined
+from jinja2 import (
+    Environment,
+    PackageLoader,
+    select_autoescape,
+    FileSystemLoader,
+    Undefined,
+    StrictUndefined,
+)
 from tqdm import tqdm
 
 from configuration import (
@@ -73,7 +80,14 @@ def elementUrl(element: overpy.Element) -> str:
         print(f"Unexpected overpy type: {type(element)}")
 
 
-printedMissingRefName = set()
+manyLastStops = set()
+missingLastStop = set()
+missingName = set()
+missingRouteUrl = set()
+missingRef = set()
+unexpectedLink = set()
+unexpectedNetwork = set()
+unexpectedRef = set()
 
 for route in tqdm(getRelationDataFromOverpass().relations):
     wtpStops = []
@@ -87,13 +101,13 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         continue
     ref = tags["ref"]
     if "url" not in tags:
-        print(f"Missing url tag for {elementUrl(route)}")
+        missingRouteUrl.add(elementUrl(route))
         continue
     if "network" in tags and tags["network"] != "ZTM Warszawa":
-        print(f"Unexpected network={tags['network']} for {route}")
+        unexpectedNetwork.add((elementUrl(route), tags["network"]))
     link = tags["url"]
     if "wtp.waw.pl" not in link:
-        print(f"Unexpected link {link} for {route}")
+        unexpectedLink.add((elementUrl(route), link))
         continue
     content = BeautifulSoup(fetchWtpWebsite(link), features="html.parser")
     for stopLink in content.select("a.timetable-link.active"):
@@ -103,8 +117,11 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         stopRef = stopLinkArgs["wtp_st"][0] + stopLinkArgs["wtp_pt"][0]
         wtpStops.append(StopData(name=stopName, ref=stopRef))
     lastStop = content.select("div.timetable-route-point.name.active.follow.disabled")
-    if len(lastStop) != 1:
-        print(f"Unexpected number of last stops: {lastStop}. Link: {link}")
+    if len(lastStop) == 0:
+        missingLastStop.add(link)
+        continue
+    if len(lastStop) > 1:
+        manyLastStops.add((link, lastStop))
         continue
     for stopLink in lastStop:
         stopName = stopLink.text.strip()
@@ -114,20 +131,20 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         role: str = member.role
         if role.startswith("platform") or role.startswith("stop"):
             element = member.resolve()
-            if "name" not in element.tags or "ref" not in element.tags:
-                url = elementUrl(element)
-                if url not in printedMissingRefName:
-                    print(f"Missing name or ref for {url}")
-                    printedMissingRefName.add(url)
+            if "name" not in element.tags:
+                missingName.add(elementUrl(element))
+                if "ref" not in element.tags:
+                    missingRef.add(elementUrl(element))
+                continue
+            if "ref" not in element.tags:
+                missingRef.add(elementUrl(element))
                 continue
             if len(element.tags["ref"]) != 6:
                 if (
                     "network" in element.tags
                     and element.tags["network"] == "ZTM Warszawa"
                 ):
-                    print(
-                        f"Bad ref={element.tags['ref']} format for {elementUrl(element)}"
-                    )
+                    unexpectedRef.add((elementUrl(element), element.tags["ref"]))
                 continue
             stop = StopData(name=element.tags["name"], ref=element.tags["ref"])
             if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
@@ -242,5 +259,13 @@ with Path("../osm-wtp/index.html").open("w") as f:
             startTime=startTime.isoformat(timespec="seconds"),
             generationSeconds=generationSeconds,
             renderResults=renderResults,
+            manyLastStops=manyLastStops,
+            missingLastStop=missingLastStop,
+            missingName=missingName,
+            missingRouteUrl=missingRouteUrl,
+            missingRef=missingRef,
+            unexpectedLink=unexpectedLink,
+            unexpectedNetwork=unexpectedNetwork,
+            unexpectedRef=unexpectedRef,
         )
     )
