@@ -3,7 +3,7 @@ from datetime import datetime
 from difflib import SequenceMatcher
 from itertools import zip_longest
 from pathlib import Path
-from typing import Dict, List
+from typing import Dict, List, Optional, Tuple
 from urllib import parse
 
 import httpx
@@ -11,10 +11,8 @@ import overpy
 from bs4 import BeautifulSoup
 from jinja2 import (
     Environment,
-    PackageLoader,
     select_autoescape,
     FileSystemLoader,
-    Undefined,
     StrictUndefined,
 )
 from tqdm import tqdm
@@ -69,6 +67,35 @@ results: Dict[str, List[RouteResult]] = {}
 MISSING_REF = "-"
 
 
+@dataclass
+class WTPLinkParams:
+    line: str
+    direction: str
+    variant: str
+
+    def url(self) -> str:
+        return f"https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln={self.line}&wtp_dr={self.direction}&wtp_vr={self.variant}"
+
+    def toTuple(self) -> Tuple[str, str, str]:
+        return self.line, self.direction, self.variant
+
+    @staticmethod
+    def fromTuple(t: Tuple[str, str, str]) -> "WTPLinkParams":
+        (line, direction, variant) = t
+        return WTPLinkParams(line=line, direction=direction, variant=variant)
+
+    @staticmethod
+    def parseWTPRouteLink(url: str) -> Optional["WTPLinkParams"]:
+        args = parse.parse_qs(parse.urlparse(url).query)
+        if "wtp_md" not in args or args["wtp_md"][0] != "3" or "wtp_ln" not in args:
+            return None
+        return WTPLinkParams(
+            line=args["wtp_ln"][0],
+            direction=args["wtp_dr"][0] if "wtp_dr" in args else "A",
+            variant=args["wtp_vr"][0] if "wtp_vr" in args else "0",
+        )
+
+
 def elementUrl(element: overpy.Element) -> str:
     if type(element) == overpy.Node:
         return f"https://osm.org/node/{element.id}"
@@ -90,6 +117,9 @@ unexpectedLink = set()
 unexpectedNetwork = set()
 unexpectedRef = set()
 
+seenWtpLinks = set()
+visitedWtpLinks = set()
+
 for route in tqdm(getRelationDataFromOverpass().relations):
     wtpStops = []
     tags = route.tags
@@ -107,6 +137,9 @@ for route in tqdm(getRelationDataFromOverpass().relations):
     if "network" in tags and tags["network"] != "ZTM Warszawa":
         unexpectedNetwork.add((elementUrl(route), tags["network"]))
     link = tags["url"]
+    parsedLink = WTPLinkParams.parseWTPRouteLink(link)
+    if parsedLink is not None:
+        visitedWtpLinks.add(parsedLink.toTuple())
     if "wtp.waw.pl" not in link:
         unexpectedLink.add((elementUrl(route), link))
         continue
@@ -117,6 +150,14 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         stopLinkArgs = parse.parse_qs(parse.urlparse(stopLink).query)
         stopRef = stopLinkArgs["wtp_st"][0] + stopLinkArgs["wtp_pt"][0]
         wtpStops.append(StopData(name=stopName, ref=stopRef))
+    for wtpLink in content.select("a"):
+        url = wtpLink.get("href")
+        if "wtp.waw.pl" not in url:
+            continue
+        parsedUrl = WTPLinkParams.parseWTPRouteLink(url)
+        if parsedUrl is not None:
+            seenWtpLinks.add(parsedUrl.toTuple())
+
     lastStop = content.select("div.timetable-route-point.name.active.follow.disabled")
     if len(lastStop) == 0:
         missingLastStop.add((elementUrl(route), link))
@@ -246,6 +287,21 @@ for ref in refs:
                 RenderRouteResult(route=route, diffRows=diffRows)
             )
 
+
+mainContent = BeautifulSoup(
+    fetchWtpWebsite("https://wtp.waw.pl/rozklady-jazdy/"), features="html.parser"
+)
+for wtpLink in mainContent.select("a"):
+    url = wtpLink.get("href")
+    if "wtp.waw.pl" not in url:
+        continue
+    parsedUrl = WTPLinkParams.parseWTPRouteLink(url)
+    if parsedUrl is not None:
+        seenWtpLinks.add(parsedUrl.toTuple())
+notLinkedWtpUrls = set()
+for link in seenWtpLinks - visitedWtpLinks:
+    notLinkedWtpUrls.add(WTPLinkParams.fromTuple(link).url())
+
 with Path("../osm-wtp/index.html").open("w") as f:
     env = Environment(
         loader=FileSystemLoader(searchpath="./"),
@@ -269,6 +325,7 @@ with Path("../osm-wtp/index.html").open("w") as f:
             missingName=missingName,
             missingRouteUrl=missingRouteUrl,
             missingRef=missingRef,
+            notLinkedWtpUrls=sorted(list(notLinkedWtpUrls)),
             unexpectedLink=unexpectedLink,
             unexpectedNetwork=unexpectedNetwork,
             unexpectedRef=unexpectedRef,
