@@ -9,9 +9,15 @@ from urllib import parse
 import httpx
 import overpy
 from bs4 import BeautifulSoup
+from jinja2 import Environment, PackageLoader, select_autoescape, FileSystemLoader, Undefined, StrictUndefined
 from tqdm import tqdm
 
-from configuration import OVERPASS_URL, cacheOverpass, cacheWTP, WARSAW_PUBLIC_TRANSPORT_ID
+from configuration import (
+    OVERPASS_URL,
+    cacheOverpass,
+    cacheWTP,
+    WARSAW_PUBLIC_TRANSPORT_ID,
+)
 
 overpassApi = overpy.Overpass(url=OVERPASS_URL)
 startTime = datetime.now()
@@ -72,7 +78,12 @@ printedMissingRefName = set()
 for route in tqdm(getRelationDataFromOverpass().relations):
     wtpStops = []
     tags = route.tags
-    if "type" not in tags or "route" not in tags or tags["type"] != "route" or "ref" not in tags:
+    if (
+        "type" not in tags
+        or "route" not in tags
+        or tags["type"] != "route"
+        or "ref" not in tags
+    ):
         continue
     ref = tags["ref"]
     if "url" not in tags:
@@ -110,8 +121,13 @@ for route in tqdm(getRelationDataFromOverpass().relations):
                     printedMissingRefName.add(url)
                 continue
             if len(element.tags["ref"]) != 6:
-                if "network" in element.tags and element.tags["network"] == "ZTM Warszawa":
-                    print(f"Bad ref={element.tags['ref']} format for {elementUrl(element)}")
+                if (
+                    "network" in element.tags
+                    and element.tags["network"] == "ZTM Warszawa"
+                ):
+                    print(
+                        f"Bad ref={element.tags['ref']} format for {elementUrl(element)}"
+                    )
                 continue
             stop = StopData(name=element.tags["name"], ref=element.tags["ref"])
             if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
@@ -129,91 +145,102 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         )
     )
 
+
+@dataclass
+class DiffRow:
+    color: str
+    refOSM: str
+    nameOSM: str
+    refOperator: str
+    nameOperator: str
+
+
+@dataclass
+class RenderRouteResult:
+    route: RouteResult
+    diffRows: List[DiffRow]
+
+
+refs = sorted(results.keys(), key=lambda x: (len(x), x))
+renderResults = {}
+for ref in refs:
+    renderResults[ref] = dict(success=True, routeResults=[])
+    for route in results[ref]:
+        osmRefs = [stop.ref for stop in route.osmStops]
+        wtpRefs = [stop.ref for stop in route.wtpStops]
+        osmNames = {stop.ref: stop.name for stop in route.osmStops}
+        wtpNames = {stop.ref: stop.name for stop in route.wtpStops}
+        diffRows = []
+        if osmRefs[:-1] != wtpRefs[:-1]:
+            matcher = SequenceMatcher(None, osmRefs, wtpRefs)
+
+            def writeTableRow(refOSM: str, refOperator: str):
+                nameOSM = osmNames[refOSM] if refOSM != MISSING_REF else MISSING_REF
+                nameOperator = (
+                    wtpNames[refOperator] if refOperator != MISSING_REF else MISSING_REF
+                )
+                if refOSM == osmRefs[-1] and refOperator == MISSING_REF:
+                    nameOperator = wtpNames[wtpRefs[-1]]
+                color = "inherit"
+                if refOSM == refOperator:
+                    color = "inherit"
+                elif refOSM == MISSING_REF:
+                    color = "green"
+                elif refOSM != MISSING_REF and refOperator != MISSING_REF:
+                    color = "orange"
+                elif refOperator == MISSING_REF and nameOperator == MISSING_REF:
+                    color = "red"
+                elif refOperator == MISSING_REF and nameOperator != MISSING_REF:
+                    color = "orange" if nameOSM != nameOperator else "inherit"
+                diffRows.append(
+                    DiffRow(
+                        color=color,
+                        refOSM=refOSM,
+                        nameOSM=nameOSM,
+                        refOperator=refOperator,
+                        nameOperator=nameOperator,
+                    )
+                )
+
+            for tag, i1, i2, j1, j2 in matcher.get_opcodes():
+                if tag == "equal":
+                    for i, j in zip(range(i1, i2), range(j1, j2)):
+                        writeTableRow(refOSM=osmRefs[i], refOperator=wtpRefs[j])
+                elif tag == "delete":
+                    for i in range(i1, i2):
+                        writeTableRow(refOSM=osmRefs[i], refOperator=MISSING_REF)
+                elif tag == "insert":
+                    for j in range(j1, j2):
+                        writeTableRow(refOSM=MISSING_REF, refOperator=wtpRefs[j])
+                elif tag == "replace":
+                    for i, j in zip_longest(
+                        range(i1, i2), range(j1, j2), fillvalue=None
+                    ):
+                        writeTableRow(
+                            refOSM=osmRefs[i] if i is not None else MISSING_REF,
+                            refOperator=wtpRefs[j] if j is not None else MISSING_REF,
+                        )
+            renderResults[ref]["success"] = False
+            renderResults[ref]["routeResults"].append(
+                RenderRouteResult(route=route, diffRows=diffRows)
+            )
+
 with Path("../osm-wtp/index.html").open("w") as f:
-
-    def writeLine(line: str):
-        f.write(line + "\n")
-
-    refs = sorted(results.keys(), key=lambda x: (len(x), x))
-    for ref in refs:
-        writeLine(f"<a href='#{ref}'>{ref}</a>")
-    for ref in refs:
-        writeLine(f"<h1 id='{ref}'>Wyniki dla {ref}</h1>")
-        success = True
-        for route in results[ref]:
-            osmRefs = [stop.ref for stop in route.osmStops]
-            wtpRefs = [stop.ref for stop in route.wtpStops]
-            osmNames = {stop.ref: stop.name for stop in route.osmStops}
-            wtpNames = {stop.ref: stop.name for stop in route.wtpStops}
-            if osmRefs[:-1] != wtpRefs[:-1]:
-                writeLine(
-                    f"""
-                    <h3>
-                        Błąd dla {route.osmName}:
-                        <a href="{route.wtpLink}">WTP</a>
-                        <a href="https://osm.org/relation/{route.osmId}">OSM</a>
-                        <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r{route.osmId}">JOSM</a>
-                    </h3>
-                """
-                )
-                writeLine("<table>")
-                writeLine(
-                    f"<thead><tr><th>OSM ref</th><th>OSM name</th><th>WTP ref</th><th>WTP name</th></thead>"
-                )
-                matcher = SequenceMatcher(None, osmRefs, wtpRefs)
-
-                def writeTableRow(refOSM: str, refOperator: str):
-                    nameOSM = osmNames[refOSM] if refOSM != MISSING_REF else MISSING_REF
-                    nameOperator = (
-                        wtpNames[refOperator]
-                        if refOperator != MISSING_REF
-                        else MISSING_REF
-                    )
-                    if refOSM == osmRefs[-1] and refOperator == MISSING_REF:
-                        nameOperator = wtpNames[wtpRefs[-1]]
-                    style = ""
-                    if refOSM == refOperator:
-                        style = ""
-                    elif refOSM == MISSING_REF:
-                        style = "color: green;"
-                    elif refOSM != MISSING_REF and refOperator != MISSING_REF:
-                        style = "color: orange;"
-                    elif refOperator == MISSING_REF and nameOperator == MISSING_REF:
-                        style = "color: red;"
-                    elif refOperator == MISSING_REF and nameOperator != MISSING_REF:
-                        style = "color: orange;" if nameOSM != nameOperator else ""
-                    writeLine(
-                        f"<tr style='{style}'><td>{refOSM}</td><td>{nameOSM}</td><td>{refOperator}</td><td>{nameOperator}</td>"
-                    )
-
-                for tag, i1, i2, j1, j2 in matcher.get_opcodes():
-                    if tag == "equal":
-                        for i, j in zip(range(i1, i2), range(j1, j2)):
-                            writeTableRow(refOSM=osmRefs[i], refOperator=wtpRefs[j])
-                    elif tag == "delete":
-                        for i in range(i1, i2):
-                            writeTableRow(refOSM=osmRefs[i], refOperator=MISSING_REF)
-                    elif tag == "insert":
-                        for j in range(j1, j2):
-                            writeTableRow(refOSM=MISSING_REF, refOperator=wtpRefs[j])
-                    elif tag == "replace":
-                        for i, j in zip_longest(
-                            range(i1, i2), range(j1, j2), fillvalue=None
-                        ):
-                            writeTableRow(
-                                refOSM=osmRefs[i] if i is not None else MISSING_REF,
-                                refOperator=wtpRefs[j]
-                                if j is not None
-                                else MISSING_REF,
-                            )
-                writeLine("</table>")
-                writeLine("<br/>")
-                success = False
-        if success:
-            writeLine("Wszystko ok!\n")
+    env = Environment(
+        loader=FileSystemLoader(searchpath="./"),
+        autoescape=select_autoescape(),
+        trim_blocks=True,
+        lstrip_blocks=True,
+        undefined=StrictUndefined,
+    )
+    template = env.get_template("index.j2")
     endTime = datetime.now()
     generationSeconds = int((endTime - startTime).total_seconds())
-    writeLine(f"Początek generowania: {startTime.isoformat(timespec='seconds')}. Zajęło {generationSeconds} sekund")
-    writeLine(
-        '<iframe style="display:none" id="hiddenIframe" name="hiddenIframe"></iframe>'
+    f.write(
+        template.render(
+            refs=refs,
+            startTime=startTime.isoformat(timespec="seconds"),
+            generationSeconds=generationSeconds,
+            renderResults=renderResults,
+        )
     )

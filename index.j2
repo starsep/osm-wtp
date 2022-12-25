@@ -1,0 +1,39 @@
+<html lang="pl">
+<head>
+    <title>Porównanie danych OSM z WTP</title>
+</head>
+<body>
+    {% for ref in refs %}
+        <a href="#{{ ref }}">{{ ref }}</a>
+    {% endfor %}
+    {% for ref, result in renderResults.items() %}
+        <h1 id="{{ ref }}">Wyniki dla {{ ref }}</h1>
+        {% for routeResult in result["routeResults"] %}
+        {% set route = routeResult.route %}
+        <h3>
+            Błąd dla {{ route.osmName }}:
+            <a href="{{ route.wtpLink }}">WTP</a>
+            <a href="https://osm.org/relation/{{ route.osmId }}">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r{{ route.osmId }}">JOSM</a>
+        </h3>
+        <table>
+            <thead><tr><th>OSM ref</th><th>OSM name</th><th>WTP ref</th><th>WTP name</th></thead>
+            {% for row in routeResult.diffRows %}
+                <tr style="color: {{ row.color }};">
+                    <td>{{ row.refOSM }}</td>
+                    <td>{{ row.nameOSM }}</td>
+                    <td>{{ row.refOperator }}</td>
+                    <td>{{ row.nameOperator }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+        <br/>
+        {% endfor %}
+        {% if result["success"] %}
+            Wszystko ok!
+        {% endif %}
+    {% endfor %}
+    Początek generowania: {{ startTime }}. Zajęło {{ generationSeconds }} sekund
+    <iframe style="display:none;" id="hiddenIframe" name="hiddenIframe"></iframe>
+</body>
+</html>
