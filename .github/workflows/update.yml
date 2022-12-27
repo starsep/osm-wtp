@@ -1,13 +1,9 @@
+---
 name: Update data
 on:
   schedule:
-    - cron:  "5 17,20,23 * * *" 
+    - cron: "5 17,20,23 * * *"
   workflow_dispatch:
-    inputs:
-      clearCache:
-        description: 'Should clear all caches?'
-        type: boolean
-        required: true
 jobs:
   update:
     runs-on: ubuntu-latest
