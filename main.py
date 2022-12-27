@@ -49,12 +49,12 @@ def fetchWtpWebsite(link: str):
 @dataclass
 class StopData:
     name: str
-    routeRef: str
+    ref: str
 
 
 @dataclass
 class RouteResult:
-    routeRef: str
+    ref: str
     osmName: str
     osmId: str
     wtpLink: str
