@@ -49,12 +49,12 @@ def fetchWtpWebsite(link: str):
 @dataclass
 class StopData:
     name: str
-    ref: str
+    routeRef: str
 
 
 @dataclass
 class RouteResult:
-    ref: str
+    routeRef: str
     osmName: str
     osmId: str
     wtpLink: str
@@ -132,12 +132,12 @@ def parseRef(tags) -> Optional[str]:
 for route in tqdm(getRelationDataFromOverpass().relations):
     wtpStops = []
     tags = route.tags
-    ref = parseRef(tags)
+    routeRef = parseRef(tags)
     if (
         "type" not in tags
         or "route" not in tags
         or tags["type"] != "route"
-        or ref is None
+        or routeRef is None
     ):
         continue
     if "url" not in tags:
@@ -185,30 +185,30 @@ for route in tqdm(getRelationDataFromOverpass().relations):
             for tag in element.tags:
                 if "disused" in tag:
                     disusedStop.add(elementUrl(element))
-            ref = parseRef(element.tags)
+            osmStopRef = parseRef(element.tags)
             if "name" not in element.tags:
                 missingName.add(elementUrl(element))
-                if ref is None:
+                if osmStopRef is None:
                     missingRef.add(elementUrl(element))
                 continue
-            if ref is None:
+            if osmStopRef is None:
                 missingRef.add(elementUrl(element))
                 continue
-            if len(ref) != 6:
+            if len(osmStopRef) != 6:
                 if (
                     "network" in element.tags
                     and element.tags["network"] == "ZTM Warszawa"
                 ):
-                    unexpectedRef.add((elementUrl(element), ref))
+                    unexpectedRef.add((elementUrl(element), osmStopRef))
                 continue
-            stop = StopData(name=element.tags["name"], ref=ref)
+            stop = StopData(name=element.tags["name"], ref=osmStopRef)
             if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
                 osmStops.append(stop)
-    if ref not in results:
-        results[ref] = []
-    results[ref].append(
+    if routeRef not in results:
+        results[routeRef] = []
+    results[routeRef].append(
         RouteResult(
-            ref=ref,
+            ref=routeRef,
             osmName=route.tags["name"],
             osmId=route.id,
             osmStops=osmStops,
@@ -235,9 +235,9 @@ class RenderRouteResult:
 
 refs = sorted(results.keys(), key=lambda x: (len(x), x))
 renderResults = {}
-for ref in refs:
-    renderResults[ref] = dict(success=True, routeResults=[])
-    for route in results[ref]:
+for routeRef in refs:
+    renderResults[routeRef] = dict(success=True, routeResults=[])
+    for route in results[routeRef]:
         osmRefs = [stop.ref for stop in route.osmStops]
         wtpRefs = [stop.ref for stop in route.wtpStops]
         osmNames = {stop.ref: stop.name for stop in route.osmStops}
@@ -292,8 +292,8 @@ for ref in refs:
                             refOSM=osmRefs[i] if i is not None else MISSING_REF,
                             refOperator=wtpRefs[j] if j is not None else MISSING_REF,
                         )
-            renderResults[ref]["success"] = False
-            renderResults[ref]["routeResults"].append(
+            renderResults[routeRef]["success"] = False
+            renderResults[routeRef]["routeResults"].append(
                 RenderRouteResult(route=route, diffRows=diffRows)
             )
 
