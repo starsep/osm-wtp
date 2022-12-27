@@ -22,6 +22,21 @@ jobs:
         with:
           repository: starsep/osm-wtp-compare
           path: osm-wtp-compare
+      - uses: actions/setup-python@v4
+        with:
+          python-version: '3.10'
+          cache: 'pip'
+      - name: Get Date
+        id: get-date
+        run: |
+          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+        shell: bash
+      - name: Cache WTP data
+        id: cache-wtp
+        uses: actions/cache@v3
+        with:
+          path: osm-wtp-compare/cache/wtp
+          key: ${{ steps.get-date.outputs.date }}
       - name: install dependencies and run
         run: |
           cd osm-wtp-compare
