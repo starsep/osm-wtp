@@ -1,11 +1,17 @@
+<!DOCTYPE html>
 <html lang="pl">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Porównanie danych OSM z WTP</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
 </head>
 <body>
+    <span>
     {% for ref in refs %}
         <a href="#{{ ref }}">{{ ref }}</a>
     {% endfor %}
+    </span>
     {% for ref, result in renderResults.items() %}
         <h1 id="{{ ref }}">Wyniki dla {{ ref }}</h1>
         {% for routeResult in result["routeResults"] %}
@@ -30,7 +36,7 @@
         <br/>
         {% endfor %}
         {% if result["success"] %}
-            Wszystko ok!
+            <span>Wszystko ok!</span>
         {% endif %}
     {% endfor %}
     <h1>Inne błędy</h1>
@@ -105,7 +111,7 @@
         {% endfor %}
     {% endif %}
 
-    Początek generowania: {{ startTime }}. Zajęło {{ generationSeconds }} sekund
+    <span>Początek generowania: {{ startTime }}. Zajęło {{ generationSeconds }} sekund</span>
     <iframe style="display:none;" id="hiddenIframe" name="hiddenIframe"></iframe>
 </body>
 </html>
