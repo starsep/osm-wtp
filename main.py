@@ -120,17 +120,26 @@ unexpectedRef = set()
 seenWtpLinks = set()
 visitedWtpLinks = set()
 
+
+def parseRef(tags) -> Optional[str]:
+    refKeys = ["ref:wtp", "ref:ztm", "ref"]
+    for refKey in refKeys:
+        if refKey in tags:
+            return tags[refKey]
+    return None
+
+
 for route in tqdm(getRelationDataFromOverpass().relations):
     wtpStops = []
     tags = route.tags
+    ref = parseRef(tags)
     if (
         "type" not in tags
         or "route" not in tags
         or tags["type"] != "route"
-        or "ref" not in tags
+        or ref is None
     ):
         continue
-    ref = tags["ref"]
     if "url" not in tags:
         missingRouteUrl.add(elementUrl(route))
         continue
@@ -176,22 +185,23 @@ for route in tqdm(getRelationDataFromOverpass().relations):
             for tag in element.tags:
                 if "disused" in tag:
                     disusedStop.add(elementUrl(element))
+            ref = parseRef(element.tags)
             if "name" not in element.tags:
                 missingName.add(elementUrl(element))
-                if "ref" not in element.tags:
+                if ref is None:
                     missingRef.add(elementUrl(element))
                 continue
-            if "ref" not in element.tags:
+            if ref is None:
                 missingRef.add(elementUrl(element))
                 continue
-            if len(element.tags["ref"]) != 6:
+            if len(ref) != 6:
                 if (
                     "network" in element.tags
                     and element.tags["network"] == "ZTM Warszawa"
                 ):
-                    unexpectedRef.add((elementUrl(element), element.tags["ref"]))
+                    unexpectedRef.add((elementUrl(element), ref))
                 continue
-            stop = StopData(name=element.tags["name"], ref=element.tags["ref"])
+            stop = StopData(name=element.tags["name"], ref=ref)
             if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
                 osmStops.append(stop)
     if ref not in results:
