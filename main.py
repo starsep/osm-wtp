@@ -142,6 +142,11 @@ def lastStopRef(lastStopName: str, previousRef: str) -> str:
         return MISSING_REF
 
 
+lineNotAvailableToday = "Najbliższy dzień z dostępnym rozkładem dla wybranej linii to"
+lineNotAvailableTodayPattern = (
+    f'div.timetable-message:-soup-contains("{lineNotAvailableToday}")'
+)
+
 for route in tqdm(getRelationDataFromOverpass().relations):
     wtpStops = []
     tags = route.tags
@@ -166,7 +171,17 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         unexpectedLink.add((elementUrl(route), link))
         continue
     content = BeautifulSoup(fetchWtpWebsite(link), features="html.parser")
-    for stopLink in content.select("a.timetable-link.active"):
+    selectStops = content.select("a.timetable-link.active")
+    if len(selectStops) == 0:
+        notAvailableDiv = content.select(lineNotAvailableTodayPattern)
+        if len(notAvailableDiv) > 0:
+            anotherDateLink = notAvailableDiv[0].select("a")[0].get("href")
+            anotherDateLinkArgs = parse.parse_qs(parse.urlparse(anotherDateLink).query)
+            if "wtp_dt" in anotherDateLinkArgs:
+                link += f'&wtp_dt={anotherDateLinkArgs["wtp_dt"][0]}'
+                content = BeautifulSoup(fetchWtpWebsite(link), features="html.parser")
+                selectStops = content.select("a.timetable-link.active")
+    for stopLink in selectStops:
         stopName = stopLink.text.strip()
         stopLink = stopLink.get("href")
         stopLinkArgs = parse.parse_qs(parse.urlparse(stopLink).query)
