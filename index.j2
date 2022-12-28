@@ -113,8 +113,8 @@
 
     {% if missingLastStopRefNames %}
         <h2>Nazwy ostatnich przystanków bez ref</h2>
-        {% for stopName in missingLastStopRefNames %}
-            <span>{{ stopName }}</span><br/>
+        {% for (stopName, previousRef) in missingLastStopRefNames %}
+            <span>{{ stopName }} po {{ previousRef }}</span><br/>
         {% endfor %}
     {% endif %}
 

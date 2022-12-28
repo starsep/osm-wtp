@@ -23,7 +23,7 @@ from configuration import (
     cacheWTP,
     WARSAW_PUBLIC_TRANSPORT_ID,
 )
-from lastStopRefs import lastStopRefs
+from lastStopRefs import lastStopRefs, lastStopRefAfter
 
 overpassApi = overpy.Overpass(url=OVERPASS_URL)
 startTime = datetime.now()
@@ -131,6 +131,17 @@ def parseRef(tags) -> Optional[str]:
     return None
 
 
+def lastStopRef(lastStopName: str, previousRef: str) -> str:
+    key = (lastStopName, previousRef)
+    if key in lastStopRefAfter:
+        return lastStopRefAfter[key]
+    elif lastStopName in lastStopRefs:
+        return lastStopRefs[lastStopName]
+    else:
+        missingLastStopRefNames.add(key)
+        return MISSING_REF
+
+
 for route in tqdm(getRelationDataFromOverpass().relations):
     wtpStops = []
     tags = route.tags
@@ -178,11 +189,7 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         continue
     for stopLink in lastStop:
         stopName = stopLink.text.strip()
-        stopRef = MISSING_REF
-        if stopName in lastStopRefs:
-            stopRef = str(lastStopRefs[stopName])
-        else:
-            missingLastStopRefNames.add(stopName)
+        stopRef = lastStopRef(lastStopName=stopName, previousRef=wtpStops[-1].ref)
         wtpStops.append(StopData(name=stopName, ref=stopRef))
     osmStops = []
     for member in route.members:
