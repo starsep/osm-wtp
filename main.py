@@ -265,8 +265,6 @@ for routeRef in refs:
                 nameOperator = (
                     wtpNames[refOperator] if refOperator != MISSING_REF else MISSING_REF
                 )
-                if refOSM == osmRefs[-1] and refOperator == MISSING_REF:
-                    nameOperator = wtpNames[wtpRefs[-1]]
                 color = "inherit"
                 if refOSM == refOperator:
                     color = "inherit"
