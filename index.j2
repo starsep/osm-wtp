@@ -111,6 +111,13 @@
         {% endfor %}
     {% endif %}
 
+    {% if missingLastStopRefNames %}
+        <h2>Nazwy ostatnich przystanków bez ref</h2>
+        {% for stopName in missingLastStopRefNames %}
+            <span>{{ stopName }}</span><br/>
+        {% endfor %}
+    {% endif %}
+
     <span>Początek generowania: {{ startTime }}. Zajęło {{ generationSeconds }} sekund</span>
     <iframe style="display:none;" id="hiddenIframe" name="hiddenIframe"></iframe>
 </body>
