@@ -257,7 +257,7 @@ for routeRef in refs:
         osmNames = {stop.ref: stop.name for stop in route.osmStops}
         wtpNames = {stop.ref: stop.name for stop in route.wtpStops}
         diffRows = []
-        if osmRefs[:-1] != wtpRefs[:-1]:
+        if osmRefs != wtpRefs:
             matcher = SequenceMatcher(None, osmRefs, wtpRefs)
 
             def writeTableRow(refOSM: str, refOperator: str):
