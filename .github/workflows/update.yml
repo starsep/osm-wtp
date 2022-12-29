@@ -9,12 +9,12 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: starsep/osm-wtp
           path: osm-wtp
       - name: checkout
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
         with:
           repository: starsep/osm-wtp-compare
           path: osm-wtp-compare
@@ -25,14 +25,14 @@ jobs:
       - name: Get Date
         id: get-date
         run: |
-          echo "::set-output name=date::$(/bin/date -u "+%Y%m%d")"
+          echo "date=$(/bin/date -u '+%Y%m%d')" >> $GITHUB_ENV
         shell: bash
       - name: Cache WTP data
         id: cache-wtp
         uses: actions/cache@v3
         with:
           path: osm-wtp-compare/cache/wtp
-          key: ${{ steps.get-date.outputs.date }}
+          key: ${{ env.date }}
       - name: install dependencies and run
         run: |
           cd osm-wtp-compare
@@ -44,5 +44,5 @@ jobs:
           git config user.name "GitHub Actions Bot"
           git config user.email "<>"
           git add index.html
-          git commit -m "Update $(date +"%Y-%m-%d")"
+          git commit -m "Update ${{ env.date }}"
           git push origin main
