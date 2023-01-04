@@ -118,6 +118,14 @@
         {% endfor %}
     {% endif %}
 
+    {% if wtpStopMapping %}
+        <h2>Mapowanie przystanków WTP => Rzeczywiste (tymczasowe zmiany, błąd WTP)</h2>
+        {% for ((stopRefWTP, stopNameWTP), (actualStopRef, actualStopName)) in wtpStopMapping.items() %}
+            <span>({{ stopRefWTP }}, {{ stopNameWTP }}) => ({{ actualStopRef }}, {{ actualStopName }})</span><br/>
+        {% endfor %}
+    {% endif %}
+
+    <br/>
     <span>Początek generowania: {{ startTime }}. Zajęło {{ generationSeconds }} sekund</span>
     <iframe style="display:none;" id="hiddenIframe" name="hiddenIframe"></iframe>
 </body>

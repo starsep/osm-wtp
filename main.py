@@ -24,6 +24,7 @@ from configuration import (
     WARSAW_PUBLIC_TRANSPORT_ID,
 )
 from lastStopRefs import lastStopRefs, lastStopRefAfter
+from wtpStopMapping import wtpStopMapping
 
 overpassApi = overpy.Overpass(url=OVERPASS_URL)
 startTime = datetime.now()
@@ -142,6 +143,13 @@ def lastStopRef(lastStopName: str, previousRef: str) -> str:
         return MISSING_REF
 
 
+def mapWtpStop(wtpStopRef: str, wtpStopName: str) -> Tuple[str, str]:
+    key = (wtpStopRef, wtpStopName)
+    if (wtpStopRef, wtpStopName) in wtpStopMapping:
+        return wtpStopMapping[key]
+    return key
+
+
 lineNotAvailableToday = "Najbliższy dzień z dostępnym rozkładem dla wybranej linii to"
 lineNotAvailableTodayPattern = (
     f'div.timetable-message:-soup-contains("{lineNotAvailableToday}")'
@@ -186,6 +194,7 @@ for route in tqdm(getRelationDataFromOverpass().relations):
         stopLink = stopLink.get("href")
         stopLinkArgs = parse.parse_qs(parse.urlparse(stopLink).query)
         stopRef = stopLinkArgs["wtp_st"][0] + stopLinkArgs["wtp_pt"][0]
+        stopRef, stopName = mapWtpStop(stopRef, stopName)
         wtpStops.append(StopData(name=stopName, ref=stopRef))
     for wtpLink in content.select("a"):
         url = wtpLink.get("href")
@@ -205,6 +214,7 @@ for route in tqdm(getRelationDataFromOverpass().relations):
     for stopLink in lastStop:
         stopName = stopLink.text.strip()
         stopRef = lastStopRef(lastStopName=stopName, previousRef=wtpStops[-1].ref)
+        stopRef, stopName = mapWtpStop(stopRef, stopName)
         wtpStops.append(StopData(name=stopName, ref=stopRef))
     osmStops = []
     for member in route.members:
@@ -367,5 +377,6 @@ with Path("../osm-wtp/index.html").open("w") as f:
             unexpectedLink=unexpectedLink,
             unexpectedNetwork=unexpectedNetwork,
             unexpectedRef=unexpectedRef,
+            wtpStopMapping=wtpStopMapping,
         )
     )
