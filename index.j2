@@ -71,8 +71,8 @@
 
     {% if missingRef %}
         <h2>Brakujący ref</h2>
-        {% for link in missingRef %}
-            <a href="{{ link }}">{{ link }}</a><br/>
+        {% for (link, name) in missingRef %}
+            <a href="{{ link }}">{% if name %}{{ name }}: {% endif %}{{ link }}</a><br/>
         {% endfor %}
     {% endif %}
 

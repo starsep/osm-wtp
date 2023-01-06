@@ -254,10 +254,10 @@ def processData():
                 if "name" not in element.tags:
                     missingName.add(elementUrl(element))
                     if osmStopRef is None:
-                        missingRef.add(elementUrl(element))
+                        missingRef.add((elementUrl(element), ""))
                     continue
                 if osmStopRef is None:
-                    missingRef.add(elementUrl(element))
+                    missingRef.add((elementUrl(element), element.tags["name"]))
                     continue
                 if len(osmStopRef) != 6:
                     if (
