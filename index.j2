@@ -78,8 +78,8 @@
 
     {% if missingRouteUrl %}
         <h2>Brakujący url dla trasy</h2>
-        {% for link in missingRouteUrl %}
-            <a href="{{ link }}">{{ link }}</a><br/>
+        {% for (link, name) in missingRouteUrl %}
+            <a href="{{ link }}">{% if name %}{{ name }}: {% endif %}{{ link }}</a><br/>
         {% endfor %}
     {% endif %}
 

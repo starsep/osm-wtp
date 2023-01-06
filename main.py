@@ -187,7 +187,7 @@ def processData():
         ):
             continue
         if "url" not in tags:
-            missingRouteUrl.add(elementUrl(route))
+            missingRouteUrl.add((elementUrl(route), tags.get("name", "")))
             continue
         if "network" in tags and tags["network"] != "ZTM Warszawa":
             unexpectedNetwork.add((elementUrl(route), tags["network"]))
