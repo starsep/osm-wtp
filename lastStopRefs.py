@@ -4,6 +4,8 @@ from typing import Tuple, Dict
 lastStopRefAfter: Dict[Tuple[str, str], str] = {
     ("Brzeziny 01", "117502"): "117601",
     ("Brzeziny 01", "238402"): "243101",
+    ("Długa 02",  "344901"): "344902",
+    ("Głowackiego 01", "145502"): "199901",
     ("Jasna 02", "344902"): "317602",
     ("Leszno 02", "616501"): "616602",
     ("Leszno 02", "682402"): "616602",
@@ -27,6 +29,7 @@ lastStopRefAfter: Dict[Tuple[str, str], str] = {
     ("Urząd Gminy 02", "389301"): "389402",
     ("Urząd Miasta 01", "188102"): "188201",
     ("Urząd Miasta 01", "195202"): "188201",
+    ("Wiejska 01", "182602"): "182701",
 }
 
 lastStopRefs: Dict[str, str] = {
@@ -135,7 +138,6 @@ lastStopRefs: Dict[str, str] = {
     "Gerbera 02": "334002",
     "Gilarska 04": "121504",
     "Głosków-Szkoła 01": "321801",
-    "Głowackiego 01": "618901",
     "Gocław 01": "214801",
     "Gocław 02": "214802",
     "Gocław 03": "214803",
@@ -398,6 +400,7 @@ lastStopRefs: Dict[str, str] = {
     "Szczęśliwice 03": "411903",
     "Szczęśliwice 04": "411904",
     "Szczęśliwice 05": "411905",
+    "Śniegockiej 02": "707702",
     "Tarchomin 07": "127707",
     "Tarchomin 09": "127709",
     "Targowisko 01": "346401",
@@ -408,6 +411,7 @@ lastStopRefs: Dict[str, str] = {
     "Ursus-Niedźwiadek 01": "422101",
     "Ursus-Niedźwiadek 02": "422102",
     "Ursus-Ratusz 03": "421603",
+    "Ursynów Płd. 05": "313605",
     "Ursynów Płd. 06": "313606",
     "Ursynów Płn. 05": "312005",
     "Ursynów Płn. 06": "312006",
@@ -420,7 +424,6 @@ lastStopRefs: Dict[str, str] = {
     "Wiatraczna 13": "200813",
     "Wiatraczna 22": "200822",
     "Wiatraczna 23": "200823",
-    "Wiejska 01": "703901",
     "Wieliszew-Plaża 01": "181501",
     "Wilanów 02": "304402",
     "Wilanów 03": "304403",
