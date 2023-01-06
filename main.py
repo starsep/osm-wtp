@@ -109,6 +109,8 @@ def elementUrl(element: overpy.Element) -> str:
         print(f"Unexpected overpy type: {type(element)}")
 
 
+allWtpRefs = set()
+allOSMRefs = set()
 disusedStop = set()
 manyLastStops = set()
 missingLastStop = set()
@@ -219,6 +221,7 @@ def processData():
             stopLinkArgs = parse.parse_qs(parse.urlparse(stopLink).query)
             stopRef = stopLinkArgs["wtp_st"][0] + stopLinkArgs["wtp_pt"][0]
             stopRef, stopName = mapWtpStop(stopRef, stopName)
+            allWtpRefs.add(stopRef)
             wtpStops.append(StopData(name=stopName, ref=stopRef))
         for wtpLink in content.select("a"):
             url = wtpLink.get("href")
@@ -241,6 +244,7 @@ def processData():
             stopName = stopLink.text.strip()
             stopRef = lastStopRef(lastStopName=stopName, previousRef=wtpStops[-1].ref)
             stopRef, stopName = mapWtpStop(stopRef, stopName)
+            allWtpRefs.add(stopRef)
             wtpStops.append(StopData(name=stopName, ref=stopRef))
         osmStops = []
         for member in route.members:
@@ -269,6 +273,7 @@ def processData():
                 stop = StopData(name=element.tags["name"], ref=osmStopRef)
                 if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
                     osmStops.append(stop)
+                    allOSMRefs.add(stop.ref)
         if routeRef not in results:
             results[routeRef] = []
         results[routeRef].append(
@@ -386,6 +391,7 @@ def processData():
                 missingName=missingName,
                 missingRouteUrl=missingRouteUrl,
                 missingRef=missingRef,
+                missingRefsInOSM=list(sorted(allWtpRefs - allOSMRefs)),
                 notLinkedWtpUrls=sorted(list(notLinkedWtpUrls)),
                 unexpectedLink=unexpectedLink,
                 unexpectedNetwork=unexpectedNetwork,
