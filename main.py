@@ -122,6 +122,7 @@ unexpectedLink = set()
 unexpectedNetwork = set()
 unexpectedRef = set()
 
+invalidWtpVariants = set()
 seenWtpLinks = set()
 visitedWtpLinks = set()
 
@@ -159,6 +160,7 @@ lineNotAvailableToday = "Najbliższy dzień z dostępnym rozkładem dla wybranej
 lineNotAvailableTodayPattern = (
     f'div.timetable-message:-soup-contains("{lineNotAvailableToday}")'
 )
+variantNotAvailable = "Wybrany wariant trasy jest niedostępny dla określonego kierunku linii"
 
 
 @dataclass
@@ -200,7 +202,11 @@ def processData():
         if "wtp.waw.pl" not in link:
             unexpectedLink.add((elementUrl(route), link))
             continue
-        content = BeautifulSoup(fetchWtpWebsite(link), features="html.parser")
+        htmlContent = fetchWtpWebsite(link)
+        if variantNotAvailable in htmlContent:
+            invalidWtpVariants.add((link, elementUrl(route)))
+            continue
+        content = BeautifulSoup(htmlContent, features="html.parser")
         selectStops = content.select("a.timetable-link.active")
         if len(selectStops) == 0:
             notAvailableDiv = content.select(lineNotAvailableTodayPattern)
@@ -385,6 +391,7 @@ def processData():
                 generationSeconds=generationSeconds,
                 renderResults=renderResults,
                 disusedStop=disusedStop,
+                invalidWtpVariants=invalidWtpVariants,
                 manyLastStops=manyLastStops,
                 missingLastStop=missingLastStop,
                 missingLastStopRefNames=list(sorted(missingLastStopRefNames)),

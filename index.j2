@@ -111,6 +111,13 @@
         {% endfor %}
     {% endif %}
 
+    {% if invalidWtpVariants %}
+        <h2>Niedostępne nr wariantów linii na WTP</h2>
+        {% for (wtpLink, osmLink) in invalidWtpVariants %}
+            <span><a href="{{ osmLink }}">OSM</a>: <a href="{{ wtpLink }}">{{ wtpLink }}</a></span><br/>
+        {% endfor %}
+    {% endif %}
+
     {% if notLinkedWtpUrls %}
         <h2>Linki do rozkładów WTP nielinkowane z żadnej relacji</h2>
         {% for link in notLinkedWtpUrls %}
