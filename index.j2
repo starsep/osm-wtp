@@ -111,6 +111,13 @@
         {% endfor %}
     {% endif %}
 
+    {% if mismatchOSMNameRef %}
+        <h2>Przystanki w OSM, których nazwa nie pasuje do ref (dwa ostatnie znaki są różne)</h2>
+        {% for (ref, name, osmLink) in mismatchOSMNameRef %}
+            <span><a href="{{ osmLink }}">{{ name }} (ref={{ ref }})</a></span><br/>
+        {% endfor %}
+    {% endif %}
+
     {% if invalidWtpVariants %}
         <h2>Niedostępne nr wariantów linii na WTP</h2>
         {% for (wtpLink, osmLink) in invalidWtpVariants %}

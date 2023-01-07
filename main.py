@@ -113,6 +113,7 @@ allWtpRefs = set()
 allOSMRefs = set()
 disusedStop = set()
 manyLastStops = set()
+mismatchOSMNameRef = set()
 missingLastStop = set()
 missingName = set()
 missingRouteUrl = set()
@@ -155,6 +156,13 @@ def mapWtpStop(wtpStopRef: str, wtpStopName: str) -> Tuple[str, str]:
     if wtpStopRef[-2] == "8":
         return f"{wtpStopRef[:-2]}0{wtpStopRef[-1]}", f"{wtpStopName[:-2]}0{wtpStopName[-1]}"
     return key
+
+
+def checkOSMNameMatchesRef(stop: StopData, url: str):
+    localRef = stop.ref[-2]
+    nameSuffix = stop.name[-2]
+    if localRef != nameSuffix:
+        mismatchOSMNameRef.add((stop.ref, stop.name, url))
 
 
 lineNotAvailableToday = "Najbliższy dzień z dostępnym rozkładem dla wybranej linii to"
@@ -281,6 +289,7 @@ def processData():
                         unexpectedRef.add((elementUrl(element), osmStopRef))
                     continue
                 stop = StopData(name=element.tags["name"], ref=osmStopRef)
+                checkOSMNameMatchesRef(stop, elementUrl(element))
                 if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
                     osmStops.append(stop)
                     allOSMRefs.add(stop.ref)
@@ -397,6 +406,7 @@ def processData():
                 disusedStop=disusedStop,
                 invalidWtpVariants=invalidWtpVariants,
                 manyLastStops=manyLastStops,
+                mismatchOSMNameRef=mismatchOSMNameRef,
                 missingLastStop=missingLastStop,
                 missingLastStopRefNames=list(sorted(missingLastStopRefNames)),
                 missingName=missingName,
