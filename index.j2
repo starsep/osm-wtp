@@ -118,6 +118,13 @@
         {% endfor %}
     {% endif %}
 
+    {% if wtpLinkDuplicates %}
+        <h2>Linki WTP linkowane z wielu relacji (duplikaty)</h2>
+        {% for wtpLink in wtpLinkDuplicates %}
+            <a href="{{ wtpLink }}">{{ wtpLink }}</a><br/>
+        {% endfor %}
+    {% endif %}
+
     {% if notLinkedWtpUrls %}
         <h2>Linki do rozkładów WTP nielinkowane z żadnej relacji</h2>
         {% for link in notLinkedWtpUrls %}

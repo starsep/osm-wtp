@@ -125,6 +125,7 @@ unexpectedRef = set()
 invalidWtpVariants = set()
 seenWtpLinks = set()
 visitedWtpLinks = set()
+wtpLinkDuplicates = set()
 
 
 def parseRef(tags) -> Optional[str]:
@@ -198,7 +199,10 @@ def processData():
         link = tags["url"]
         parsedLink = WTPLinkParams.parseWTPRouteLink(link)
         if parsedLink is not None:
-            visitedWtpLinks.add(parsedLink.toTuple())
+            parsedLinkTuple = parsedLink.toTuple()
+            if parsedLinkTuple in visitedWtpLinks:
+                wtpLinkDuplicates.add(WTPLinkParams.fromTuple(parsedLinkTuple).url())
+            visitedWtpLinks.add(parsedLinkTuple)
         if "wtp.waw.pl" not in link:
             unexpectedLink.add((elementUrl(route), link))
             continue
@@ -404,6 +408,7 @@ def processData():
                 unexpectedNetwork=unexpectedNetwork,
                 unexpectedRef=unexpectedRef,
                 wtpStopMapping=wtpStopMapping,
+                wtpLinkDuplicates=wtpLinkDuplicates,
             )
         )
 
