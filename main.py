@@ -153,7 +153,7 @@ def mapWtpStop(wtpStopRef: str, wtpStopName: str) -> Tuple[str, str]:
     if (wtpStopRef, wtpStopName) in wtpStopMapping:
         return wtpStopMapping[key]
     # stops 8x => 0x
-    if wtpStopRef[-2] == "8":
+    if len(wtpStopRef) == 6 and wtpStopRef[-2] == "8":
         return f"{wtpStopRef[:-2]}0{wtpStopRef[-1]}", f"{wtpStopName[:-2]}0{wtpStopName[-1]}"
     return key
 
