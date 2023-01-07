@@ -309,7 +309,7 @@ def processData():
     refs = sorted(results.keys(), key=lambda x: (len(x), x))
     renderResults = {}
     for routeRef in refs:
-        renderResults[routeRef] = dict(success=True, routeResults=[])
+        renderResults[routeRef] = dict(error=False, routeResults=[])
         for route in results[routeRef]:
             osmRefs = [stop.ref for stop in route.osmStops]
             wtpRefs = [stop.ref for stop in route.wtpStops]
@@ -367,7 +367,7 @@ def processData():
                                 if j is not None
                                 else MISSING_REF,
                             )
-                renderResults[routeRef]["success"] = False
+                renderResults[routeRef]["error"] = True
                 renderResults[routeRef]["routeResults"].append(
                     RenderRouteResult(route=route, diffRows=diffRows)
                 )

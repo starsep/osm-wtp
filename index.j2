@@ -9,10 +9,15 @@
 <body>
     <span>
     {% for ref in refs %}
-        <a href="#{{ ref }}">{% if not renderResults[ref]["success"] %}&#10060;{% endif %}{{ ref }}</a>
+        {% if renderResults[ref]["error"] %}
+            <a href="#{{ ref }}">&#10060;{{ ref }}</a>
+        {% else %}
+            <span>{{ ref }}</span>
+        {% endif %}
     {% endfor %}
     </span>
     {% for ref, result in renderResults.items() %}
+        {% if result["error"] %}
         <h1 id="{{ ref }}">Wyniki dla {{ ref }}</h1>
         {% for routeResult in result["routeResults"] %}
         {% set route = routeResult.route %}
@@ -35,9 +40,7 @@
         </table>
         <br/>
         {% endfor %}
-        {% if result["success"] %}
-            <span>Wszystko ok!</span>
-        {% endif %}
+    {% endif %}
     {% endfor %}
     <h1>Inne błędy</h1>
 
@@ -154,7 +157,11 @@
     {% endif %}
 
     <br/>
-    <span>Początek generowania: {{ startTime }}. Zajęło {{ generationSeconds }} sekund</span>
     <iframe style="display:none;" id="hiddenIframe" name="hiddenIframe"></iframe>
+    <footer>
+        Początek generowania: {{ startTime }}. Zajęło {{ generationSeconds }} sekund.
+        Źródło danych: <a href="https://osm.org/copyright/pl">© autorzy OpenStreetMap</a> oraz <a href="https://wtp.waw.pl">Warszawski Transport Publiczny</a>.
+        Kod na <a href="https://github.com/starsep/osm-wtp-compare">GitHubie</a>. Proszę tam zgłaszać błędy w skrypcie.
+    </footer>
 </body>
 </html>
