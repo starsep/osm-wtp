@@ -9,7 +9,7 @@
 <body>
     <span>
     {% for ref in refs %}
-        <a href="#{{ ref }}">{{ ref }}</a>
+        <a href="#{{ ref }}">{% if not renderResults[ref]["success"] %}&#10060;{% endif %}{{ ref }}</a>
     {% endfor %}
     </span>
     {% for ref, result in renderResults.items() %}
