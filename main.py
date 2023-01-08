@@ -197,6 +197,7 @@ def processData():
             or "route" not in tags
             or tags["type"] != "route"
             or routeRef is None
+            or tags["route"] == "tracks"
         ):
             continue
         if "url" not in tags:
