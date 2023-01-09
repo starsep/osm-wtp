@@ -351,6 +351,7 @@ lastStopRefs: Dict[str, str] = {
     "P+R Al.Krakowska 15": "401515",
     "P+R Al.Krakowska 16": "401516",
     "P+R Nadarzyn 01": "434901",
+    "Pruszków 02": "490502",
     "Przekorna 02": "305002",
     "Pustelnik 03": "124003",
     "Radzymin 01": "191501",
