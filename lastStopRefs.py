@@ -2,6 +2,7 @@
 from typing import Tuple, Dict
 
 lastStopRefAfter: Dict[Tuple[str, str], str] = {
+    ("11 Listopada 01", "198001"): "184801",
     ("Brzeziny 01", "117502"): "117601",
     ("Brzeziny 01", "238402"): "243101",
     ("Długa 02", "344901"): "344902",
@@ -405,7 +406,7 @@ lastStopRefs: Dict[str, str] = {
     "Szczęśliwice 03": "411903",
     "Szczęśliwice 04": "411904",
     "Szczęśliwice 05": "411905",
-    "Śniegockiej 02": "707702",
+    "Śniegockiej 02": "707002",
     "Tarchomin 07": "127707",
     "Tarchomin 09": "127709",
     "Targowisko 01": "346401",
