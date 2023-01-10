@@ -160,14 +160,14 @@
     {% endif %}
 
     {% if notUniqueOSMNames %}
-        <h2>Wiele przystanków o różnych nazwach o wspólnym ref i z różną nazwą w OSM</h2>
+        <h2>Przystanki o wspólnym ref i z różnymi nazwami w OSM</h2>
         {% for (ref, names) in notUniqueOSMNames.items() %}
             <span>{{ ref}}: {% for name in names %}{{ name }}{{ ", " if not loop.last else "" }}{% endfor %}</span><br/>
         {% endfor %}
     {% endif %}
 
     {% if notUniqueOSMNames %}
-        <h2>Wiele przystanków o różnych nazwach o wspólnym ref i z różną nazwą w WTP</h2>
+        <h2>Przystanki o wspólnym ref i różnymi nazwami w WTP</h2>
         {% for (ref, names) in notUniqueWTPNames.items() %}
             <span>{{ ref}}: {% for name in names %}{{ name }}{{ ", " if not loop.last else "" }}{% endfor %}</span><br/>
         {% endfor %}
