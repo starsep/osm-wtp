@@ -292,7 +292,11 @@ def processData():
                     ):
                         unexpectedRef.add((elementUrl(element), osmStopRef))
                     continue
-                stop = StopData(name=element.tags["name"], ref=osmStopRef)
+                osmStopName = element.tags["name"]
+                if osmStopRef not in osmRefToName:
+                    osmRefToName[osmStopRef] = set()
+                osmRefToName[osmStopRef].add(osmStopName)
+                stop = StopData(name=osmStopName, ref=osmStopRef)
                 checkOSMNameMatchesRef(stop, elementUrl(element))
                 if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
                     osmStops.append(stop)
@@ -317,10 +321,6 @@ def processData():
         for route in results[routeRef]:
             osmRefs = [stop.ref for stop in route.osmStops]
             wtpRefs = [stop.ref for stop in route.wtpStops]
-            for stop in route.osmStops:
-                if stop.ref not in osmRefToName:
-                    osmRefToName[stop.ref] = set()
-                osmRefToName[stop.ref].add(stop.name)
             for stop in route.wtpStops:
                 if stop.ref not in wtpRefToName:
                     wtpRefToName[stop.ref] = set()
@@ -424,7 +424,7 @@ def processData():
                 missingName=missingName,
                 missingRouteUrl=missingRouteUrl,
                 missingRef=missingRef,
-                missingRefsInOSM=list(sorted(allWtpRefs - allOSMRefs)),
+                missingRefsInOSM=[(ref, list(wtpRefToName[ref])[0]) for ref in sorted(allWtpRefs - allOSMRefs)],
                 notLinkedWtpUrls=sorted(list(notLinkedWtpUrls)),
                 unexpectedLink=unexpectedLink,
                 unexpectedNetwork=unexpectedNetwork,

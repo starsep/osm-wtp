@@ -119,8 +119,8 @@
 
     {% if missingRefsInOSM %}
         <h2>Ref przystanków WTP, które nie występują w żadnej trasie w OSM</h2>
-        {% for ref in missingRefsInOSM %}
-            <span>{{ ref }}</span><br/>
+        {% for (ref, name) in missingRefsInOSM %}
+            <span>{{ ref }}: {{ name}}</span><br/>
         {% endfor %}
     {% endif %}
 
@@ -161,14 +161,14 @@
 
     {% if notUniqueOSMNames %}
         <h2>Wiele przystanków o różnych nazwach o wspólnym ref i z różną nazwą w OSM</h2>
-        {% for (ref, names) in notUniqueOSMNames %}
+        {% for (ref, names) in notUniqueOSMNames.items() %}
             <span>{{ ref}}: {% for name in names %}{{ name }}{{ ", " if not loop.last else "" }}{% endfor %}</span><br/>
         {% endfor %}
     {% endif %}
 
     {% if notUniqueOSMNames %}
         <h2>Wiele przystanków o różnych nazwach o wspólnym ref i z różną nazwą w WTP</h2>
-        {% for (ref, names) in notUniqueWTPNames %}
+        {% for (ref, names) in notUniqueWTPNames.items() %}
             <span>{{ ref}}: {% for name in names %}{{ name }}{{ ", " if not loop.last else "" }}{% endfor %}</span><br/>
         {% endfor %}
     {% endif %}
