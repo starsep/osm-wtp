@@ -3,7 +3,7 @@ from datetime import datetime
 from difflib import SequenceMatcher
 from itertools import zip_longest
 from pathlib import Path
-from typing import Dict, List, Optional, Tuple
+from typing import Dict, List, Optional, Tuple, Set
 from urllib import parse
 
 import httpx
@@ -127,6 +127,9 @@ invalidWtpVariants = set()
 seenWtpLinks = set()
 visitedWtpLinks = set()
 wtpLinkDuplicates = set()
+
+osmRefToName: Dict[str, Set[str]] = dict()
+wtpRefToName: Dict[str, Set[str]] = dict()
 
 
 def parseRef(tags) -> Optional[str]:
@@ -314,16 +317,22 @@ def processData():
         for route in results[routeRef]:
             osmRefs = [stop.ref for stop in route.osmStops]
             wtpRefs = [stop.ref for stop in route.wtpStops]
-            osmNames = {stop.ref: stop.name for stop in route.osmStops}
-            wtpNames = {stop.ref: stop.name for stop in route.wtpStops}
+            for stop in route.osmStops:
+                if stop.ref not in osmRefToName:
+                    osmRefToName[stop.ref] = set()
+                osmRefToName[stop.ref].add(stop.name)
+            for stop in route.wtpStops:
+                if stop.ref not in wtpRefToName:
+                    wtpRefToName[stop.ref] = set()
+                wtpRefToName[stop.ref].add(stop.name)
             diffRows = []
             if osmRefs != wtpRefs:
                 matcher = SequenceMatcher(None, osmRefs, wtpRefs)
 
                 def writeTableRow(refOSM: str, refOperator: str):
-                    nameOSM = osmNames[refOSM] if refOSM != MISSING_REF else MISSING_REF
+                    nameOSM = list(osmRefToName[refOSM])[0] if refOSM != MISSING_REF else MISSING_REF
                     nameOperator = (
-                        wtpNames[refOperator]
+                        list(wtpRefToName[refOperator])[0]
                         if refOperator != MISSING_REF
                         else MISSING_REF
                     )
@@ -407,6 +416,8 @@ def processData():
                 disusedStop=disusedStop,
                 invalidWtpVariants=invalidWtpVariants,
                 manyLastStops=manyLastStops,
+                notUniqueOSMNames={ref: names for ref, names in osmRefToName.items() if len(names) > 1},
+                notUniqueWTPNames={ref: names for ref, names in wtpRefToName.items() if len(names) > 1},
                 mismatchOSMNameRef=mismatchOSMNameRef,
                 missingLastStop=missingLastStop,
                 missingLastStopRefNames=list(sorted(missingLastStopRefNames)),
