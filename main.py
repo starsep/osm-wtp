@@ -62,6 +62,9 @@ class RouteResult:
     wtpLink: str
     osmStops: List[StopData]
     wtpStops: List[StopData]
+    detour: bool
+    new: bool
+    short: bool
 
 
 results: Dict[str, List[RouteResult]] = {}
@@ -319,6 +322,9 @@ def processData():
                 osmStops=osmStops,
                 wtpLink=link,
                 wtpStops=wtpStops,
+                detour=len(content.select("div.timetable-route-point.active.detour")) > 0,
+                new=len(content.select("div.timetable-route-point.active.new")) > 0,
+                short=len(content.select("div.timetable-route-point.active.short")) > 0,
             )
         )
 

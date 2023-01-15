@@ -9,10 +9,10 @@
 <body>
     <p>
         Na tej stronie można znaleźć porównanie danych transportu publicznego OpenStreetMap oraz Warszawskiego Transportu Publicznego.
-        Strona <a href="https://wtp.waw.pl"/>wtp.waw.pl</a> ma czasami błędy. Nie należy ślepo wierzyć i kopiować.
+        Strona <a href="https://wtp.waw.pl">wtp.waw.pl</a> ma czasami błędy. Nie należy ślepo wierzyć i kopiować.
         Nie zaleca się tworzyć zmian krótkoterminowych np. na weekend, na 1 listopada.
         Dane z OSM są aktualizowane co godzinę, WTP raz na dobę.
-        Rozkład WTP brany jest z pierwszego dnia kiedy dana linia jest dostępna np. poniedziałek dla linii niejeżdżącej w weekendy.
+        Rozkład WTP brany jest z pierwszego dnia, kiedy dana linia jest dostępna np. poniedziałek dla linii niejeżdżącej w weekendy.
         Więcej szczegółów <a href="https://starsep.com/pl/posts/osm-wtp/">w tym artykule</a>.
         W razie problemów proszę o kontakt na <a href="https://osm.org/message/new/starsep">OSM</a>.
     </p>
@@ -32,7 +32,10 @@
         {% for routeResult in result["routeResults"] %}
         {% set route = routeResult.route %}
         <h3>
-            Błąd dla {{ route.osmName }}:
+            Błąd dla {{ route.osmName }}
+            {% if route.detour %}<span title="Trasa objazdowa">&#x1F7E0;</span>{% endif %}
+            {% if route.new %}<span title="Nowa trasa">&#x1F535;</span>{% endif %}
+            {% if route.short %}<span title="Trasa skrócona">&#x1F7E1;</span>{% endif %}
             <a href="{{ route.wtpLink }}">WTP</a>
             <a href="https://osm.org/relation/{{ route.osmId }}">OSM</a>
             <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r{{ route.osmId }}">JOSM</a>
