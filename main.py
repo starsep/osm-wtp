@@ -140,6 +140,14 @@ def parseRef(tags) -> Optional[str]:
     return None
 
 
+def parseName(tags) -> Optional[str]:
+    nameKeys = ["name:wtp", "name:ztm", "name"]
+    for nameKey in nameKeys:
+        if nameKey in tags:
+            return tags[nameKey]
+    return None
+
+
 def lastStopRef(lastStopName: str, previousRef: str) -> str:
     key = (lastStopName, previousRef)
     if key in lastStopRefAfter:
@@ -277,13 +285,14 @@ def processData():
                     if "disused" in tag:
                         disusedStop.add(elementUrl(element))
                 osmStopRef = parseRef(element.tags)
-                if "name" not in element.tags:
+                osmStopName = parseName(element.tags)
+                if osmStopName is None:
                     missingName.add(elementUrl(element))
                     if osmStopRef is None:
                         missingRef.add((elementUrl(element), ""))
                     continue
                 if osmStopRef is None:
-                    missingRef.add((elementUrl(element), element.tags["name"]))
+                    missingRef.add((elementUrl(element), osmStopName))
                     continue
                 if len(osmStopRef) != 6:
                     if (
@@ -292,7 +301,6 @@ def processData():
                     ):
                         unexpectedRef.add((elementUrl(element), osmStopRef))
                     continue
-                osmStopName = element.tags["name"]
                 if osmStopRef not in osmRefToName:
                     osmRefToName[osmStopRef] = set()
                 osmRefToName[osmStopRef].add(osmStopName)
