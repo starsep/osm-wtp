@@ -51,7 +51,6 @@
                 </tr>
             {% endfor %}
         </table>
-        <br/>
         {% endfor %}
     {% endif %}
     {% endfor %}
@@ -60,130 +59,129 @@
     {% if disusedStop %}
         <h2>Przystanek z disused w tagu</h2>
         {% for link in disusedStop %}
-            <a href="{{ link }}">{{ link }}</a><br/>
+            <a href="{{ link }}">{{ link }}</a>
         {% endfor %}
     {% endif %}
 
     {% if manyLastStops %}
         <h2>WTP: Wiele przystanków końcowych</h2>
         {% for (link, stops) in manyLastStops %}
-            <a href="{{ link }}">{{ stops }}</a><br/>
+            <a href="{{ link }}">{{ stops }}</a>
         {% endfor %}
     {% endif %}
 
     {% if missingLastStop %}
         <h2>WTP: Brakujący przystanek końcowy</h2>
         {% for (osmUrl, wtpUrl) in missingLastStop %}
-            <a href="{{ osmUrl }}">{{ osmUrl }}</a>: <a href="{{ wtpUrl }}">{{ wtpUrl }}</a><br/>
+            <a href="{{ osmUrl }}">{{ osmUrl }}</a>: <a href="{{ wtpUrl }}">{{ wtpUrl }}</a>
         {% endfor %}
     {% endif %}
 
     {% if missingName %}
         <h2>Brakująca nazwa</h2>
         {% for link in missingName %}
-            <a href="{{ link }}">{{ link }}</a><br/>
+            <a href="{{ link }}">{{ link }}</a>
         {% endfor %}
     {% endif %}
 
     {% if missingRef %}
         <h2>Brakujący ref</h2>
         {% for (link, name) in missingRef %}
-            <a href="{{ link }}">{% if name %}{{ name }}: {% endif %}{{ link }}</a><br/>
+            <a href="{{ link }}">{% if name %}{{ name }}: {% endif %}{{ link }}</a>
         {% endfor %}
     {% endif %}
 
     {% if missingRouteUrl %}
         <h2>Brakujący url dla trasy</h2>
         {% for (link, name) in missingRouteUrl %}
-            <a href="{{ link }}">{% if name %}{{ name }}: {% endif %}{{ link }}</a><br/>
+            <a href="{{ link }}">{% if name %}{{ name }}: {% endif %}{{ link }}</a>
         {% endfor %}
     {% endif %}
 
     {% if unexpectedLink %}
         <h2>Niespodziewany link dla trasy</h2>
         {% for (link, value) in unexpectedLink %}
-            <a href="{{ link }}">{{ value }}</a><br/>
+            <a href="{{ link }}">{{ value }}</a>
         {% endfor %}
     {% endif %}
 
     {% if unexpectedNetwork %}
         <h2>Niespodziewany network dla trasy</h2>
         {% for (link, network) in unexpectedNetwork %}
-            <a href="{{ link }}">{{ network }}</a><br/>
+            <a href="{{ link }}">{{ network }}</a>
         {% endfor %}
     {% endif %}
 
     {% if unexpectedRef %}
         <h2>Niespodziewany ref</h2>
         {% for (link, ref) in unexpectedRef %}
-            <a href="{{ link }}">{{ ref }}</a><br/>
+            <a href="{{ link }}">{{ ref }}</a>
         {% endfor %}
     {% endif %}
 
     {% if missingRefsInOSM %}
         <h2>Ref przystanków WTP, które nie występują w żadnej trasie w OSM</h2>
         {% for (ref, name) in missingRefsInOSM %}
-            <span>{{ ref }}: {{ name}}</span><br/>
+            <span>{{ ref }}: {{ name}}</span>
         {% endfor %}
     {% endif %}
 
     {% if mismatchOSMNameRef %}
         <h2>Przystanki w OSM, których nazwa nie pasuje do ref (dwa ostatnie znaki są różne)</h2>
         {% for (ref, name, osmLink) in mismatchOSMNameRef %}
-            <span><a href="{{ osmLink }}">{{ name }} (ref={{ ref }})</a></span><br/>
+            <span><a href="{{ osmLink }}">{{ name }} (ref={{ ref }})</a></span>
         {% endfor %}
     {% endif %}
 
     {% if invalidWtpVariants %}
         <h2>Niedostępne nr wariantów linii na WTP</h2>
         {% for (wtpLink, osmLink) in invalidWtpVariants %}
-            <span><a href="{{ osmLink }}">OSM</a>: <a href="{{ wtpLink }}">{{ wtpLink }}</a></span><br/>
+            <span><a href="{{ osmLink }}">OSM</a>: <a href="{{ wtpLink }}">{{ wtpLink }}</a></span>
         {% endfor %}
     {% endif %}
 
     {% if wtpLinkDuplicates %}
         <h2>Linki WTP linkowane z wielu relacji (duplikaty)</h2>
         {% for wtpLink in wtpLinkDuplicates %}
-            <a href="{{ wtpLink }}">{{ wtpLink }}</a><br/>
+            <a href="{{ wtpLink }}">{{ wtpLink }}</a>
         {% endfor %}
     {% endif %}
 
     {% if notLinkedWtpUrls %}
         <h2>Linki do rozkładów WTP nielinkowane z żadnej relacji</h2>
         {% for link in notLinkedWtpUrls %}
-            <a href="{{ link }}">{{ link }}</a><br/>
+            <a href="{{ link }}">{{ link }}</a>
         {% endfor %}
     {% endif %}
 
     {% if missingLastStopRefNames %}
         <h2>Nazwy ostatnich przystanków bez ref</h2>
         {% for (stopName, previousRef) in missingLastStopRefNames %}
-            <span>{{ stopName }} po {{ previousRef }}</span><br/>
+            <span>{{ stopName }} po {{ previousRef }}</span>
         {% endfor %}
     {% endif %}
 
     {% if notUniqueOSMNames %}
         <h2>Przystanki o wspólnym ref i z różnymi nazwami w OSM</h2>
         {% for (ref, names) in notUniqueOSMNames.items() %}
-            <span>{{ ref}}: {% for name in names %}{{ name }}{{ ", " if not loop.last else "" }}{% endfor %}</span><br/>
+            <span>{{ ref}}: {% for name in names %}{{ name }}{{ ", " if not loop.last else "" }}{% endfor %}</span>
         {% endfor %}
     {% endif %}
 
     {% if notUniqueWTPNames %}
         <h2>Przystanki o wspólnym ref i różnymi nazwami w WTP</h2>
         {% for (ref, names) in notUniqueWTPNames.items() %}
-            <span>{{ ref}}: {% for name in names %}{{ name }}{{ ", " if not loop.last else "" }}{% endfor %}</span><br/>
+            <span>{{ ref}}: {% for name in names %}{{ name }}{{ ", " if not loop.last else "" }}{% endfor %}</span>
         {% endfor %}
     {% endif %}
 
     {% if wtpStopMapping %}
         <h2>Mapowanie przystanków WTP => Rzeczywiste (tymczasowe zmiany, błąd WTP)</h2>
         {% for ((stopRefWTP, stopNameWTP), (actualStopRef, actualStopName)) in wtpStopMapping.items() %}
-            <span>({{ stopRefWTP }}, {{ stopNameWTP }}) => ({{ actualStopRef }}, {{ actualStopName }})</span><br/>
+            <span>({{ stopRefWTP }}, {{ stopNameWTP }}) => ({{ actualStopRef }}, {{ actualStopName }})</span>
         {% endfor %}
     {% endif %}
 
-    <br/>
     <iframe style="display:none;" id="hiddenIframe" name="hiddenIframe"></iframe>
     <footer>
         Początek generowania: {{ startTime }}. Zajęło {{ generationSeconds }} sekund.
