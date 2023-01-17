@@ -20,7 +20,7 @@
     <span>
     {% for ref in refs %}
         {% if renderResults[ref]["error"] %}
-            <a href="#{{ ref }}">&#10060;{{ ref }}</a>
+            <a href="#{{ ref }}">{% if renderResults[ref]["detourOnlyErrors"] %}&#10006;{% else %}&#10060;{% endif %}{{ ref }}</a>
         {% else %}
             <span>{{ ref }}</span>
         {% endif %}
