@@ -380,6 +380,7 @@ lastStopRefs: Dict[str, str] = {
     "Rubinowa 02": "347602",
     "Rynia 01": "136501",
     "Rzakta 01": "239401",
+    "Sadyba 02": "306502",
     "Sadyba 03": "306503",
     "Sadyba 05": "306505",
     "Sadyba 06": "306506",
