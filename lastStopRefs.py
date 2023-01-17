@@ -301,6 +301,7 @@ lastStopRefs: Dict[str, str] = {
     "Piaski 04": "604504",
     "Pieczyska 01": "395401",
     "Pilaszków 51": "518051",
+    "Pilcha 02": "662902",
     "PKP Dąbkowizna 01": "186801",
     "PKP Gołąbki 01": "414901",
     "PKP Halinów 01": "231201",
