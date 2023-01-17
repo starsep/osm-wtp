@@ -127,8 +127,8 @@ unexpectedNetwork = set()
 unexpectedRef = set()
 
 invalidWtpVariants = set()
-seenWtpLinks = set()
-visitedWtpLinks = set()
+seenWtpLinks: Set[Tuple[str, str, str]] = set()
+visitedWtpLinks: Set[Tuple[str, str, str]] = set()
 wtpLinkDuplicates = set()
 
 osmRefToName: Dict[str, Set[str]] = dict()
@@ -212,6 +212,7 @@ def processData():
             or tags["type"] != "route"
             or routeRef is None
             or tags["route"] == "tracks"
+            or tags["route"] == "subway"
         ):
             continue
         if "url" not in tags:
@@ -406,9 +407,11 @@ def processData():
         parsedUrl = WTPLinkParams.parseWTPRouteLink(url)
         if parsedUrl is not None:
             seenWtpLinks.add(parsedUrl.toTuple())
-    notLinkedWtpUrls = set()
+    notLinkedWtpUrls: Set[str] = set()
     for link in seenWtpLinks - visitedWtpLinks:
-        notLinkedWtpUrls.add(WTPLinkParams.fromTuple(link).url())
+        wtpLinkParams = WTPLinkParams.fromTuple(link)
+        if wtpLinkParams.line not in ["M1", "M2"]:
+            notLinkedWtpUrls.add(wtpLinkParams.url())
 
     with Path("../osm-wtp/index.html").open("w") as f:
         env = Environment(
