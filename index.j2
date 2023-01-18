@@ -26,6 +26,7 @@
         {% endif %}
     {% endfor %}
     </span>
+    <span>Legenda: &#10006; trasy objazdowe nie pasują &#10060; trasa nieobjazdowa nie pasuje</span>
     {% for ref, result in renderResults.items() %}
         {% if result["error"] %}
         <h1 id="{{ ref }}">Wyniki dla {{ ref }}</h1>
