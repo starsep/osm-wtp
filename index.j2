@@ -19,19 +19,25 @@
     <h1>Lista linii</h1>
     <span>
     {% for ref in refs %}
-        {% if renderResults[ref]["error"] %}
+        {% if renderResults[ref]["routeMismatch"] %}
             <a href="#{{ ref }}">{% if renderResults[ref]["detourOnlyErrors"] %}&#10006;{% else %}&#10060;{% endif %}{{ ref }}</a>
+        {% elif renderResults[ref]["error"] %}
+            <a href="#{{ ref }}">&#9888;{{ ref }}</a>
         {% else %}
             <span>{{ ref }}</span>
         {% endif %}
     {% endfor %}
     </span>
-    <span>Legenda: &#10006; trasy objazdowe nie pasują &#10060; trasa nieobjazdowa nie pasuje</span>
+    <h3>Legenda:</h3>
+    <span>&#10060; trasa bez objazdów nie pasuje</span>
+    <span>&#10006; trasa objazdowa nie pasuje</span>
+    <span>&#9888; inne błędy</span>
     {% for ref, result in renderResults.items() %}
         {% if result["error"] %}
         <h1 id="{{ ref }}">Wyniki dla {{ ref }}</h1>
         {% for routeResult in result["routeResults"] %}
         {% set route = routeResult.route %}
+        {% if routeResult.diffRows or routeResult.otherErrors %}
         <h3>
             Błąd dla {{ route.osmName }}
             {% if route.detour %}<span title="Trasa objazdowa">&#x1F7E0;</span>{% endif %}
@@ -41,6 +47,8 @@
             <a href="https://osm.org/relation/{{ route.osmId }}">OSM</a>
             <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r{{ route.osmId }}">JOSM</a>
         </h3>
+        {% endif %}
+        {% if routeResult.diffRows %}
         <table>
             <thead><tr><th>OSM ref</th><th>OSM name</th><th>WTP ref</th><th>WTP name</th></thead>
             {% for row in routeResult.diffRows %}
@@ -52,6 +60,10 @@
                 </tr>
             {% endfor %}
         </table>
+        {% endif %}
+        {% for error in routeResult.otherErrors %}
+            <span>{{ error }}</span>
+        {% endfor %}
         {% endfor %}
     {% endif %}
     {% endfor %}
@@ -64,17 +76,17 @@
         {% endfor %}
     {% endif %}
 
-    {% if manyLastStops %}
+    {% if wtpManyLastStops %}
         <h2>WTP: Wiele przystanków końcowych</h2>
-        {% for (link, stops) in manyLastStops %}
+        {% for (link, stops) in wtpManyLastStops %}
             <a href="{{ link }}">{{ stops }}</a>
         {% endfor %}
     {% endif %}
 
-    {% if missingLastStop %}
+    {% if wtpMissingLastStop %}
         <h2>WTP: Brakujący przystanek końcowy</h2>
-        {% for (osmUrl, wtpUrl) in missingLastStop %}
-            <a href="{{ osmUrl }}">{{ osmUrl }}</a>: <a href="{{ wtpUrl }}">{{ wtpUrl }}</a>
+        {% for wtpUrl in wtpMissingLastStop %}
+            <a href="{{ wtpUrl }}">{{ wtpUrl }}</a>
         {% endfor %}
     {% endif %}
 

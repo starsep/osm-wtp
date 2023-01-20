@@ -4,11 +4,8 @@ from difflib import SequenceMatcher
 from itertools import zip_longest
 from pathlib import Path
 from typing import Dict, List, Optional, Tuple, Set
-from urllib import parse
 
-import httpx
 import overpy
-from bs4 import BeautifulSoup
 from jinja2 import (
     Environment,
     select_autoescape,
@@ -20,11 +17,22 @@ from tqdm import tqdm
 from configuration import (
     OVERPASS_URL,
     cacheOverpass,
-    cacheWTP,
     WARSAW_PUBLIC_TRANSPORT_ID,
+    MISSING_REF,
 )
-from lastStopRefs import lastStopRefs, lastStopRefAfter
-from wtpStopMapping import wtpStopMapping
+from model.stopData import StopData
+from osm.utils import elementUrl
+from warsaw.wtpScraper import (
+    WTPLink,
+    wtpDomain,
+    wtpSeenLinks,
+    scrapeHomepage,
+    wtpMissingLastStop,
+    wtpMissingLastStopRefNames,
+    wtpStopRefs,
+    scrapeLink,
+)
+from warsaw.wtpStopMapping import wtpStopMapping
 
 overpassApi = overpy.Overpass(url=OVERPASS_URL)
 startTime = datetime.now()
@@ -43,17 +51,6 @@ def getRelationDataFromOverpass():
     return overpassApi.query(query)
 
 
-@cacheWTP.memoize()
-def fetchWtpWebsite(link: str):
-    return httpx.get(link, follow_redirects=True).text
-
-
-@dataclass
-class StopData:
-    name: str
-    ref: str
-
-
 @dataclass
 class RouteResult:
     ref: str
@@ -65,70 +62,28 @@ class RouteResult:
     detour: bool
     new: bool
     short: bool
+    unknownRoles: Set[str]
+    construction: bool
+    proposed: bool
+    invalidRouteTag: bool
 
 
 results: Dict[str, List[RouteResult]] = {}
 
-MISSING_REF = "-"
 
-
-@dataclass
-class WTPLinkParams:
-    line: str
-    direction: str
-    variant: str
-
-    def url(self) -> str:
-        return f"https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln={self.line}&wtp_dr={self.direction}&wtp_vr={self.variant}"
-
-    def toTuple(self) -> Tuple[str, str, str]:
-        return self.line, self.direction, self.variant
-
-    @staticmethod
-    def fromTuple(t: Tuple[str, str, str]) -> "WTPLinkParams":
-        (line, direction, variant) = t
-        return WTPLinkParams(line=line, direction=direction, variant=variant)
-
-    @staticmethod
-    def parseWTPRouteLink(url: str) -> Optional["WTPLinkParams"]:
-        args = parse.parse_qs(parse.urlparse(url).query)
-        if "wtp_md" not in args or args["wtp_md"][0] != "3" or "wtp_ln" not in args:
-            return None
-        return WTPLinkParams(
-            line=args["wtp_ln"][0],
-            direction=args["wtp_dr"][0] if "wtp_dr" in args else "A",
-            variant=args["wtp_vr"][0] if "wtp_vr" in args else "0",
-        )
-
-
-def elementUrl(element: overpy.Element) -> str:
-    if type(element) == overpy.Node:
-        return f"https://osm.org/node/{element.id}"
-    elif type(element) == overpy.Way:
-        return f"https://osm.org/way/{element.id}"
-    elif type(element) == overpy.Relation:
-        return f"https://osm.org/relation/{element.id}"
-    else:
-        print(f"Unexpected overpy type: {type(element)}")
-
-
-allWtpRefs = set()
 allOSMRefs = set()
 disusedStop = set()
 manyLastStops = set()
 mismatchOSMNameRef = set()
-missingLastStop = set()
 missingName = set()
 missingRouteUrl = set()
 missingRef = set()
-missingLastStopRefNames = set()
 unexpectedLink = set()
 unexpectedNetwork = set()
 unexpectedRef = set()
 
 invalidWtpVariants = set()
-seenWtpLinks: Set[Tuple[str, str, str]] = set()
-visitedWtpLinks: Set[Tuple[str, str, str]] = set()
+osmWtpLinks: Set[Tuple[str, str, str]] = set()
 wtpLinkDuplicates = set()
 
 osmRefToName: Dict[str, Set[str]] = dict()
@@ -151,39 +106,11 @@ def parseName(tags) -> Optional[str]:
     return None
 
 
-def lastStopRef(lastStopName: str, previousRef: str) -> str:
-    key = (lastStopName, previousRef)
-    if key in lastStopRefAfter:
-        return lastStopRefAfter[key]
-    elif lastStopName in lastStopRefs:
-        return lastStopRefs[lastStopName]
-    else:
-        missingLastStopRefNames.add(key)
-        return MISSING_REF
-
-
-def mapWtpStop(wtpStopRef: str, wtpStopName: str) -> Tuple[str, str]:
-    key = (wtpStopRef, wtpStopName)
-    if (wtpStopRef, wtpStopName) in wtpStopMapping:
-        return wtpStopMapping[key]
-    # stops 8x => 0x
-    if len(wtpStopRef) == 6 and wtpStopRef[-2] == "8":
-        return f"{wtpStopRef[:-2]}0{wtpStopRef[-1]}", f"{wtpStopName[:-2]}0{wtpStopName[-1]}"
-    return key
-
-
 def checkOSMNameMatchesRef(stop: StopData, url: str):
     localRef = stop.ref[-2]
     nameSuffix = stop.name[-2]
     if localRef != nameSuffix:
         mismatchOSMNameRef.add((stop.ref, stop.name, url))
-
-
-lineNotAvailableToday = "Najbliższy dzień z dostępnym rozkładem dla wybranej linii to"
-lineNotAvailableTodayPattern = (
-    f'div.timetable-message:-soup-contains("{lineNotAvailableToday}")'
-)
-variantNotAvailable = "Wybrany wariant trasy jest niedostępny dla określonego kierunku linii"
 
 
 @dataclass
@@ -199,11 +126,12 @@ class DiffRow:
 class RenderRouteResult:
     route: RouteResult
     diffRows: List[DiffRow]
+    otherErrors: Set[str]
 
 
 def processData():
+    scrapeHomepage()
     for route in tqdm(getRelationDataFromOverpass().relations):
-        wtpStops = []
         tags = route.tags
         routeRef = parseRef(tags)
         if (
@@ -221,75 +149,35 @@ def processData():
         if "network" in tags and tags["network"] != "ZTM Warszawa":
             unexpectedNetwork.add((elementUrl(route), tags["network"]))
         link = tags["url"]
-        parsedLink = WTPLinkParams.parseWTPRouteLink(link)
-        if parsedLink is not None:
-            parsedLinkTuple = parsedLink.toTuple()
-            if parsedLinkTuple in visitedWtpLinks:
-                wtpLinkDuplicates.add(WTPLinkParams.fromTuple(parsedLinkTuple).url())
-            visitedWtpLinks.add(parsedLinkTuple)
-        if "wtp.waw.pl" not in link:
+        if wtpDomain not in link:
             unexpectedLink.add((elementUrl(route), link))
             continue
-        htmlContent = fetchWtpWebsite(link)
-        if variantNotAvailable in htmlContent:
+        parsedLink = WTPLink.parseWTPRouteLink(link)
+        if parsedLink is not None:
+            parsedLinkTuple = parsedLink.toTuple()
+            if parsedLinkTuple in osmWtpLinks:
+                wtpLinkDuplicates.add(WTPLink.fromTuple(parsedLinkTuple).url())
+            osmWtpLinks.add(parsedLinkTuple)
+        scrapingResult = scrapeLink(link)
+        if scrapingResult.notAvailable:
             invalidWtpVariants.add((link, elementUrl(route)))
             continue
-        content = BeautifulSoup(htmlContent, features="html.parser")
-        selectStops = content.select("a.timetable-link.active")
-        if len(selectStops) == 0:
-            notAvailableDiv = content.select(lineNotAvailableTodayPattern)
-            if len(notAvailableDiv) > 0:
-                anotherDateLink = notAvailableDiv[0].select("a")[0].get("href")
-                anotherDateLinkArgs = parse.parse_qs(
-                    parse.urlparse(anotherDateLink).query
-                )
-                if "wtp_dt" in anotherDateLinkArgs:
-                    link += f'&wtp_dt={anotherDateLinkArgs["wtp_dt"][0]}'
-                    content = BeautifulSoup(
-                        fetchWtpWebsite(link), features="html.parser"
-                    )
-                    selectStops = content.select("a.timetable-link.active")
-        for stopLink in selectStops:
-            stopName = stopLink.text.strip()
-            stopLink = stopLink.get("href")
-            stopLinkArgs = parse.parse_qs(parse.urlparse(stopLink).query)
-            stopRef = stopLinkArgs["wtp_st"][0] + stopLinkArgs["wtp_pt"][0]
-            stopRef, stopName = mapWtpStop(stopRef, stopName)
-            allWtpRefs.add(stopRef)
-            wtpStops.append(StopData(name=stopName, ref=stopRef))
-        for wtpLink in content.select("a"):
-            url = wtpLink.get("href")
-            if "wtp.waw.pl" not in url:
-                continue
-            parsedUrl = WTPLinkParams.parseWTPRouteLink(url)
-            if parsedUrl is not None:
-                seenWtpLinks.add(parsedUrl.toTuple())
-
-        lastStop = content.select(
-            "div.timetable-route-point.name.active.follow.disabled"
-        )
-        if len(lastStop) == 0:
-            missingLastStop.add((elementUrl(route), link))
-            continue
-        if len(lastStop) > 1:
-            manyLastStops.add((link, lastStop))
-            continue
-        for stopLink in lastStop:
-            stopName = stopLink.text.strip()
-            stopRef = lastStopRef(lastStopName=stopName, previousRef=wtpStops[-1].ref)
-            stopRef, stopName = mapWtpStop(stopRef, stopName)
-            allWtpRefs.add(stopRef)
-            wtpStops.append(StopData(name=stopName, ref=stopRef))
         osmStops = []
+        unknownRoles = set()
+        construction = False
+        proposed = False
+        invalidRouteTag = False
         for member in route.members:
             role: str = member.role
+            element = member.resolve()
+            tags = element.tags
             if role.startswith("platform") or role.startswith("stop"):
                 element = member.resolve()
                 for tag in element.tags:
                     if "disused" in tag:
                         disusedStop.add(elementUrl(element))
-                osmStopRef = parseRef(element.tags)
-                osmStopName = parseName(element.tags)
+                osmStopRef = parseRef(tags)
+                osmStopName = parseName(tags)
                 if osmStopName is None:
                     missingName.add(elementUrl(element))
                     if osmStopRef is None:
@@ -300,8 +188,8 @@ def processData():
                     continue
                 if len(osmStopRef) != 6:
                     if (
-                        "network" in element.tags
-                        and element.tags["network"] == "ZTM Warszawa"
+                        "network" in tags
+                        and tags["network"] == "ZTM Warszawa"
                     ):
                         unexpectedRef.add((elementUrl(element), osmStopRef))
                     continue
@@ -313,6 +201,21 @@ def processData():
                 if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
                     osmStops.append(stop)
                     allOSMRefs.add(stop.ref)
+            elif len(role) > 0:
+                unknownRoles.add(role)
+            else:
+                if "highway" not in tags and "railway" not in tags:
+                    invalidRouteTag = True
+                if "highway" in tags:
+                    if tags["highway"] == "construction":
+                        construction = True
+                    if tags["highway"] == "proposed":
+                        proposed = True
+                if "railway" in tags:
+                    if tags["railway"] == "construction":
+                        construction = True
+                    if tags["railway"] == "proposed":
+                        proposed = True
         if routeRef not in results:
             results[routeRef] = []
         results[routeRef].append(
@@ -322,17 +225,22 @@ def processData():
                 osmId=route.id,
                 osmStops=osmStops,
                 wtpLink=link,
-                wtpStops=wtpStops,
-                detour=len(content.select("div.timetable-route-point.active.detour")) > 0,
-                new=len(content.select("div.timetable-route-point.active.new")) > 0,
-                short=len(content.select("div.timetable-route-point.active.short")) > 0,
+                wtpStops=scrapingResult.stops,
+                detour=scrapingResult.detour,
+                new=scrapingResult.new,
+                short=scrapingResult.short,
+                unknownRoles=unknownRoles,
+                construction=construction,
+                proposed=proposed,
+                invalidRouteTag=invalidRouteTag,
             )
         )
 
     refs = sorted(results.keys(), key=lambda x: (len(x), x))
     renderResults = {}
     for routeRef in refs:
-        renderResults[routeRef] = dict(error=False, detourOnlyErrors=True, routeResults=[])
+        detourOnlyErrors = True
+        routeResults = []
         for route in results[routeRef]:
             osmRefs = [stop.ref for stop in route.osmStops]
             wtpRefs = [stop.ref for stop in route.wtpStops]
@@ -340,12 +248,25 @@ def processData():
                 if stop.ref not in wtpRefToName:
                     wtpRefToName[stop.ref] = set()
                 wtpRefToName[stop.ref].add(stop.name)
+            otherErrors = set()
             diffRows = []
+            if len(route.unknownRoles) > 0:
+                otherErrors.add(f"Nieznane role: {route.unknownRoles}")
+            if route.construction:
+                otherErrors.add("Trasa używa highway/railway=construction")
+            if route.proposed:
+                otherErrors.add("Trasa używa highway/railway=proposed")
+            if route.invalidRouteTag:
+                otherErrors.add("Trasa przebiega przez element bez tagu highway/railway")
             if osmRefs != wtpRefs:
                 matcher = SequenceMatcher(None, osmRefs, wtpRefs)
 
                 def writeTableRow(refOSM: str, refOperator: str):
-                    nameOSM = list(osmRefToName[refOSM])[0] if refOSM != MISSING_REF else MISSING_REF
+                    nameOSM = (
+                        list(osmRefToName[refOSM])[0]
+                        if refOSM != MISSING_REF
+                        else MISSING_REF
+                    )
                     nameOperator = (
                         list(wtpRefToName[refOperator])[0]
                         if refOperator != MISSING_REF
@@ -392,26 +313,19 @@ def processData():
                                 if j is not None
                                 else MISSING_REF,
                             )
-                renderResults[routeRef]["error"] = True
                 if not route.detour:
-                    renderResults[routeRef]["detourOnlyErrors"] = False
-                renderResults[routeRef]["routeResults"].append(
-                    RenderRouteResult(route=route, diffRows=diffRows)
+                    detourOnlyErrors = False
+            error = len(otherErrors) > 0 or len(routeResults) > 0
+            if error:
+                routeResults.append(
+                    RenderRouteResult(route=route, diffRows=diffRows, otherErrors=otherErrors)
                 )
-
-    mainContent = BeautifulSoup(
-        fetchWtpWebsite("https://wtp.waw.pl/rozklady-jazdy/"), features="html.parser"
-    )
-    for wtpLink in mainContent.select("a"):
-        url = wtpLink.get("href")
-        if "wtp.waw.pl" not in url:
-            continue
-        parsedUrl = WTPLinkParams.parseWTPRouteLink(url)
-        if parsedUrl is not None:
-            seenWtpLinks.add(parsedUrl.toTuple())
+            renderResults[routeRef] = dict(
+                routeMismatch=osmRefs != wtpRefs, error=error, detourOnlyErrors=detourOnlyErrors, routeResults=routeResults,
+            )
     notLinkedWtpUrls: Set[str] = set()
-    for link in seenWtpLinks - visitedWtpLinks:
-        wtpLinkParams = WTPLinkParams.fromTuple(link)
+    for link in wtpSeenLinks - osmWtpLinks:
+        wtpLinkParams = WTPLink.fromTuple(link)
         if wtpLinkParams.line not in ["M1", "M2"]:
             notLinkedWtpUrls.add(wtpLinkParams.url())
 
@@ -434,16 +348,23 @@ def processData():
                 renderResults=renderResults,
                 disusedStop=disusedStop,
                 invalidWtpVariants=invalidWtpVariants,
-                manyLastStops=manyLastStops,
-                notUniqueOSMNames={ref: names for ref, names in osmRefToName.items() if len(names) > 1},
-                notUniqueWTPNames={ref: names for ref, names in wtpRefToName.items() if len(names) > 1},
+                wtpManyLastStops=manyLastStops,
+                notUniqueOSMNames={
+                    ref: names for ref, names in osmRefToName.items() if len(names) > 1
+                },
+                notUniqueWTPNames={
+                    ref: names for ref, names in wtpRefToName.items() if len(names) > 1
+                },
                 mismatchOSMNameRef=mismatchOSMNameRef,
-                missingLastStop=missingLastStop,
-                missingLastStopRefNames=list(sorted(missingLastStopRefNames)),
+                wtpMissingLastStop=wtpMissingLastStop,
+                missingLastStopRefNames=list(sorted(wtpMissingLastStopRefNames)),
                 missingName=missingName,
                 missingRouteUrl=missingRouteUrl,
                 missingRef=missingRef,
-                missingRefsInOSM=[(ref, list(wtpRefToName[ref])[0]) for ref in sorted(allWtpRefs - allOSMRefs)],
+                missingRefsInOSM=[
+                    (ref, list(wtpRefToName[ref])[0])
+                    for ref in sorted(wtpStopRefs - allOSMRefs)
+                ],
                 notLinkedWtpUrls=sorted(list(notLinkedWtpUrls)),
                 unexpectedLink=unexpectedLink,
                 unexpectedNetwork=unexpectedNetwork,
