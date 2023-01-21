@@ -185,7 +185,9 @@ def analyzeOSMRelations() -> OSMResults:
     return results
 
 
-def validateRoute(routeWays: List[overpy.Element], stopNodes: Set[overpy.Node], otherErrors: Set[str]):
+def validateRoute(
+    routeWays: List[overpy.Element], stopNodes: Set[overpy.Node], otherErrors: Set[str]
+):
     variantWayNodes: Set[overpy.Node] = set()
     validatedWays: List[overpy.Way] = []
     for way in routeWays:
@@ -196,33 +198,64 @@ def validateRoute(routeWays: List[overpy.Element], stopNodes: Set[overpy.Node], 
         else:
             otherErrors.add("Element bez roli niebędący linią")
     validateRouteGeometry(validatedWays=validatedWays, otherErrors=otherErrors)
-    checkStopNodesWithinRoute(stopNodes=stopNodes, variantWayNodes=variantWayNodes, otherErrors=otherErrors)
+    checkStopNodesWithinRoute(
+        stopNodes=stopNodes, variantWayNodes=variantWayNodes, otherErrors=otherErrors
+    )
+
 
 def validateRouteGeometry(validatedWays: List[overpy.Way], otherErrors: Set[str]):
     # TODO: direction
     previousWay = validatedWays[0]
     for way in validatedWays[1:]:
-        if not matchWayNode(previousWay=previousWay, currentWay=way):
+        if not matchWayNode(
+            previousWay=previousWay, currentWay=way, otherErrors=otherErrors
+        ):
             otherErrors.add("Trasa jest niespójna")
         previousWay = way
 
-def matchWayNode(previousWay: overpy.Way, currentWay: overpy.Way) -> bool:
+
+def matchWayNode(
+    previousWay: overpy.Way, currentWay: overpy.Way, otherErrors: Set[str]
+) -> bool:
     previousStart = previousWay.nodes[0].id
     previousEnd = previousWay.nodes[-1].id
     currentStart = currentWay.nodes[0].id
     currentEnd = currentWay.nodes[-1].id
-    return previousStart == currentStart or previousEnd == currentStart or previousStart == currentEnd or previousEnd == currentEnd
+    return (
+        previousStart == currentStart
+        or previousEnd == currentStart
+        or previousStart == currentEnd
+        or previousEnd == currentEnd
+        or matchRoundabout(previousWay, currentWay, otherErrors)
+        or matchRoundabout(currentWay, previousWay, otherErrors)
+    )
 
 
+def matchRoundabout(
+    roundabout: overpy.Way, way: overpy.Way, otherErrors: Set[str]
+) -> bool:
+    if (
+        "junction" not in roundabout.tags
+        or roundabout.tags["junction"] != "roundabout"
+        or roundabout.nodes[0].id != roundabout.nodes[-1].id
+    ):
+        return False
+    endingWayNodes = [way.nodes[0].id, way.nodes[-1].id]
+    for node in roundabout.nodes:
+        if node.id in endingWayNodes:
+            otherErrors.add("Niepodzielone rondo jest częścią trasy")
+            return True
+    return False
 
-def validateWay(way: overpy.Way, otherErrors: Set[str], variantWayNodes: Set[overpy.Node]):
+
+def validateWay(
+    way: overpy.Way, otherErrors: Set[str], variantWayNodes: Set[overpy.Node]
+):
     for node in way.nodes:
         variantWayNodes.add(node)
     tags = way.tags
     if "highway" not in tags and "railway" not in tags:
-        otherErrors.add(
-            "Trasa przebiega przez element bez tagu highway/railway"
-        )
+        otherErrors.add("Trasa przebiega przez element bez tagu highway/railway")
     if "highway" in tags:
         if tags["highway"] == "construction":
             otherErrors.add("Trasa używa highway=construction")
@@ -234,8 +267,12 @@ def validateWay(way: overpy.Way, otherErrors: Set[str], variantWayNodes: Set[ove
         if tags["railway"] == "proposed":
             otherErrors.add("Trasa używa railway=proposed")
 
-def checkStopNodesWithinRoute(stopNodes: Set[overpy.Node], variantWayNodes: Set[overpy.Node], otherErrors: Set[str]):
+
+def checkStopNodesWithinRoute(
+    stopNodes: Set[overpy.Node],
+    variantWayNodes: Set[overpy.Node],
+    otherErrors: Set[str],
+):
     stopsNotWithinRoute = stopNodes - variantWayNodes
     if len(stopsNotWithinRoute) > 0:
         otherErrors.add("Punkty zatrzymania nie należą do trasy")
-
