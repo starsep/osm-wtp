@@ -1,0 +1,1522 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Porównanie danych OSM z WTP</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+</head>
+<body>
+    <p>
+        Na tej stronie można znaleźć porównanie danych transportu publicznego OpenStreetMap oraz Warszawskiego Transportu Publicznego.
+        Strona <a href="https://wtp.waw.pl">wtp.waw.pl</a> ma czasami błędy. Nie należy ślepo wierzyć i kopiować.
+        Nie zaleca się tworzyć zmian krótkoterminowych np. na weekend, na 1 listopada.
+        Dane z OSM są aktualizowane co godzinę, WTP raz na dobę.
+        Rozkład WTP brany jest z pierwszego dnia, kiedy dana linia jest dostępna np. poniedziałek dla linii niejeżdżącej w weekendy.
+        Więcej szczegółów <a href="https://starsep.com/pl/posts/osm-wtp/">w tym artykule</a>.
+        W razie problemów proszę o kontakt na <a href="https://osm.org/message/new/starsep">OSM</a>.
+    </p>
+    <h1>Lista linii</h1>
+    <span>
+            <span>1</span>
+            <span>2</span>
+            <span>3</span>
+            <span>4</span>
+            <span>6</span>
+            <span>7</span>
+            <span>9</span>
+            <span>11</span>
+            <span>13</span>
+            <span>15</span>
+            <span>17</span>
+            <span>20</span>
+            <span>22</span>
+            <span>23</span>
+            <span>24</span>
+            <span>25</span>
+            <span>26</span>
+            <span>27</span>
+            <span>28</span>
+            <span>31</span>
+            <span>33</span>
+            <span>35</span>
+            <span>75</span>
+            <span>78</span>
+            <span>S1</span>
+            <a href="#S2">&#9888;S2</a>
+            <span>S3</span>
+            <span>102</span>
+            <span>103</span>
+            <span>104</span>
+            <span>105</span>
+            <span>106</span>
+            <span>107</span>
+            <span>108</span>
+            <span>109</span>
+            <span>110</span>
+            <span>111</span>
+            <span>112</span>
+            <span>114</span>
+            <span>115</span>
+            <span>116</span>
+            <span>117</span>
+            <span>118</span>
+            <a href="#119">&#9888;119</a>
+            <span>120</span>
+            <span>121</span>
+            <span>122</span>
+            <span>123</span>
+            <span>124</span>
+            <span>125</span>
+            <span>126</span>
+            <span>127</span>
+            <span>128</span>
+            <span>129</span>
+            <span>131</span>
+            <span>132</span>
+            <span>133</span>
+            <span>134</span>
+            <span>135</span>
+            <span>136</span>
+            <a href="#138">&#9888;138</a>
+            <span>139</span>
+            <span>140</span>
+            <span>141</span>
+            <span>142</span>
+            <a href="#143">&#9888;143</a>
+            <a href="#145">&#10060;145</a>
+            <span>146</span>
+            <span>147</span>
+            <span>148</span>
+            <span>149</span>
+            <span>150</span>
+            <a href="#151">&#9888;151</a>
+            <span>152</span>
+            <span>153</span>
+            <span>154</span>
+            <span>156</span>
+            <span>157</span>
+            <span>158</span>
+            <span>159</span>
+            <span>160</span>
+            <span>161</span>
+            <span>162</span>
+            <span>163</span>
+            <span>164</span>
+            <span>165</span>
+            <span>166</span>
+            <a href="#167">&#9888;167</a>
+            <a href="#168">&#9888;168</a>
+            <span>169</span>
+            <span>170</span>
+            <span>171</span>
+            <span>172</span>
+            <span>173</span>
+            <span>174</span>
+            <span>175</span>
+            <span>176</span>
+            <span>177</span>
+            <span>178</span>
+            <span>179</span>
+            <span>180</span>
+            <span>181</span>
+            <a href="#182">&#9888;182</a>
+            <span>183</span>
+            <span>184</span>
+            <span>185</span>
+            <span>186</span>
+            <a href="#187">&#9888;187</a>
+            <a href="#188">&#9888;188</a>
+            <span>189</span>
+            <span>190</span>
+            <span>191</span>
+            <span>192</span>
+            <span>193</span>
+            <span>194</span>
+            <span>196</span>
+            <span>197</span>
+            <span>198</span>
+            <span>199</span>
+            <span>200</span>
+            <span>201</span>
+            <span>202</span>
+            <span>203</span>
+            <span>204</span>
+            <span>207</span>
+            <span>208</span>
+            <span>209</span>
+            <span>210</span>
+            <span>211</span>
+            <span>212</span>
+            <span>213</span>
+            <span>217</span>
+            <span>218</span>
+            <span>220</span>
+            <span>221</span>
+            <a href="#222">&#10006;222</a>
+            <span>225</span>
+            <span>226</span>
+            <span>228</span>
+            <span>233</span>
+            <span>234</span>
+            <span>239</span>
+            <span>240</span>
+            <span>245</span>
+            <span>249</span>
+            <span>250</span>
+            <span>251</span>
+            <span>255</span>
+            <span>256</span>
+            <span>262</span>
+            <span>263</span>
+            <span>264</span>
+            <span>303</span>
+            <a href="#305">&#9888;305</a>
+            <span>308</span>
+            <span>311</span>
+            <span>314</span>
+            <span>317</span>
+            <span>319</span>
+            <span>320</span>
+            <span>326</span>
+            <span>328</span>
+            <span>331</span>
+            <span>332</span>
+            <span>338</span>
+            <span>339</span>
+            <span>340</span>
+            <span>356</span>
+            <span>379</span>
+            <span>401</span>
+            <span>402</span>
+            <span>409</span>
+            <a href="#411">&#9888;411</a>
+            <span>414</span>
+            <span>500</span>
+            <span>501</span>
+            <a href="#502">&#9888;502</a>
+            <span>503</span>
+            <span>504</span>
+            <span>507</span>
+            <span>509</span>
+            <a href="#511">&#9888;511</a>
+            <span>512</span>
+            <a href="#514">&#9888;514</a>
+            <span>516</span>
+            <span>517</span>
+            <span>518</span>
+            <span>519</span>
+            <a href="#520">&#9888;520</a>
+            <span>521</span>
+            <span>522</span>
+            <a href="#523">&#9888;523</a>
+            <a href="#525">&#9888;525</a>
+            <span>527</span>
+            <span>702</span>
+            <span>703</span>
+            <span>704</span>
+            <span>705</span>
+            <span>706</span>
+            <span>707</span>
+            <span>709</span>
+            <span>710</span>
+            <span>711</span>
+            <span>712</span>
+            <span>713</span>
+            <span>714</span>
+            <span>715</span>
+            <span>716</span>
+            <span>717</span>
+            <span>719</span>
+            <span>720</span>
+            <span>721</span>
+            <span>722</span>
+            <a href="#723">&#9888;723</a>
+            <span>724</span>
+            <span>727</span>
+            <span>728</span>
+            <span>729</span>
+            <span>730</span>
+            <a href="#731">&#9888;731</a>
+            <span>733</span>
+            <span>735</span>
+            <a href="#736">&#10060;736</a>
+            <span>737</span>
+            <span>738</span>
+            <span>739</span>
+            <span>742</span>
+            <span>743</span>
+            <span>750</span>
+            <span>809</span>
+            <span>815</span>
+            <span>817</span>
+            <span>850</span>
+            <span>900</span>
+            <span>E-1</span>
+            <span>E-2</span>
+            <span>L-1</span>
+            <span>L-2</span>
+            <span>L-3</span>
+            <span>L-4</span>
+            <span>L-5</span>
+            <span>L-6</span>
+            <span>L-7</span>
+            <span>L-8</span>
+            <span>L-9</span>
+            <span>L10</span>
+            <span>L11</span>
+            <span>L12</span>
+            <span>L13</span>
+            <span>L14</span>
+            <a href="#L15">&#10006;L15</a>
+            <span>L16</span>
+            <span>L17</span>
+            <span>L18</span>
+            <span>L19</span>
+            <span>L20</span>
+            <a href="#L21">&#10006;L21</a>
+            <span>L22</span>
+            <span>L23</span>
+            <span>L24</span>
+            <a href="#L25">&#9888;L25</a>
+            <span>L26</span>
+            <span>L27</span>
+            <span>L28</span>
+            <span>L29</span>
+            <span>L30</span>
+            <span>L31</span>
+            <span>L32</span>
+            <span>L34</span>
+            <span>L35</span>
+            <a href="#L36">&#10006;L36</a>
+            <span>L37</span>
+            <span>L38</span>
+            <span>L39</span>
+            <span>L40</span>
+            <span>L41</span>
+            <a href="#L43">&#10006;L43</a>
+            <span>L45</span>
+            <a href="#L46">&#10006;L46</a>
+            <span>L47</span>
+            <a href="#L48">&#10006;L48</a>
+            <span>L49</span>
+            <span>L50</span>
+            <span>L51</span>
+            <span>L52</span>
+            <span>N01</span>
+            <span>N02</span>
+            <span>N03</span>
+            <span>N11</span>
+            <span>N12</span>
+            <span>N13</span>
+            <span>N14</span>
+            <span>N16</span>
+            <span>N21</span>
+            <span>N22</span>
+            <span>N24</span>
+            <a href="#N25">&#9888;N25</a>
+            <span>N31</span>
+            <span>N32</span>
+            <span>N33</span>
+            <span>N34</span>
+            <span>N35</span>
+            <span>N36</span>
+            <span>N37</span>
+            <span>N38</span>
+            <span>N41</span>
+            <span>N42</span>
+            <span>N43</span>
+            <span>N44</span>
+            <span>N45</span>
+            <span>N46</span>
+            <span>N50</span>
+            <span>N56</span>
+            <span>N58</span>
+            <span>N61</span>
+            <span>N62</span>
+            <a href="#N63">&#9888;N63</a>
+            <span>N64</span>
+            <span>N71</span>
+            <span>N72</span>
+            <span>N81</span>
+            <span>N83</span>
+            <span>N85</span>
+            <span>N86</span>
+            <span>N88</span>
+            <span>N91</span>
+            <span>N95</span>
+            <span>Z-4</span>
+            <span>Z42</span>
+            <span>Z76</span>
+    </span>
+    <h3>Legenda:</h3>
+    <span>&#10060; trasa bez objazdów nie pasuje</span>
+    <span>&#10006; trasa objazdowa nie pasuje</span>
+    <span>&#9888; inne błędy</span>
+        <h1 id="S2">Wyniki dla S2</h1>
+        <h3>
+            Błąd dla S2: Warszawa Lotnisko Chopina => Sulejówek Miłosna
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=S2&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/2569256">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r2569256">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="119">Wyniki dla 119</h1>
+        <h3>
+            Błąd dla Bus 119: Rakowiecka-Sanktuarium => Wiśniowa Góra
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=119&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/2525053">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r2525053">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="138">Wyniki dla 138</h1>
+        <h3>
+            Błąd dla Bus 138: Utrata => Bokserska
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=138&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/4034093">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4034093">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 138: Bokserska => Utrata
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=138&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/7364141">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r7364141">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="143">Wyniki dla 143</h1>
+        <h3>
+            Błąd dla Bus 143: Rembertów-Kolonia => Pomnik Lotnika
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=143&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/3199496">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r3199496">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 143: Pomnik Lotnika => Rembertów-Kolonia
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=143&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/3199534">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r3199534">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="151">Wyniki dla 151</h1>
+        <h3>
+            Błąd dla Bus 151: Nowowiejska => Rechniewskiego
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=151&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/4597990">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4597990">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 151: Rechniewskiego => Nowowiejska
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=151&wtp_dr=B&wtp_vr=0">WTP</a>
+            <a href="https://osm.org/relation/4597991">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4597991">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="167">Wyniki dla 167</h1>
+        <h3>
+            Błąd dla Bus 167: Stare Bemowo => Siekierki-Sanktuarium
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=167&wtp_dr=A&wtp_vr=0">WTP</a>
+            <a href="https://osm.org/relation/14357161">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r14357161">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 167: Fort Radiowo => Siekierki-Sanktuarium
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=167&wtp_dr=A&wtp_vr=1">WTP</a>
+            <a href="https://osm.org/relation/14357162">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r14357162">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="168">Wyniki dla 168</h1>
+        <h3>
+            Błąd dla Bus 168: Spartańska => Witolin
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=168&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/3271083">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r3271083">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="182">Wyniki dla 182</h1>
+        <h3>
+            Błąd dla Bus 182: Witolin => Dworzec Zachodni
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?&wtp_md=3&wtp_ln=182&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/3277750">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r3277750">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 182: Dworzec Zachodni => Witolin
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?&wtp_md=3&wtp_ln=182&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/3277770">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r3277770">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="187">Wyniki dla 187</h1>
+        <h3>
+            Błąd dla Bus 187: Ursus-Niedźwiadek => Stegny
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?&wtp_md=3&wtp_ln=187&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/3285142">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r3285142">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 187: Stegny => Ursus-Niedźwiadek
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?&wtp_md=3&wtp_ln=187&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/3285224">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r3285224">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="188">Wyniki dla 188</h1>
+        <h3>
+            Błąd dla Bus 188: Gocławek Wschodni => Terminal Autokarowy
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?&wtp_md=3&wtp_ln=188&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/3285358">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r3285358">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 188: Lotnisko Chopina-Przyloty => Gocławek Wschodni
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?&wtp_md=3&wtp_ln=188&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/3285400">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r3285400">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="305">Wyniki dla 305</h1>
+        <h3>
+            Błąd dla Bus 305: PKP Międzylesie => Strusia
+<span title="Trasa objazdowa">&#x1F7E0;</span>            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=305&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/4034100">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4034100">JOSM</a>
+        </h3>
+        <table>
+            <thead><tr><th>OSM ref</th><th>OSM name</th><th>WTP ref</th><th>WTP name</th></thead>
+                <tr style="color: inherit;">
+                    <td>203904</td>
+                    <td>PKP Międzylesie 04</td>
+                    <td>203904</td>
+                    <td>PKP Międzylesie 04</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>203903</td>
+                    <td>PKP Międzylesie 03</td>
+                    <td>203903</td>
+                    <td>PKP Międzylesie 03</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>225701</td>
+                    <td>Rogatkowa 01</td>
+                    <td>225701</td>
+                    <td>Rogatkowa 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>221801</td>
+                    <td>Żonkilowa 01</td>
+                    <td>221801</td>
+                    <td>Żonkilowa 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>247601</td>
+                    <td>Biegunowa 01</td>
+                    <td>247601</td>
+                    <td>Biegunowa 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>221701</td>
+                    <td>Motylkowa 01</td>
+                    <td>221701</td>
+                    <td>Motylkowa 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>221601</td>
+                    <td>Wiązana 01</td>
+                    <td>221601</td>
+                    <td>Wiązana 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>219202</td>
+                    <td>Zwoleńska 02</td>
+                    <td>219202</td>
+                    <td>Zwoleńska 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>219102</td>
+                    <td>Zerzeń 02</td>
+                    <td>219102</td>
+                    <td>Zerzeń 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>219002</td>
+                    <td>Kombajnistów 02</td>
+                    <td>219002</td>
+                    <td>Kombajnistów 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>218902</td>
+                    <td>Lebiodowa 02</td>
+                    <td>218902</td>
+                    <td>Lebiodowa 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>224702</td>
+                    <td>Trakt Lubelski-Las 02</td>
+                    <td>224702</td>
+                    <td>Trakt Lubelski-Las 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>218802</td>
+                    <td>Lucerny 02</td>
+                    <td>218802</td>
+                    <td>Lucerny 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>218702</td>
+                    <td>Klimontowska 02</td>
+                    <td>218702</td>
+                    <td>Klimontowska 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>218602</td>
+                    <td>Dzielnicowa 02</td>
+                    <td>218602</td>
+                    <td>Dzielnicowa 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>218502</td>
+                    <td>Spadowa 02</td>
+                    <td>218502</td>
+                    <td>Spadowa 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>201802</td>
+                    <td>Trakt Lubelski 02</td>
+                    <td>201802</td>
+                    <td>Trakt Lubelski 02</td>
+                </tr>
+                <tr style="color: orange;">
+                    <td>226002</td>
+                    <td>Skrzyneckiego 02</td>
+                    <td>201902</td>
+                    <td>Trawiasta 02</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>202002</td>
+                    <td>Kajki 02</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>245401</td>
+                    <td>Instytut Kardiologii 01</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>202402</td>
+                    <td>Odrodzenia 02</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>202004</td>
+                    <td>Kajki 04</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>212502</td>
+                    <td>Cm.Ofiar Wojny 02</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>206401</td>
+                    <td>Marysin 01</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>206201</td>
+                    <td>Potockich 01</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>206101</td>
+                    <td>Łysakowska 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>206102</td>
+                    <td>Łysakowska 02</td>
+                    <td>206102</td>
+                    <td>Łysakowska 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>206202</td>
+                    <td>Potockich 02</td>
+                    <td>206202</td>
+                    <td>Potockich 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>206302</td>
+                    <td>Sezam 02</td>
+                    <td>206302</td>
+                    <td>Sezam 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>206405</td>
+                    <td>Marysin 05</td>
+                    <td>206405</td>
+                    <td>Marysin 05</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>212501</td>
+                    <td>Cm. Ofiar Wojny 01</td>
+                    <td>212501</td>
+                    <td>Cm.Ofiar Wojny 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>232001</td>
+                    <td>Rolnicza 01</td>
+                    <td>232001</td>
+                    <td>Rolnicza 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>202003</td>
+                    <td>Kajki 03</td>
+                    <td>202003</td>
+                    <td>Kajki 03</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>202001</td>
+                    <td>Kajki 01</td>
+                    <td>202001</td>
+                    <td>Kajki 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>201901</td>
+                    <td>Trawiasta 01</td>
+                    <td>201901</td>
+                    <td>Trawiasta 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>226101</td>
+                    <td>Strusia 01</td>
+                    <td>226101</td>
+                    <td>Strusia 01</td>
+                </tr>
+        </table>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="411">Wyniki dla 411</h1>
+        <h3>
+            Błąd dla Bus 411: Metro Politechnika => Stara Miłosna (Graniczna)
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=411&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/4031565">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4031565">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 411: Stara Miłosna (Graniczna) => Metro Politechnika
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=411&wtp_dr=B&wtp_vr=0">WTP</a>
+            <a href="https://osm.org/relation/4031566">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4031566">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 411: Gocław => Metro Politechnika
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=411&wtp_dr=B&wtp_vr=1">WTP</a>
+            <a href="https://osm.org/relation/5330193">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r5330193">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="502">Wyniki dla 502</h1>
+        <h3>
+            Błąd dla Bus 502: Metro Politechnika => Stara Miłosna (Graniczna)
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=502&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/2005218">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r2005218">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 502: Stara Miłosna (Graniczna) => Metro Politechnika
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=502&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/2005219">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r2005219">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="511">Wyniki dla 511</h1>
+        <h3>
+            Błąd dla Bus 511: Dąbrówka Wiślana => Metro Młociny
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=511&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/2008785">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r2008785">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="514">Wyniki dla 514</h1>
+        <h3>
+            Błąd dla Bus 514: Wola Grzybowska => Metro Politechnika
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=514&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/4031569">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4031569">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 514: Metro Politechnika => Wola Grzybowska
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=514&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/4031570">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4031570">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="520">Wyniki dla 520</h1>
+        <h3>
+            Błąd dla Bus 520: Marysin => Plac Bankowy
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=520&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/4031575">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4031575">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 520: Plac Bankowy => Marysin
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=520&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/4031576">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4031576">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="523">Wyniki dla 523</h1>
+        <h3>
+            Błąd dla Bus 523: PKP Olszynka Grochowska => Stare Bemowo
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=523&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/4254149">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4254149">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 523: Stare Bemowo => PKP Olszynka Grochowska
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=523&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/4254150">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4254150">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="525">Wyniki dla 525</h1>
+        <h3>
+            Błąd dla Bus 525: Dworzec Centralny => Międzylesie
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=525&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/4031584">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4031584">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 525: Międzylesie => Dworzec Centralny
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=525&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/4031585">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4031585">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="723">Wyniki dla 723</h1>
+        <h3>
+            Błąd dla Bus 723: PKP Legionowo-Przystanek => Żerań FSO
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=723&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/4272701">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4272701">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 723: Mickiewicza => Żerań FSO
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=723&wtp_dr=B&wtp_vr=1">WTP</a>
+            <a href="https://osm.org/relation/15328690">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r15328690">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="731">Wyniki dla 731</h1>
+        <h3>
+            Błąd dla Bus 731: Legionowo, Os. Młodych => Żerań FSO
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=731&wtp_dr=A&wtp_vr=1">WTP</a>
+            <a href="https://osm.org/relation/4230804">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4230804">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus 731: Legionowo, Starostwo Powiatowe => Żerań FSO
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=731&wtp_dr=A&wtp_vr=0">WTP</a>
+            <a href="https://osm.org/relation/4230805">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4230805">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="L25">Wyniki dla L25</h1>
+        <h3>
+            Błąd dla Bus L25: Urząd Miasta => Góra Kalwaria, Rynek
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?&wtp_md=3&wtp_ln=L25&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/15334657">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r15334657">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus L25: Góra Kalwaria, Rynek => Zgoda
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?&wtp_md=3&wtp_ln=L25&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/15334658">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r15334658">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="L46">Wyniki dla L46</h1>
+        <h3>
+            Błąd dla Bus L46: CH Marki => Zielonka, 11 Listopada
+<span title="Trasa objazdowa">&#x1F7E0;</span>            <a href="https://wtp.waw.pl/rozklady-jazdy/?&wtp_md=3&wtp_ln=L46&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/8736841">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r8736841">JOSM</a>
+        </h3>
+        <table>
+            <thead><tr><th>OSM ref</th><th>OSM name</th><th>WTP ref</th><th>WTP name</th></thead>
+                <tr style="color: inherit;">
+                    <td>123402</td>
+                    <td>CH Marki 02</td>
+                    <td>123402</td>
+                    <td>CH Marki 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>123502</td>
+                    <td>Wolności 02</td>
+                    <td>123502</td>
+                    <td>Wolności 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>123302</td>
+                    <td>Wiejska 02</td>
+                    <td>123302</td>
+                    <td>Wiejska 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>123602</td>
+                    <td>Szpitalna 02</td>
+                    <td>123602</td>
+                    <td>Szpitalna 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>123702</td>
+                    <td>Szkolna 02</td>
+                    <td>123702</td>
+                    <td>Szkolna 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>135202</td>
+                    <td>Fabryczna 02</td>
+                    <td>135202</td>
+                    <td>Fabryczna 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>198102</td>
+                    <td>Sportowa 02</td>
+                    <td>198102</td>
+                    <td>Sportowa 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>154502</td>
+                    <td>Jagiełły 02</td>
+                    <td>154502</td>
+                    <td>Jagiełły 02</td>
+                </tr>
+                <tr style="color: orange;">
+                    <td>197702</td>
+                    <td>Ząbkowska 02</td>
+                    <td>154602</td>
+                    <td>Sokola 02</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>154702</td>
+                    <td>Wronia 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>197502</td>
+                    <td>Pustelnicka 02</td>
+                    <td>197502</td>
+                    <td>Pustelnicka 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>196604</td>
+                    <td>Mazurska 04</td>
+                    <td>196604</td>
+                    <td>Mazurska 04</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>196602</td>
+                    <td>Mazurska 02</td>
+                    <td>196602</td>
+                    <td>Mazurska 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>185502</td>
+                    <td>Powstańców 02</td>
+                    <td>185502</td>
+                    <td>Powstańców 02</td>
+                </tr>
+                <tr style="color: orange;">
+                    <td>185402</td>
+                    <td>Sowińskiego 02</td>
+                    <td>185352</td>
+                    <td>Młodzieżowa 52</td>
+                </tr>
+                <tr style="color: red;">
+                    <td>185302</td>
+                    <td>Młodzieżowa 02</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>196501</td>
+                    <td>Osiedle Wolności 01</td>
+                    <td>196501</td>
+                    <td>Os.Wolności 01</td>
+                </tr>
+                <tr style="color: orange;">
+                    <td>185202</td>
+                    <td>Wolności 02</td>
+                    <td>185201</td>
+                    <td>Wolności 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>185102</td>
+                    <td>Urząd Miasta 02</td>
+                    <td>185102</td>
+                    <td>Urząd Miasta 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>134501</td>
+                    <td>Plac Jana Pawła II 01</td>
+                    <td>134501</td>
+                    <td>pl.Jana Pawła II 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>134401</td>
+                    <td>Muzeum Zielonki 01</td>
+                    <td>134401</td>
+                    <td>Muzeum Zielonki 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>186002</td>
+                    <td>Mickiewicza 02</td>
+                    <td>186002</td>
+                    <td>Mickiewicza 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>158301</td>
+                    <td>Os. Poligon 01</td>
+                    <td>158301</td>
+                    <td>Os.Poligon 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>185002</td>
+                    <td>Os. Wituś 02</td>
+                    <td>185002</td>
+                    <td>Os.Wituś 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>184902</td>
+                    <td>Paderewskiego 02</td>
+                    <td>184902</td>
+                    <td>Paderewskiego 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>197801</td>
+                    <td>Bankowa 01</td>
+                    <td>197801</td>
+                    <td>Bankowa 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>197901</td>
+                    <td>PKP Zielonka Bankowa 01</td>
+                    <td>197901</td>
+                    <td>PKP Zielonka Bankowa 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>198001</td>
+                    <td>Armii Krajowej 01</td>
+                    <td>198001</td>
+                    <td>Armii Krajowej 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>184801</td>
+                    <td>11 Listopada 01</td>
+                    <td>184801</td>
+                    <td>11 Listopada 01</td>
+                </tr>
+        </table>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus L46: Zielonka, 11 Listopada => CH Marki
+<span title="Trasa objazdowa">&#x1F7E0;</span>            <a href="https://wtp.waw.pl/rozklady-jazdy/?&wtp_md=3&wtp_ln=L46&wtp_dr=B&wtp_vr=0">WTP</a>
+            <a href="https://osm.org/relation/8736842">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r8736842">JOSM</a>
+        </h3>
+        <table>
+            <thead><tr><th>OSM ref</th><th>OSM name</th><th>WTP ref</th><th>WTP name</th></thead>
+                <tr style="color: inherit;">
+                    <td>184801</td>
+                    <td>11 Listopada 01</td>
+                    <td>184801</td>
+                    <td>11 Listopada 01</td>
+                </tr>
+                <tr style="color: orange;">
+                    <td>184902</td>
+                    <td>Paderewskiego 02</td>
+                    <td>184901</td>
+                    <td>Paderewskiego 01</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>197902</td>
+                    <td>PKP Zielonka Bankowa 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>197802</td>
+                    <td>Bankowa 02</td>
+                    <td>197802</td>
+                    <td>Bankowa 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>185001</td>
+                    <td>Os. Wituś 01</td>
+                    <td>185001</td>
+                    <td>Os.Wituś 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>158302</td>
+                    <td>Os. Poligon 02</td>
+                    <td>158302</td>
+                    <td>Os.Poligon 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>134303</td>
+                    <td>Kolejowa 03</td>
+                    <td>134303</td>
+                    <td>Kolejowa 03</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>186001</td>
+                    <td>Mickiewicza 01</td>
+                    <td>186001</td>
+                    <td>Mickiewicza 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>134402</td>
+                    <td>Muzeum Zielonki 02</td>
+                    <td>134402</td>
+                    <td>Muzeum Zielonki 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>185101</td>
+                    <td>Urząd Miasta 01</td>
+                    <td>185101</td>
+                    <td>Urząd Miasta 01</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>196501</td>
+                    <td>Os.Wolności 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>185201</td>
+                    <td>Wolności 01</td>
+                    <td>185201</td>
+                    <td>Wolności 01</td>
+                </tr>
+                <tr style="color: orange;">
+                    <td>196501</td>
+                    <td>Osiedle Wolności 01</td>
+                    <td>185351</td>
+                    <td>Młodzieżowa 51</td>
+                </tr>
+                <tr style="color: red;">
+                    <td>185301</td>
+                    <td>Młodzieżowa 01</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+                <tr style="color: red;">
+                    <td>185401</td>
+                    <td>Sowińskiego 01</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>185501</td>
+                    <td>Powstańców 01</td>
+                    <td>185501</td>
+                    <td>Powstańców 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>196601</td>
+                    <td>Mazurska 01</td>
+                    <td>196601</td>
+                    <td>Mazurska 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>196603</td>
+                    <td>Mazurska 03</td>
+                    <td>196603</td>
+                    <td>Mazurska 03</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>197501</td>
+                    <td>Pustelnicka 01</td>
+                    <td>197501</td>
+                    <td>Pustelnicka 01</td>
+                </tr>
+                <tr style="color: orange;">
+                    <td>197701</td>
+                    <td>Ząbkowska 01</td>
+                    <td>154701</td>
+                    <td>Wronia 01</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>154601</td>
+                    <td>Sokola 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>154501</td>
+                    <td>Jagiełły 01</td>
+                    <td>154501</td>
+                    <td>Jagiełły 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>198101</td>
+                    <td>Sportowa 01</td>
+                    <td>198101</td>
+                    <td>Sportowa 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>135201</td>
+                    <td>Fabryczna 01</td>
+                    <td>135201</td>
+                    <td>Fabryczna 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>123701</td>
+                    <td>Szkolna 01</td>
+                    <td>123701</td>
+                    <td>Szkolna 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>123601</td>
+                    <td>Szpitalna 01</td>
+                    <td>123601</td>
+                    <td>Szpitalna 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>123301</td>
+                    <td>Wiejska 01</td>
+                    <td>123301</td>
+                    <td>Wiejska 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>123501</td>
+                    <td>Wolności 01</td>
+                    <td>123501</td>
+                    <td>Wolności 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>123402</td>
+                    <td>CH Marki 02</td>
+                    <td>123402</td>
+                    <td>CH Marki 02</td>
+                </tr>
+        </table>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus L46: Zielonka, 11 Listopada => Marki, Fabryczna
+<span title="Trasa objazdowa">&#x1F7E0;</span><span title="Trasa skrócona">&#x1F7E1;</span>            <a href="https://wtp.waw.pl/rozklady-jazdy/?&wtp_md=3&wtp_ln=L46&wtp_dr=B&wtp_vr=1">WTP</a>
+            <a href="https://osm.org/relation/12286974">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r12286974">JOSM</a>
+        </h3>
+        <table>
+            <thead><tr><th>OSM ref</th><th>OSM name</th><th>WTP ref</th><th>WTP name</th></thead>
+                <tr style="color: inherit;">
+                    <td>184801</td>
+                    <td>11 Listopada 01</td>
+                    <td>184801</td>
+                    <td>11 Listopada 01</td>
+                </tr>
+                <tr style="color: orange;">
+                    <td>184902</td>
+                    <td>Paderewskiego 02</td>
+                    <td>184901</td>
+                    <td>Paderewskiego 01</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>197902</td>
+                    <td>PKP Zielonka Bankowa 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>197802</td>
+                    <td>Bankowa 02</td>
+                    <td>197802</td>
+                    <td>Bankowa 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>185001</td>
+                    <td>Os. Wituś 01</td>
+                    <td>185001</td>
+                    <td>Os.Wituś 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>158302</td>
+                    <td>Os. Poligon 02</td>
+                    <td>158302</td>
+                    <td>Os.Poligon 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>134303</td>
+                    <td>Kolejowa 03</td>
+                    <td>134303</td>
+                    <td>Kolejowa 03</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>186001</td>
+                    <td>Mickiewicza 01</td>
+                    <td>186001</td>
+                    <td>Mickiewicza 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>134402</td>
+                    <td>Muzeum Zielonki 02</td>
+                    <td>134402</td>
+                    <td>Muzeum Zielonki 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>134502</td>
+                    <td>Plac Jana Pawła II 02</td>
+                    <td>134502</td>
+                    <td>pl.Jana Pawła II 02</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>185101</td>
+                    <td>Urząd Miasta 01</td>
+                    <td>185101</td>
+                    <td>Urząd Miasta 01</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>196501</td>
+                    <td>Os.Wolności 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>185201</td>
+                    <td>Wolności 01</td>
+                    <td>185201</td>
+                    <td>Wolności 01</td>
+                </tr>
+                <tr style="color: orange;">
+                    <td>196501</td>
+                    <td>Osiedle Wolności 01</td>
+                    <td>185351</td>
+                    <td>Młodzieżowa 51</td>
+                </tr>
+                <tr style="color: red;">
+                    <td>185301</td>
+                    <td>Młodzieżowa 01</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+                <tr style="color: red;">
+                    <td>185401</td>
+                    <td>Sowińskiego 01</td>
+                    <td>-</td>
+                    <td>-</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>185501</td>
+                    <td>Powstańców 01</td>
+                    <td>185501</td>
+                    <td>Powstańców 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>196601</td>
+                    <td>Mazurska 01</td>
+                    <td>196601</td>
+                    <td>Mazurska 01</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>196603</td>
+                    <td>Mazurska 03</td>
+                    <td>196603</td>
+                    <td>Mazurska 03</td>
+                </tr>
+                <tr style="color: inherit;">
+                    <td>197501</td>
+                    <td>Pustelnicka 01</td>
+                    <td>197501</td>
+                    <td>Pustelnicka 01</td>
+                </tr>
+                <tr style="color: orange;">
+                    <td>197701</td>
+                    <td>Ząbkowska 01</td>
+                    <td>154701</td>
+                    <td>Wronia 01</td>
+                </tr>
+                <tr style="color: orange;">
+                    <td>135202</td>
+                    <td>Fabryczna 02</td>
+                    <td>154601</td>
+                    <td>Sokola 01</td>
+                </tr>
+                <tr style="color: green;">
+                    <td>-</td>
+                    <td>-</td>
+                    <td>229402</td>
+                    <td>Fabryczna 02</td>
+                </tr>
+        </table>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="N25">Wyniki dla N25</h1>
+        <h3>
+            Błąd dla Bus N25: Dworzec Centralny => Międzylesie
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?&wtp_md=3&wtp_ln=N25&wtp_dr=B">WTP</a>
+            <a href="https://osm.org/relation/4037504">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4037504">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus N25: Międzylesie => Dworzec Centralny
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?&wtp_md=3&wtp_ln=N25&wtp_dr=A">WTP</a>
+            <a href="https://osm.org/relation/4037505">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4037505">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h1 id="N63">Wyniki dla N63</h1>
+        <h3>
+            Błąd dla Bus N63: Legionowo, Os. Jagiellońska => Dworzec Centralny
+            <a href="https://www.wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=N63&wtp_dr=B&wtp_vr=0">WTP</a>
+            <a href="https://osm.org/relation/4272707">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r4272707">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+        <h3>
+            Błąd dla Bus N63: Chotomów => Dworzec Centralny
+            <a href="https://www.wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=N63&wtp_dr=B&wtp_vr=1">WTP</a>
+            <a href="https://osm.org/relation/5528559">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r5528559">JOSM</a>
+        </h3>
+            <span>Trasa używa highway/railway=construction</span>
+    <h1>Inne błędy</h1>
+
+
+
+
+        <h2>Brakująca nazwa</h2>
+            <a href="https://osm.org/way/69334280">https://osm.org/way/69334280</a>
+            <a href="https://osm.org/way/103410135">https://osm.org/way/103410135</a>
+            <a href="https://osm.org/way/759624158">https://osm.org/way/759624158</a>
+            <a href="https://osm.org/way/57731411">https://osm.org/way/57731411</a>
+            <a href="https://osm.org/way/63514618">https://osm.org/way/63514618</a>
+            <a href="https://osm.org/way/103410099">https://osm.org/way/103410099</a>
+            <a href="https://osm.org/way/283748309">https://osm.org/way/283748309</a>
+            <a href="https://osm.org/way/123444177">https://osm.org/way/123444177</a>
+            <a href="https://osm.org/way/225388770">https://osm.org/way/225388770</a>
+            <a href="https://osm.org/way/333276984">https://osm.org/way/333276984</a>
+            <a href="https://osm.org/relation/12155718">https://osm.org/relation/12155718</a>
+            <a href="https://osm.org/way/149942260">https://osm.org/way/149942260</a>
+            <a href="https://osm.org/way/149942255">https://osm.org/way/149942255</a>
+            <a href="https://osm.org/way/190029776">https://osm.org/way/190029776</a>
+            <a href="https://osm.org/way/190030639">https://osm.org/way/190030639</a>
+            <a href="https://osm.org/way/242360081">https://osm.org/way/242360081</a>
+            <a href="https://osm.org/way/242360083">https://osm.org/way/242360083</a>
+            <a href="https://osm.org/way/242360082">https://osm.org/way/242360082</a>
+            <a href="https://osm.org/way/207325010">https://osm.org/way/207325010</a>
+            <a href="https://osm.org/way/826273419">https://osm.org/way/826273419</a>
+            <a href="https://osm.org/way/182670857">https://osm.org/way/182670857</a>
+            <a href="https://osm.org/way/242060975">https://osm.org/way/242060975</a>
+            <a href="https://osm.org/way/130675961">https://osm.org/way/130675961</a>
+            <a href="https://osm.org/way/127322899">https://osm.org/way/127322899</a>
+            <a href="https://osm.org/way/131033862">https://osm.org/way/131033862</a>
+            <a href="https://osm.org/way/826273418">https://osm.org/way/826273418</a>
+
+        <h2>Brakujący ref</h2>
+            <a href="https://osm.org/way/150067063">Warszawa Rembertów: https://osm.org/way/150067063</a>
+            <a href="https://osm.org/way/759624158">https://osm.org/way/759624158</a>
+            <a href="https://osm.org/way/63514618">https://osm.org/way/63514618</a>
+            <a href="https://osm.org/way/283748309">https://osm.org/way/283748309</a>
+            <a href="https://osm.org/way/87771042">peron 1: https://osm.org/way/87771042</a>
+            <a href="https://osm.org/way/87771032">peron 2: https://osm.org/way/87771032</a>
+            <a href="https://osm.org/way/130677604">peron: https://osm.org/way/130677604</a>
+            <a href="https://osm.org/way/130679731">peron: https://osm.org/way/130679731</a>
+            <a href="https://osm.org/way/130679745">peron: https://osm.org/way/130679745</a>
+            <a href="https://osm.org/node/1442872162">Nieporęt: https://osm.org/node/1442872162</a>
+            <a href="https://osm.org/way/131033862">https://osm.org/way/131033862</a>
+            <a href="https://osm.org/node/9276045093">Dąbkowizna: https://osm.org/node/9276045093</a>
+            <a href="https://osm.org/way/240723287">Peron: https://osm.org/way/240723287</a>
+            <a href="https://osm.org/way/240723312">Peron: https://osm.org/way/240723312</a>
+
+        <h2>Brakujący url dla trasy</h2>
+            <a href="https://osm.org/relation/3656069">R90: Działdowo - Warszawa: https://osm.org/relation/3656069</a>
+            <a href="https://osm.org/relation/3656070">R90: Warszawa - Działdowo: https://osm.org/relation/3656070</a>
+            <a href="https://osm.org/relation/7085355">A1: Podkowa Leśna Główna => Warszawa Śródmieście WKD: https://osm.org/relation/7085355</a>
+            <a href="https://osm.org/relation/7085356">A12: Warszawa Śródmieście WKD => Podkowa Lesnia Główna: https://osm.org/relation/7085356</a>
+            <a href="https://osm.org/relation/7085357">A1: Grodzisk Mazowiecki Radońska => Warszawa Śródmieście WKD: https://osm.org/relation/7085357</a>
+            <a href="https://osm.org/relation/7085358">A1: Warszawa Śródmieście WKD => Grodzisk Mazowiecki Radońska: https://osm.org/relation/7085358</a>
+            <a href="https://osm.org/relation/15285013">Tram 33: Kielecka => Piaski: https://osm.org/relation/15285013</a>
+
+
+
+        <h2>Niespodziewany ref</h2>
+            <a href="https://osm.org/way/190031408">1;3</a>
+            <a href="https://osm.org/way/445388022">2</a>
+
+        <h2>Ref przystanków WTP, które nie występują w żadnej trasie w OSM</h2>
+            <span>101313: Żerań FSO 13</span>
+            <span>154601: Sokola 01</span>
+            <span>154602: Sokola 02</span>
+            <span>154701: Wronia 01</span>
+            <span>154702: Wronia 02</span>
+            <span>175252: Leśna 52</span>
+            <span>176902: Helenów 02</span>
+            <span>184901: Paderewskiego 01</span>
+            <span>191002: Wieliszew 02</span>
+            <span>191301: Nieporęt 01</span>
+            <span>191302: Nieporęt 02</span>
+            <span>191401: Dąbkowizna 01</span>
+            <span>191402: Dąbkowizna 02</span>
+            <span>194802: Kochanowskiego 02</span>
+            <span>196252: Sokola 52</span>
+            <span>245401: Instytut Kardiologii 01</span>
+            <span>283751: Szekspira 51</span>
+            <span>284351: Łukasińskiego 51</span>
+            <span>284752: Kościuszki 52</span>
+            <span>284851: Grabskiego 51</span>
+            <span>284852: Grabskiego 52</span>
+            <span>285051: Iwaszkiewicza 51</span>
+            <span>285052: Iwaszkiewicza 52</span>
+
+
+
+
+        <h2>Linki do rozkładów WTP nielinkowane z żadnej relacji</h2>
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=126&wtp_dr=B&wtp_vr=4">https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=126&wtp_dr=B&wtp_vr=4</a>
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=702&wtp_dr=A&wtp_vr=0">https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=702&wtp_dr=A&wtp_vr=0</a>
+            <a href="https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=S2&wtp_dr=B&wtp_vr=3">https://wtp.waw.pl/rozklady-jazdy/?wtp_md=3&wtp_ln=S2&wtp_dr=B&wtp_vr=3</a>
+
+
+        <h2>Przystanki o wspólnym ref i z różnymi nazwami w OSM</h2>
+            <span>423402: Al. Piłsudskiego 02, Piastów Toruńska 02</span>
+
+
+        <h2>Mapowanie przystanków WTP => Rzeczywiste (tymczasowe zmiany, błąd WTP)</h2>
+            <span>(512002, Kolejowa 02) => (512052, Kolejowa 52)</span>
+            <span>(107002, Kamienna 02) => (107052, Kamienna 52)</span>
+
+    <iframe style="display:none;" id="hiddenIframe" name="hiddenIframe"></iframe>
+    <footer>
+        Początek generowania: 2023-01-21T01:11:09. Zajęło 724 sekund.
+        Źródło danych: <a href="https://osm.org/copyright/pl">© autorzy OpenStreetMap</a> oraz <a href="https://wtp.waw.pl">Warszawski Transport Publiczny</a>.
+        Kod na <a href="https://github.com/starsep/osm-wtp-compare">GitHubie</a>. Proszę tam zgłaszać błędy w skrypcie.
+    </footer>
+</body>
+</html>
