@@ -266,6 +266,17 @@ def validateWay(
             otherErrors.add("Trasa używa railway=construction")
         if tags["railway"] == "proposed":
             otherErrors.add("Trasa używa railway=proposed")
+    validateAccessTags(tags, otherErrors)
+
+
+def validateAccessTags(tags, otherErrors: Set[str]):
+    if (
+        "access" in tags
+        and tags["access"] == "no"
+        and ("bus" not in tags or tags["bus"] not in ["yes", "designated"])
+        and ("psv" not in tags or tags["psv"] not in ["yes", "designated"])
+    ):
+        otherErrors.add("access=no bez bus/psv=yes/designated")
 
 
 def checkStopNodesWithinRoute(
