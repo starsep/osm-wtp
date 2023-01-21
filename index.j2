@@ -35,23 +35,23 @@
     {% for ref, result in renderResults.items() %}
         {% if result["error"] %}
         <h1 id="{{ ref }}">Wyniki dla {{ ref }}</h1>
-        {% for routeResult in result["routeResults"] %}
-        {% set route = routeResult.route %}
-        {% if routeResult.diffRows or routeResult.otherErrors %}
+        {% for variantResult in result.variantResults %}
+        {% set variant = variantResult.variant %}
+        {% if variantResult.diffRows or variantResult.otherErrors %}
         <h3>
-            Błąd dla {{ route.osmName }}
-            {% if route.detour %}<span title="Trasa objazdowa">&#x1F7E0;</span>{% endif %}
-            {% if route.new %}<span title="Nowa trasa">&#x1F535;</span>{% endif %}
-            {% if route.short %}<span title="Trasa skrócona">&#x1F7E1;</span>{% endif %}
-            <a href="{{ route.wtpLink }}">WTP</a>
-            <a href="https://osm.org/relation/{{ route.osmId }}">OSM</a>
-            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r{{ route.osmId }}">JOSM</a>
+            Błąd dla {{ variant.osmName }}
+            {% if variant.detour %}<span title="Trasa objazdowa">&#x1F7E0;</span>{% endif %}
+            {% if variant.new %}<span title="Nowa trasa">&#x1F535;</span>{% endif %}
+            {% if variant.short %}<span title="Trasa skrócona">&#x1F7E1;</span>{% endif %}
+            <a href="{{ variant.operatorLink }}">WTP</a>
+            <a href="https://osm.org/relation/{{ variant.osmId }}">OSM</a>
+            <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r{{ variant.osmId }}">JOSM</a>
         </h3>
         {% endif %}
-        {% if routeResult.diffRows %}
+        {% if variantResult.diffRows %}
         <table>
             <thead><tr><th>OSM ref</th><th>OSM name</th><th>WTP ref</th><th>WTP name</th></thead>
-            {% for row in routeResult.diffRows %}
+            {% for row in variantResult.diffRows %}
                 <tr style="color: {{ row.color }};">
                     <td>{{ row.refOSM }}</td>
                     <td>{{ row.nameOSM }}</td>
@@ -61,7 +61,7 @@
             {% endfor %}
         </table>
         {% endif %}
-        {% for error in routeResult.otherErrors %}
+        {% for error in variantResult.otherErrors %}
             <span>{{ error }}</span>
         {% endfor %}
         {% endfor %}

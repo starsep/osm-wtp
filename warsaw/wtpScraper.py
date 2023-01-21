@@ -5,6 +5,7 @@ from urllib import parse
 from bs4 import BeautifulSoup
 
 from configuration import MISSING_REF
+from model.types import StopName, StopRef
 from warsaw.wtpLastStopRefs import lastStopRefs, lastStopRefAfter
 from model.stopData import StopData
 from scraper.scraper import cache, parseLinkArguments, fetchWebsite
@@ -128,7 +129,6 @@ def cachedParseWebsite(htmlContent: str, link: str) -> CachedWTPResult:
         anotherDateLink = notAvailableDiv[0].select("a")[0].get("href")
         anotherDateLinkArgs = parseLinkArguments(anotherDateLink)
         if wtpDateArg in anotherDateLinkArgs:
-            print(link, 124)
             return cachedScrapeLink(
                 link + f"&{wtpDateArg}={anotherDateLinkArgs[wtpDateArg][0]}"
             )
@@ -199,7 +199,7 @@ def scrapeHomepage():
     wtpSeenLinks.update(cachedScrapeHomepage())
 
 
-def lastStopRef(lastStopName: str, previousRef: str) -> str:
+def lastStopRef(lastStopName: StopName, previousRef: StopRef) -> str:
     key = (lastStopName, previousRef)
     if key in lastStopRefAfter:
         return lastStopRefAfter[key]
@@ -209,7 +209,7 @@ def lastStopRef(lastStopName: str, previousRef: str) -> str:
         return MISSING_REF
 
 
-def mapWtpStop(wtpStopRef: str, wtpStopName: str) -> Tuple[str, str]:
+def mapWtpStop(wtpStopRef: StopRef, wtpStopName: StopName) -> Tuple[StopRef, StopName]:
     key = (wtpStopRef, wtpStopName)
     if (wtpStopRef, wtpStopName) in wtpStopMapping:
         return wtpStopMapping[key]

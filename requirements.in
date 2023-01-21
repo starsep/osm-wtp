@@ -4,4 +4,3 @@ geojson
 httpx
 jinja2
 overpy
-tqdm
