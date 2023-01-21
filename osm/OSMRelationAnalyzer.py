@@ -217,18 +217,21 @@ def validateRouteGeometry(validatedWays: List[overpy.Way], otherErrors: Set[str]
 def matchWayNode(
     previousWay: overpy.Way, currentWay: overpy.Way, otherErrors: Set[str]
 ) -> bool:
+    if matchRoundabout(previousWay, currentWay, otherErrors) or matchRoundabout(currentWay, previousWay, otherErrors):
+        return True
     previousStart = previousWay.nodes[0].id
     previousEnd = previousWay.nodes[-1].id
     currentStart = currentWay.nodes[0].id
     currentEnd = currentWay.nodes[-1].id
-    return (
-        previousStart == currentStart
-        or previousEnd == currentStart
-        or previousStart == currentEnd
-        or previousEnd == currentEnd
-        or matchRoundabout(previousWay, currentWay, otherErrors)
-        or matchRoundabout(currentWay, previousWay, otherErrors)
-    )
+    if previousEnd == currentStart or previousEnd == currentEnd:
+        if "oneway" in previousWay.tags and previousWay.tags["oneway"] == "-1":
+            otherErrors.add("Jednokierunkowa droga używana pod prąd")
+        return True
+    if previousStart == currentStart or previousStart == currentEnd:
+        if "oneway" in previousWay.tags and previousWay.tags["oneway"] == "yes":
+            otherErrors.add("Jednokierunkowa droga używana pod prąd")
+        return True
+    return False
 
 
 def matchRoundabout(
