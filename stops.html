@@ -1,0 +1,552 @@
+<!DOCTYPE html>
+<html lang="pl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Porównanie danych OSM z WTP</title>
+    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
+</head><body>
+<nav>
+  <a href="index.html">Linie</a>
+  <a href="stops.html">Przystanki</a>
+  <a href="https://github.com/starsep/osm-wtp-compare">GitHub</a>
+</nav>    <h1>Problemy związane z przystankami/punktami zatrzymania</h1>
+
+        <h2>Przystanki oddalone o siebie powyżej 100 metrów w OSM/GTFS</h2>
+        <table>
+            <thead><tr><th>ref</th><th>nazwa OSM</th><th>nazwa GTFS</th><th>odległość [m]</th></thead>
+                <tr>
+                    <td>102501</td>
+                    <td>Poetów 01</td>
+                    <td>Poetów 01</td>
+                    <td>207</td>
+                </tr>
+                <tr>
+                    <td>135304</td>
+                    <td>Juranda ze Spychowa - Szkoła 04</td>
+                    <td>Juranda ze Spychowa - szkoła 04</td>
+                    <td>148</td>
+                </tr>
+                <tr>
+                    <td>139302</td>
+                    <td>Osiedle Niepodległości 02</td>
+                    <td>Wołomin Os. Niepodległości 02</td>
+                    <td>104</td>
+                </tr>
+                <tr>
+                    <td>156801</td>
+                    <td>Słowackiego 01</td>
+                    <td>Radzymin Słowackiego 01</td>
+                    <td>144</td>
+                </tr>
+                <tr>
+                    <td>171201</td>
+                    <td>Kordeckiego 01</td>
+                    <td>Kobyłka Kordeckiego 01</td>
+                    <td>198</td>
+                </tr>
+                <tr>
+                    <td>172601</td>
+                    <td>Magnolii 01</td>
+                    <td>Słupno Magnolii 01</td>
+                    <td>139</td>
+                </tr>
+                <tr>
+                    <td>174001</td>
+                    <td>Lipowa 01</td>
+                    <td>Słupno Lipowa 01</td>
+                    <td>160</td>
+                </tr>
+                <tr>
+                    <td>175401</td>
+                    <td>Kościelna 01</td>
+                    <td>Wołomin Kościelna 01</td>
+                    <td>163</td>
+                </tr>
+                <tr>
+                    <td>176901</td>
+                    <td>Helenów 01</td>
+                    <td>Helenów 01</td>
+                    <td>261</td>
+                </tr>
+                <tr>
+                    <td>177102</td>
+                    <td>Zagościniec-Szkoła 02</td>
+                    <td>Zagościniec - Szkoła 02</td>
+                    <td>115</td>
+                </tr>
+                <tr>
+                    <td>185202</td>
+                    <td>Wolności 02</td>
+                    <td>Zielonka Wolności 02</td>
+                    <td>238</td>
+                </tr>
+                <tr>
+                    <td>187702</td>
+                    <td>Sielska 02</td>
+                    <td>Stanisławów Pierwszy Sielska 02</td>
+                    <td>111</td>
+                </tr>
+                <tr>
+                    <td>187902</td>
+                    <td>Przemysłowa 02</td>
+                    <td>Okunin Przemysłowa 02</td>
+                    <td>125</td>
+                </tr>
+                <tr>
+                    <td>188402</td>
+                    <td>Przyjaciół 02</td>
+                    <td>Nieporęt Przyjaciół 02</td>
+                    <td>102</td>
+                </tr>
+                <tr>
+                    <td>222501</td>
+                    <td>Nowa Wieś 01</td>
+                    <td>Józefów Nowa Wieś 01</td>
+                    <td>104</td>
+                </tr>
+                <tr>
+                    <td>226101</td>
+                    <td>Strusia 01</td>
+                    <td>Strusia 01</td>
+                    <td>109</td>
+                </tr>
+                <tr>
+                    <td>232601</td>
+                    <td>Boryszewska 01</td>
+                    <td>Wiązowna Boryszewska 01</td>
+                    <td>158</td>
+                </tr>
+                <tr>
+                    <td>238201</td>
+                    <td>Wspólna 01</td>
+                    <td>Duchnów Wspólna 01</td>
+                    <td>388</td>
+                </tr>
+                <tr>
+                    <td>238302</td>
+                    <td>Spacerowa 02</td>
+                    <td>Duchnów Spacerowa 02</td>
+                    <td>197</td>
+                </tr>
+                <tr>
+                    <td>238401</td>
+                    <td>Duchnów 01</td>
+                    <td>Duchnów 01</td>
+                    <td>135</td>
+                </tr>
+                <tr>
+                    <td>240702</td>
+                    <td>Teofilów 02</td>
+                    <td>Wola Ducka Teofilów 02</td>
+                    <td>141</td>
+                </tr>
+                <tr>
+                    <td>247902</td>
+                    <td>Równa 02</td>
+                    <td>Majdan Równa 02</td>
+                    <td>116</td>
+                </tr>
+                <tr>
+                    <td>281602</td>
+                    <td>Świerk 02</td>
+                    <td>Otwock Świerk 02</td>
+                    <td>118</td>
+                </tr>
+                <tr>
+                    <td>304751</td>
+                    <td>Pałacowa 51</td>
+                    <td>Pałacowa 51</td>
+                    <td>261</td>
+                </tr>
+                <tr>
+                    <td>315651</td>
+                    <td>Bartyki 51</td>
+                    <td>Bartyki 51</td>
+                    <td>175</td>
+                </tr>
+                <tr>
+                    <td>338301</td>
+                    <td>Komputerowa 01</td>
+                    <td>Komputerowa 01</td>
+                    <td>117</td>
+                </tr>
+                <tr>
+                    <td>343901</td>
+                    <td>Srebrnych Świerków 01</td>
+                    <td>Julianów Srebrnych Świerków 01</td>
+                    <td>150</td>
+                </tr>
+                <tr>
+                    <td>344902</td>
+                    <td>Długa 02</td>
+                    <td>Chylice Długa 02</td>
+                    <td>100</td>
+                </tr>
+                <tr>
+                    <td>373002</td>
+                    <td>Polna 02</td>
+                    <td>Żabieniec Polna 02</td>
+                    <td>108</td>
+                </tr>
+                <tr>
+                    <td>374502</td>
+                    <td>Cendrowice 02</td>
+                    <td>Cendrowice 02</td>
+                    <td>110</td>
+                </tr>
+                <tr>
+                    <td>375602</td>
+                    <td>Zachodnia 02</td>
+                    <td>Piaseczno Zachodnia 02</td>
+                    <td>110</td>
+                </tr>
+                <tr>
+                    <td>378601</td>
+                    <td>Dobiesz II 01</td>
+                    <td>Dobiesz II 01</td>
+                    <td>117</td>
+                </tr>
+                <tr>
+                    <td>379801</td>
+                    <td>Anemonów 01</td>
+                    <td>Bogatki Anemonów 01</td>
+                    <td>266</td>
+                </tr>
+                <tr>
+                    <td>379802</td>
+                    <td>Anemonów 02</td>
+                    <td>Bogatki Anemonów 02</td>
+                    <td>193</td>
+                </tr>
+                <tr>
+                    <td>385001</td>
+                    <td>Habdzin IV 01</td>
+                    <td>Habdzin IV 01</td>
+                    <td>162</td>
+                </tr>
+                <tr>
+                    <td>385002</td>
+                    <td>Habdzin IV 02</td>
+                    <td>Habdzin IV 02</td>
+                    <td>127</td>
+                </tr>
+                <tr>
+                    <td>385102</td>
+                    <td>Łęg 02</td>
+                    <td>Łęg 02</td>
+                    <td>105</td>
+                </tr>
+                <tr>
+                    <td>396901</td>
+                    <td>Słomczyn 01</td>
+                    <td>Słomczyn 01</td>
+                    <td>147</td>
+                </tr>
+                <tr>
+                    <td>481802</td>
+                    <td>Postępu 02</td>
+                    <td>Nowa Wola Postępu 02</td>
+                    <td>146</td>
+                </tr>
+                <tr>
+                    <td>518101</td>
+                    <td>Łaźniewska 01</td>
+                    <td>Święcice Łaźniewska 01</td>
+                    <td>142</td>
+                </tr>
+                <tr>
+                    <td>519001</td>
+                    <td>Robotnicza 01</td>
+                    <td>Ożarów Mazowiecki Robotnicza 01</td>
+                    <td>113</td>
+                </tr>
+                <tr>
+                    <td>519101</td>
+                    <td>Orzechowa 01</td>
+                    <td>Strzykuły Orzechowa 01</td>
+                    <td>140</td>
+                </tr>
+                <tr>
+                    <td>614601</td>
+                    <td>Chodkiewicza 01</td>
+                    <td>Izabelin Chodkiewicza 01</td>
+                    <td>181</td>
+                </tr>
+                <tr>
+                    <td>665101</td>
+                    <td>Łomna-Szkoła 01</td>
+                    <td>Łomna - Szkoła 01</td>
+                    <td>111</td>
+                </tr>
+                <tr>
+                    <td>665102</td>
+                    <td>Łomna-Szkoła 02</td>
+                    <td>Łomna - Szkoła 02</td>
+                    <td>128</td>
+                </tr>
+                <tr>
+                    <td>665201</td>
+                    <td>Łomna Zachód 01</td>
+                    <td>Łomna Zachód 01</td>
+                    <td>132</td>
+                </tr>
+                <tr>
+                    <td>667302</td>
+                    <td>Dworska 02</td>
+                    <td>Wrzosówka Dworska 02</td>
+                    <td>233</td>
+                </tr>
+                <tr>
+                    <td>680301</td>
+                    <td>Borzęcin Mały 01</td>
+                    <td>Borzęcin Mały 01</td>
+                    <td>148</td>
+                </tr>
+        </table>
+
+        <h2>Brakująca nazwa</h2>
+            <a href="https://osm.org/way/69334280">https://osm.org/way/69334280</a>
+            <a href="https://osm.org/way/103410135">https://osm.org/way/103410135</a>
+            <a href="https://osm.org/way/759624158">https://osm.org/way/759624158</a>
+            <a href="https://osm.org/way/57731411">https://osm.org/way/57731411</a>
+            <a href="https://osm.org/way/63514618">https://osm.org/way/63514618</a>
+            <a href="https://osm.org/way/103410099">https://osm.org/way/103410099</a>
+            <a href="https://osm.org/way/283748309">https://osm.org/way/283748309</a>
+            <a href="https://osm.org/way/123444177">https://osm.org/way/123444177</a>
+            <a href="https://osm.org/way/225388770">https://osm.org/way/225388770</a>
+            <a href="https://osm.org/way/333276984">https://osm.org/way/333276984</a>
+            <a href="https://osm.org/relation/12155718">https://osm.org/relation/12155718</a>
+            <a href="https://osm.org/way/149942260">https://osm.org/way/149942260</a>
+            <a href="https://osm.org/way/149942255">https://osm.org/way/149942255</a>
+            <a href="https://osm.org/way/190029776">https://osm.org/way/190029776</a>
+            <a href="https://osm.org/way/190030639">https://osm.org/way/190030639</a>
+            <a href="https://osm.org/way/242360081">https://osm.org/way/242360081</a>
+            <a href="https://osm.org/way/242360083">https://osm.org/way/242360083</a>
+            <a href="https://osm.org/way/242360082">https://osm.org/way/242360082</a>
+            <a href="https://osm.org/way/207325010">https://osm.org/way/207325010</a>
+            <a href="https://osm.org/way/826273419">https://osm.org/way/826273419</a>
+            <a href="https://osm.org/way/182670857">https://osm.org/way/182670857</a>
+            <a href="https://osm.org/way/242060975">https://osm.org/way/242060975</a>
+            <a href="https://osm.org/way/130675961">https://osm.org/way/130675961</a>
+            <a href="https://osm.org/way/127322899">https://osm.org/way/127322899</a>
+            <a href="https://osm.org/way/130677604">https://osm.org/way/130677604</a>
+            <a href="https://osm.org/way/130679731">https://osm.org/way/130679731</a>
+            <a href="https://osm.org/way/130679745">https://osm.org/way/130679745</a>
+            <a href="https://osm.org/way/131033862">https://osm.org/way/131033862</a>
+            <a href="https://osm.org/way/826273418">https://osm.org/way/826273418</a>
+
+        <h2>Brakujący ref</h2>
+            <a href="https://osm.org/way/150067063">Warszawa Rembertów: https://osm.org/way/150067063</a>
+            <a href="https://osm.org/way/759624158">https://osm.org/way/759624158</a>
+            <a href="https://osm.org/way/63514618">https://osm.org/way/63514618</a>
+            <a href="https://osm.org/way/283748309">https://osm.org/way/283748309</a>
+            <a href="https://osm.org/way/87771042">peron 1: https://osm.org/way/87771042</a>
+            <a href="https://osm.org/way/87771032">peron 2: https://osm.org/way/87771032</a>
+            <a href="https://osm.org/node/1442872162">Nieporęt: https://osm.org/node/1442872162</a>
+            <a href="https://osm.org/way/131033862">https://osm.org/way/131033862</a>
+            <a href="https://osm.org/node/9276045093">Dąbkowizna: https://osm.org/node/9276045093</a>
+            <a href="https://osm.org/way/240723287">Peron: https://osm.org/way/240723287</a>
+            <a href="https://osm.org/way/240723312">Peron: https://osm.org/way/240723312</a>
+
+        <h2>Niespodziewany ref</h2>
+            <a href="https://osm.org/way/190031408">1;3</a>
+            <a href="https://osm.org/way/445388022">2</a>
+
+        <h2>Ref przystanków WTP, które nie występują w żadnej trasie w OSM</h2>
+            <span>154601: Sokola 01</span>
+            <span>154602: Sokola 02</span>
+            <span>154701: Wronia 01</span>
+            <span>154702: Wronia 02</span>
+            <span>175252: Leśna 52</span>
+            <span>176902: Helenów 02</span>
+            <span>184901: Paderewskiego 01</span>
+            <span>191002: Wieliszew 02</span>
+            <span>191301: Nieporęt 01</span>
+            <span>191302: Nieporęt 02</span>
+            <span>191401: Dąbkowizna 01</span>
+            <span>191402: Dąbkowizna 02</span>
+            <span>194802: Kochanowskiego 02</span>
+            <span>196252: Sokola 52</span>
+            <span>245401: Instytut Kardiologii 01</span>
+            <span>283751: Szekspira 51</span>
+            <span>284351: Łukasińskiego 51</span>
+            <span>284752: Kościuszki 52</span>
+            <span>284851: Grabskiego 51</span>
+            <span>284852: Grabskiego 52</span>
+            <span>285051: Iwaszkiewicza 51</span>
+            <span>285052: Iwaszkiewicza 52</span>
+
+
+
+        <h2>Przystanki o wspólnym ref i z różnymi nazwami w OSM</h2>
+            <span>423402: Al. Piłsudskiego 02, Piastów Toruńska 02</span>
+
+
+        <h2>Mapowanie przystanków WTP => Rzeczywiste (tymczasowe zmiany, błąd WTP)</h2>
+            <span>(512002, Kolejowa 02) => (512052, Kolejowa 52)</span>
+            <span>(107002, Kamienna 02) => (107052, Kamienna 52)</span>
+
+        <h2>Przystanki w OSM niebędące w GTFS</h2>
+            <span>107052: Kamienna 52</span>
+            <span>185301: Młodzieżowa 01</span>
+            <span>185302: Młodzieżowa 02</span>
+            <span>185401: Sowińskiego 01</span>
+            <span>185402: Sowińskiego 02</span>
+            <span>190101: Warszawa ZOO 01</span>
+            <span>190102: Warszawa ZOO 02</span>
+            <span>190201: Warszawa Praga 01</span>
+            <span>190202: Warszawa Praga 02</span>
+            <span>190301: Warszawa Toruńska 01</span>
+            <span>190302: Warszawa Toruńska 02</span>
+            <span>190401: Warszawa Żerań 01</span>
+            <span>190402: Warszawa Żerań 02</span>
+            <span>190501: Warszawa Płudy 01</span>
+            <span>190502: Warszawa Płudy 02</span>
+            <span>190601: Warszawa Choszczówka 01</span>
+            <span>190602: Warszawa Choszczówka 02</span>
+            <span>190701: Legionowo 01</span>
+            <span>190702: Legionowo 02</span>
+            <span>190801: Legionowo Piaski 01</span>
+            <span>190802: Legionowo Piaski 02</span>
+            <span>190901: Michałów-Reginów 01</span>
+            <span>190902: Michałów-Reginów 02</span>
+            <span>191001: Wieliszew 01</span>
+            <span>191501: Radzymin 01</span>
+            <span>196101: Leszczyńska 01</span>
+            <span>196201: Sokola 01</span>
+            <span>196301: Brzozowa 01</span>
+            <span>226002: Skrzyneckiego 02</span>
+            <span>246601: Legionów 01</span>
+            <span>246602: Legionów 02</span>
+            <span>246701: Moniuszki 01</span>
+            <span>246702: Moniuszki 02</span>
+            <span>283701: Szekspira 01</span>
+            <span>283801: Dąbrowskiego 01</span>
+            <span>284301: Łukasińskiego 01</span>
+            <span>284702: Kościuszki 02</span>
+            <span>285001: Iwaszkiewicza 01</span>
+            <span>285002: Iwaszkiewicza 02</span>
+            <span>290001: Warszawa Wschodnia 01</span>
+            <span>290002: Warszawa Wschodnia 02</span>
+            <span>290101: Warszawa Stadion 01</span>
+            <span>290102: Warszawa Stadion 02</span>
+            <span>290201: Warszawa Olszynka Grochowska 01</span>
+            <span>290202: Warszawa Olszynka Grochowska 02</span>
+            <span>290301: Warszawa Gocławek 01</span>
+            <span>290302: Warszawa Gocławek 02</span>
+            <span>290401: Warszawa Wawer 01</span>
+            <span>290402: Warszawa Wawer 02</span>
+            <span>290501: Warszawa Anin 01</span>
+            <span>290502: Warszawa Anin 02</span>
+            <span>290601: Warszawa Międzylesie 01</span>
+            <span>290602: Warszawa Międzylesie 02</span>
+            <span>290701: Warszawa Radość 01</span>
+            <span>290702: Warszawa Radość 02</span>
+            <span>290801: Warszawa Miedzeszyn 01</span>
+            <span>290802: Warszawa Miedzeszyn 02</span>
+            <span>290901: Warszawa Falenica 01</span>
+            <span>290902: Warszawa Falenica 02</span>
+            <span>291001: Warszawa Rembertów 01</span>
+            <span>291002: Warszawa Rembertów 02</span>
+            <span>291101: Warszawa Wesoła 01</span>
+            <span>291102: Warszawa Wesoła 02</span>
+            <span>291201: Warszawa Wola Grzybowska 01</span>
+            <span>291202: Warszawa Wola Grzybowska 02</span>
+            <span>291301: Sulejówek 01</span>
+            <span>291302: Sulejówek 02</span>
+            <span>291401: Sulejówek Miłosna 01</span>
+            <span>291501: Michalin 01</span>
+            <span>291502: Michalin 02</span>
+            <span>291601: Józefów 01</span>
+            <span>291602: Józefów 02</span>
+            <span>291701: Otwock Świder 01</span>
+            <span>291702: Otwock Świder 02</span>
+            <span>291803: Otwock 03</span>
+            <span>390101: Warszawa Służewiec 01</span>
+            <span>390102: Warszawa Służewiec 02</span>
+            <span>490001: Warszawa Zachodnia 01</span>
+            <span>490002: Warszawa Zachodnia 02</span>
+            <span>490101: Warszawa Ochota 01</span>
+            <span>490102: Warszawa Ochota 02</span>
+            <span>490201: Warszawa Włochy 01</span>
+            <span>490202: Warszawa Włochy 02</span>
+            <span>490301: Warszawa Ursus 01</span>
+            <span>490302: Warszawa Ursus 02</span>
+            <span>490401: Piastów 01</span>
+            <span>490402: Piastów 02</span>
+            <span>490501: Pruszków 01</span>
+            <span>490502: Pruszków 02</span>
+            <span>491301: Warszawa Aleje Jerozolimskie 01</span>
+            <span>491302: Warszawa Aleje Jerozolimskie 02</span>
+            <span>491701: Warszawa Rakowiec 01</span>
+            <span>491702: Warszawa Rakowiec 02</span>
+            <span>491801: Warszawa Żwirki i Wigury 01</span>
+            <span>491802: Warszawa Żwirki i Wigury 02</span>
+            <span>491901: Warszawa Lotnisko Chopina 01</span>
+            <span>491902: Warszawa Lotnisko Chopina 02</span>
+            <span>492301: Warszawa Ursus Niedźwiadek 01</span>
+            <span>492302: Warszawa Ursus Niedźwiadek 02</span>
+            <span>512052: Kolejowa 52</span>
+            <span>590207: Warszawa Zachodnia (Peron 9) 07</span>
+            <span>590208: Warszawa Zachodnia (Peron 9) 08</span>
+            <span>590301: Warszawa Wola 01</span>
+            <span>590302: Warszawa Wola 02</span>
+            <span>590401: Warszawa Młynów 01</span>
+            <span>590402: Warszawa Młynów 02</span>
+            <span>590701: Warszawa Koło 01</span>
+            <span>590702: Warszawa Koło 02</span>
+            <span>590801: Warszawa Powązki 01</span>
+            <span>590802: Warszawa Powązki 02</span>
+            <span>790101: Warszawa Śródmieście 01</span>
+            <span>790102: Warszawa Śródmieście 02</span>
+            <span>790201: Warszawa Powiśle 01</span>
+            <span>790202: Warszawa Powiśle 02</span>
+            <span>790301: Warszawa Gdańska 01</span>
+            <span>790302: Warszawa Gdańska 02</span>
+
+        <h2>Przystanki w GTFS niebędące w żadnej relacji w OSM</h2>
+            <span>102808: Dw. Wschodni (Kijowska) 08</span>
+            <span>107002: Kamienna 02</span>
+            <span>107601: 11 Listopada 01</span>
+            <span>116601: Kopijników 01</span>
+            <span>125310: Nowodwory 10</span>
+            <span>146901: Świderska 01</span>
+            <span>150702: Tarchomin Kościelny 02</span>
+            <span>154601: Marki Sokola 01</span>
+            <span>154602: Marki Sokola 02</span>
+            <span>154701: Marki Wronia 01</span>
+            <span>154702: Marki Wronia 02</span>
+            <span>175252: Wołomin Leśna 52</span>
+            <span>176902: Helenów 02</span>
+            <span>184901: Zielonka Paderewskiego 01</span>
+            <span>194802: Czarna Kochanowskiego 02</span>
+            <span>196252: Wołomin Sokola 52</span>
+            <span>245401: Instytut Kardiologii 01</span>
+            <span>283751: Sulejówek Szekspira 51</span>
+            <span>284351: Sulejówek Łukasińskiego 51</span>
+            <span>284752: Sulejówek Kościuszki 52</span>
+            <span>284851: Sulejówek Grabskiego 51</span>
+            <span>284852: Sulejówek Grabskiego 52</span>
+            <span>285051: Sulejówek Iwaszkiewicza 51</span>
+            <span>285052: Sulejówek Iwaszkiewicza 52</span>
+            <span>287153: Otwock Pułaskiego 53</span>
+            <span>324010: Woronicza 10</span>
+            <span>325412: PKP Służewiec 12</span>
+            <span>325803: Zajezdnia Woronicza 03</span>
+            <span>326302: Rondo Żabczyńskiego 02</span>
+            <span>400310: Pl. Narutowicza 10</span>
+            <span>400314: Pl. Narutowicza 14</span>
+            <span>409004: Zajezdnia Kleszczowa 04</span>
+            <span>512002: Kolejowa 02</span>
+            <span>604510: Piaski 10</span>
+            <span>606107: Zajezdnia Żoliborz 07</span>
+            <span>606108: Zajezdnia Żoliborz 08</span>
+
+<iframe style="display:none;" id="hiddenIframe" name="hiddenIframe"></iframe>
+<footer>
+    Początek generowania: 2023-01-22T23:21:48. Zajęło 6 sekund.
+    Źródło danych: <a href="https://osm.org/copyright/pl">© autorzy OpenStreetMap</a> oraz <a href="https://wtp.waw.pl">Warszawski Transport Publiczny</a>.
+    Kod na <a href="https://github.com/starsep/osm-wtp-compare">GitHubie</a>. Proszę tam zgłaszać błędy w skrypcie.
+</footer></body>
+</html>
