@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html lang="pl">
+{% include "head.j2" %}
+<body>
+    {% include "nav.j2" %}
+    <h1>Problemy związane z przystankami/punktami zatrzymania</h1>
+
+    {% if farAwayStops %}
+        <h2>Przystanki oddalone o siebie powyżej {{ stopDistanceThreshold }} metrów w OSM/GTFS</h2>
+        <table>
+            <thead><tr><th>ref</th><th>nazwa OSM</th><th>nazwa GTFS</th><th>odległość [m]</th></thead>
+            {% for (ref, distance) in farAwayStops %}
+                <tr>
+                    <td>{{ ref }}</td>
+                    <td>{{ osmStops[ref].name }}</td>
+                    <td>{{ gtfsStops[ref].name }}</td>
+                    <td>{{ distance }}</td>
+                </tr>
+            {% endfor %}
+        </table>
+    {% endif %}
+
+    {% if missingName %}
+        <h2>Brakująca nazwa</h2>
+        {% for link in missingName %}
+            <a href="{{ link }}">{{ link }}</a>
+        {% endfor %}
+    {% endif %}
+
+    {% if missingStopRef %}
+        <h2>Brakujący ref</h2>
+        {% for (link, name) in missingStopRef %}
+            <a href="{{ link }}">{% if name %}{{ name }}: {% endif %}{{ link }}</a>
+        {% endfor %}
+    {% endif %}
+
+    {% if unexpectedStopRef %}
+        <h2>Niespodziewany ref</h2>
+        {% for (link, ref) in unexpectedStopRef %}
+            <a href="{{ link }}">{{ ref }}</a>
+        {% endfor %}
+    {% endif %}
+
+    {% if missingRefsInOSM %}
+        <h2>Ref przystanków WTP, które nie występują w żadnej trasie w OSM</h2>
+        {% for (ref, name) in missingRefsInOSM %}
+            <span>{{ ref }}: {{ name}}</span>
+        {% endfor %}
+    {% endif %}
+
+    {% if mismatchOSMNameRef %}
+        <h2>Przystanki w OSM, których nazwa nie pasuje do ref (dwa ostatnie znaki są różne)</h2>
+        {% for (ref, name, osmLink) in mismatchOSMNameRef %}
+            <span><a href="{{ osmLink }}">{{ name }} (ref={{ ref }})</a></span>
+        {% endfor %}
+    {% endif %}
+
+    {% if missingLastStopRefNames %}
+        <h2>Nazwy ostatnich przystanków bez ref</h2>
+        {% for (stopName, previousRef) in missingLastStopRefNames %}
+            <span>{{ stopName }} po {{ previousRef }}</span>
+        {% endfor %}
+    {% endif %}
+
+    {% if notUniqueOSMNames %}
+        <h2>Przystanki o wspólnym ref i z różnymi nazwami w OSM</h2>
+        {% for (ref, names) in notUniqueOSMNames.items() %}
+            <span>{{ ref}}: {% for name in names %}{{ name }}{{ ", " if not loop.last else "" }}{% endfor %}</span>
+        {% endfor %}
+    {% endif %}
+
+    {% if notUniqueWTPNames %}
+        <h2>Przystanki o wspólnym ref i różnymi nazwami w WTP</h2>
+        {% for (ref, names) in notUniqueWTPNames.items() %}
+            <span>{{ ref}}: {% for name in names %}{{ name }}{{ ", " if not loop.last else "" }}{% endfor %}</span>
+        {% endfor %}
+    {% endif %}
+
+    {% if wtpStopMapping %}
+        <h2>Mapowanie przystanków WTP => Rzeczywiste (tymczasowe zmiany, błąd WTP)</h2>
+        {% for ((stopRefWTP, stopNameWTP), (actualStopRef, actualStopName)) in wtpStopMapping.items() %}
+            <span>({{ stopRefWTP }}, {{ stopNameWTP }}) => ({{ actualStopRef }}, {{ actualStopName }})</span>
+        {% endfor %}
+    {% endif %}
+
+    {% if osmStopRefsNotInGTFS %}
+        <h2>Przystanki w OSM niebędące w GTFS</h2>
+        {% for osmStopRef in osmStopRefsNotInGTFS %}
+            {% set osmStop = osmStops[osmStopRef] %}
+            <span>{{ osmStop.ref }}: {{ osmStop.name }}</span>
+        {% endfor %}
+    {% endif %}
+
+    {% if gtfsStopRefsNotInOSM %}
+        <h2>Przystanki w GTFS niebędące w żadnej relacji w OSM</h2>
+        {% for gtfsStopRef in gtfsStopRefsNotInOSM %}
+            {% set gtfsStop = gtfsStops[gtfsStopRef] %}
+            <span>{{ gtfsStop.ref }}: {{ gtfsStop.name }}</span>
+        {% endfor %}
+    {% endif %}
+
+    {% include "footer.j2" %}
+</body>
+</html>

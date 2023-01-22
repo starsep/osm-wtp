@@ -1,12 +1,8 @@
 <!DOCTYPE html>
 <html lang="pl">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Porównanie danych OSM z WTP</title>
-    <link rel="stylesheet" href="https://cdn.simplecss.org/simple.min.css">
-</head>
+{% include "head.j2" %}
 <body>
+    {% include "nav.j2" %}
     <p>
         Na tej stronie można znaleźć porównanie danych transportu publicznego OpenStreetMap oraz Warszawskiego Transportu Publicznego.
         Strona <a href="https://wtp.waw.pl">wtp.waw.pl</a> ma czasami błędy. Nie należy ślepo wierzyć i kopiować.
@@ -70,7 +66,7 @@
     <h1>Inne błędy</h1>
 
     {% if disusedStop %}
-        <h2>Przystanek z disused w tagu</h2>
+        <h2>Przystanek z disused w tagu używana w trasie</h2>
         {% for link in disusedStop %}
             <a href="{{ link }}">{{ link }}</a>
         {% endfor %}
@@ -87,20 +83,6 @@
         <h2>WTP: Brakujący przystanek końcowy</h2>
         {% for wtpUrl in wtpMissingLastStop %}
             <a href="{{ wtpUrl }}">{{ wtpUrl }}</a>
-        {% endfor %}
-    {% endif %}
-
-    {% if missingName %}
-        <h2>Brakująca nazwa</h2>
-        {% for link in missingName %}
-            <a href="{{ link }}">{{ link }}</a>
-        {% endfor %}
-    {% endif %}
-
-    {% if missingRef %}
-        <h2>Brakujący ref</h2>
-        {% for (link, name) in missingRef %}
-            <a href="{{ link }}">{% if name %}{{ name }}: {% endif %}{{ link }}</a>
         {% endfor %}
     {% endif %}
 
@@ -125,27 +107,6 @@
         {% endfor %}
     {% endif %}
 
-    {% if unexpectedRef %}
-        <h2>Niespodziewany ref</h2>
-        {% for (link, ref) in unexpectedRef %}
-            <a href="{{ link }}">{{ ref }}</a>
-        {% endfor %}
-    {% endif %}
-
-    {% if missingRefsInOSM %}
-        <h2>Ref przystanków WTP, które nie występują w żadnej trasie w OSM</h2>
-        {% for (ref, name) in missingRefsInOSM %}
-            <span>{{ ref }}: {{ name}}</span>
-        {% endfor %}
-    {% endif %}
-
-    {% if mismatchOSMNameRef %}
-        <h2>Przystanki w OSM, których nazwa nie pasuje do ref (dwa ostatnie znaki są różne)</h2>
-        {% for (ref, name, osmLink) in mismatchOSMNameRef %}
-            <span><a href="{{ osmLink }}">{{ name }} (ref={{ ref }})</a></span>
-        {% endfor %}
-    {% endif %}
-
     {% if invalidWtpVariants %}
         <h2>Niedostępne nr wariantów linii na WTP</h2>
         {% for (wtpLink, osmLink) in invalidWtpVariants %}
@@ -167,39 +128,6 @@
         {% endfor %}
     {% endif %}
 
-    {% if missingLastStopRefNames %}
-        <h2>Nazwy ostatnich przystanków bez ref</h2>
-        {% for (stopName, previousRef) in missingLastStopRefNames %}
-            <span>{{ stopName }} po {{ previousRef }}</span>
-        {% endfor %}
-    {% endif %}
-
-    {% if notUniqueOSMNames %}
-        <h2>Przystanki o wspólnym ref i z różnymi nazwami w OSM</h2>
-        {% for (ref, names) in notUniqueOSMNames.items() %}
-            <span>{{ ref}}: {% for name in names %}{{ name }}{{ ", " if not loop.last else "" }}{% endfor %}</span>
-        {% endfor %}
-    {% endif %}
-
-    {% if notUniqueWTPNames %}
-        <h2>Przystanki o wspólnym ref i różnymi nazwami w WTP</h2>
-        {% for (ref, names) in notUniqueWTPNames.items() %}
-            <span>{{ ref}}: {% for name in names %}{{ name }}{{ ", " if not loop.last else "" }}{% endfor %}</span>
-        {% endfor %}
-    {% endif %}
-
-    {% if wtpStopMapping %}
-        <h2>Mapowanie przystanków WTP => Rzeczywiste (tymczasowe zmiany, błąd WTP)</h2>
-        {% for ((stopRefWTP, stopNameWTP), (actualStopRef, actualStopName)) in wtpStopMapping.items() %}
-            <span>({{ stopRefWTP }}, {{ stopNameWTP }}) => ({{ actualStopRef }}, {{ actualStopName }})</span>
-        {% endfor %}
-    {% endif %}
-
-    <iframe style="display:none;" id="hiddenIframe" name="hiddenIframe"></iframe>
-    <footer>
-        Początek generowania: {{ startTime }}. Zajęło {{ generationSeconds }} sekund.
-        Źródło danych: <a href="https://osm.org/copyright/pl">© autorzy OpenStreetMap</a> oraz <a href="https://wtp.waw.pl">Warszawski Transport Publiczny</a>.
-        Kod na <a href="https://github.com/starsep/osm-wtp-compare">GitHubie</a>. Proszę tam zgłaszać błędy w skrypcie.
-    </footer>
+    {% include "footer.j2" %}
 </body>
 </html>

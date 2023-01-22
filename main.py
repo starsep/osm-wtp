@@ -10,6 +10,7 @@ from jinja2 import (
 )
 
 from compare.comparator import compareStops
+from gtfs.osmGTFSStopsComparer import compareOSMAndGTFSStops, STOP_DISTANCE_THRESHOLD
 from osm.OSMRelationAnalyzer import (
     analyzeOSMRelations,
     osmRefToName,
@@ -20,11 +21,11 @@ from osm.OSMRelationAnalyzer import (
     mismatchOSMNameRef,
     missingName,
     missingRouteUrl,
-    missingRef,
+    missingStopRef,
     allOSMRefs,
     unexpectedLink,
     unexpectedNetwork,
-    unexpectedRef,
+    unexpectedStopRef,
     wtpLinkDuplicates,
 )
 from warsaw.wtpScraper import (
@@ -49,27 +50,44 @@ def processData():
         wtpLinkParams = WTPLink.fromTuple(link)
         if wtpLinkParams.line not in ["M1", "M2"]:
             notLinkedWtpUrls.add(wtpLinkParams.url())
-
+    osmAndGTFSComparisonResult = compareOSMAndGTFSStops()
+    env = Environment(
+        loader=FileSystemLoader(searchpath="./templates"),
+        autoescape=select_autoescape(),
+        trim_blocks=True,
+        lstrip_blocks=True,
+        undefined=StrictUndefined,
+    )
+    endTime = datetime.now()
+    generationSeconds = int((endTime - startTime).total_seconds())
+    sharedContext = dict(
+        startTime=startTime.isoformat(timespec="seconds"),
+        generationSeconds=generationSeconds,
+    )
     with Path("../osm-wtp/index.html").open("w") as f:
-        env = Environment(
-            loader=FileSystemLoader(searchpath="./"),
-            autoescape=select_autoescape(),
-            trim_blocks=True,
-            lstrip_blocks=True,
-            undefined=StrictUndefined,
-        )
         template = env.get_template("index.j2")
-        endTime = datetime.now()
-        generationSeconds = int((endTime - startTime).total_seconds())
         f.write(
             template.render(
                 refs=compareResults.refs,
-                startTime=startTime.isoformat(timespec="seconds"),
-                generationSeconds=generationSeconds,
                 renderResults=compareResults.renderResults,
                 disusedStop=disusedStop,
                 invalidWtpVariants=invalidOperatorVariants,
                 wtpManyLastStops=manyLastStops,
+                wtpMissingLastStop=wtpMissingLastStop,
+                missingRouteUrl=missingRouteUrl,
+                notLinkedWtpUrls=sorted(list(notLinkedWtpUrls)),
+                unexpectedLink=unexpectedLink,
+                unexpectedNetwork=unexpectedNetwork,
+                wtpLinkDuplicates=wtpLinkDuplicates,
+                **sharedContext
+            )
+        )
+    with Path("../osm-wtp/stops.html").open("w") as f:
+        template = env.get_template("stops.j2")
+        f.write(
+            template.render(
+                farAwayStops=osmAndGTFSComparisonResult.farAwayStops,
+                stopDistanceThreshold=int(STOP_DISTANCE_THRESHOLD),
                 notUniqueOSMNames={
                     ref: names for ref, names in osmRefToName.items() if len(names) > 1
                 },
@@ -79,21 +97,20 @@ def processData():
                     if len(names) > 1
                 },
                 mismatchOSMNameRef=mismatchOSMNameRef,
-                wtpMissingLastStop=wtpMissingLastStop,
                 missingLastStopRefNames=list(sorted(wtpMissingLastStopRefNames)),
                 missingName=missingName,
-                missingRouteUrl=missingRouteUrl,
-                missingRef=missingRef,
+                missingStopRef=missingStopRef,
                 missingRefsInOSM=[
                     (ref, list(compareResults.operatorRefToName[ref])[0])
                     for ref in sorted(wtpStopRefs - allOSMRefs)
                 ],
-                notLinkedWtpUrls=sorted(list(notLinkedWtpUrls)),
-                unexpectedLink=unexpectedLink,
-                unexpectedNetwork=unexpectedNetwork,
-                unexpectedRef=unexpectedRef,
+                unexpectedStopRef=unexpectedStopRef,
                 wtpStopMapping=wtpStopMapping,
-                wtpLinkDuplicates=wtpLinkDuplicates,
+                osmStops=osmAndGTFSComparisonResult.osmStops,
+                gtfsStops=osmAndGTFSComparisonResult.gtfsStops,
+                osmStopRefsNotInGTFS=osmAndGTFSComparisonResult.osmStopRefsNotInGTFS,
+                gtfsStopRefsNotInOSM=osmAndGTFSComparisonResult.gtfsStopRefsNotInOSM,
+                **sharedContext
             )
         )
 

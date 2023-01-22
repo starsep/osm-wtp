@@ -7,7 +7,7 @@ from diskcache import Cache
 from configuration import WARSAW_PUBLIC_TRANSPORT_ID, OVERPASS_URL, cacheDirectory
 from model.stopData import StopData
 from model.types import StopName, RouteRef, StopRef
-from osm.utils import elementUrl
+from osm.utils import elementUrl, coordinatesOfStop
 from warsaw.wtpScraper import wtpDomain, WTPLink, scrapeLink
 
 mismatchOSMNameRef = set()
@@ -67,15 +67,24 @@ class VariantResult:
     otherErrors: Set[str]
 
 
+@dataclass
+class OSMStop:
+    ref: StopRef
+    name: StopName
+    lat: float
+    lon: float
+
+
 allOSMRefs = set()
 disusedStop = set()
 manyLastStops = set()
 missingName = set()
 missingRouteUrl = set()
-missingRef = set()
+missingStopRef = set()
 unexpectedLink = set()
 unexpectedNetwork = set()
-unexpectedRef = set()
+unexpectedStopRef = set()
+osmStopsWithLocation: Dict[StopRef, OSMStop] = dict()
 
 invalidOperatorVariants = set()
 osmOperatorLinks: Set[Tuple[str, str, str]] = set()
@@ -140,20 +149,31 @@ def analyzeOSMRelations() -> OSMResults:
                 if osmStopName is None:
                     missingName.add(elementUrl(element))
                     if osmStopRef is None:
-                        missingRef.add((elementUrl(element), ""))
+                        missingStopRef.add((elementUrl(element), ""))
                     continue
                 if osmStopRef is None:
-                    missingRef.add((elementUrl(element), osmStopName))
+                    missingStopRef.add((elementUrl(element), osmStopName))
                     continue
                 if len(osmStopRef) != 6:
                     if "network" in tags and tags["network"] == "ZTM Warszawa":
-                        unexpectedRef.add((elementUrl(element), osmStopRef))
+                        unexpectedStopRef.add((elementUrl(element), osmStopRef))
                     continue
                 if osmStopRef not in osmRefToName:
                     osmRefToName[osmStopRef] = set()
                 osmRefToName[osmStopRef].add(osmStopName)
                 stop = StopData(name=osmStopName, ref=osmStopRef)
                 checkOSMNameMatchesRef(stop, elementUrl(element))
+                # prefer stop to platform
+                if osmStopRef not in osmStopsWithLocation or role == "stop":
+                    coords = coordinatesOfStop(element)
+                    if coords is not None:
+                        lat, lon = coords
+                        osmStopsWithLocation[osmStopRef] = OSMStop(
+                            ref=osmStopRef,
+                            name=osmStopName,
+                            lat=lat,
+                            lon=lon,
+                        )
                 if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
                     osmStops.append(stop)
                     allOSMRefs.add(stop.ref)
@@ -217,7 +237,9 @@ def validateRouteGeometry(validatedWays: List[overpy.Way], otherErrors: Set[str]
 def matchWayNode(
     previousWay: overpy.Way, currentWay: overpy.Way, otherErrors: Set[str]
 ) -> bool:
-    if matchRoundabout(previousWay, currentWay, otherErrors) or matchRoundabout(currentWay, previousWay, otherErrors):
+    if matchRoundabout(previousWay, currentWay, otherErrors) or matchRoundabout(
+        currentWay, previousWay, otherErrors
+    ):
         return True
     previousStart = previousWay.nodes[0].id
     previousEnd = previousWay.nodes[-1].id
