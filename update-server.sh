@@ -22,9 +22,11 @@ cd ../osm-wtp || return
 git config user.name "OSM WTP Bot"
 git config user.email "<>"
 mv index.html index2.html
+mv stops.html stops2.html
 git pull
 mv index2.html index.html
-git add index.html
+mv stops2.html stops.html
+git add *.html
 git commit -m "Update $date"
 git push origin main
 cd ../osm-wtp-compare || return
