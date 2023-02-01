@@ -372,6 +372,7 @@ lastStopRefs: Dict[str, str] = {
     "Radzymin 01": "191501",
     "Rakowiecka-Sanktuarium 06": "328606",
     "Rechniewskiego 02": "250202",
+    "Reduta Wolska 07": "500907",
     "Regulska 02": "413002",
     "Rembertów-Akademia 01": "208801",
     "Rembertów-Kolonia 01": "208601",
