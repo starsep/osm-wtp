@@ -152,7 +152,8 @@ def analyzeOSMRelations() -> OSMResults:
                 osmStopRef = parseRef(tags)
                 osmStopName = parseName(tags)
                 if osmStopName is None:
-                    missingName.add(elementUrl(element))
+                    if not ("railway" in tags and tags["railway"] == "platform"):
+                        missingName.add(elementUrl(element))
                     if osmStopRef is None:
                         missingStopRef.add((elementUrl(element), ""))
                     continue
