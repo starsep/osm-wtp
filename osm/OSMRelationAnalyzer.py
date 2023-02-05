@@ -4,10 +4,11 @@ from typing import Optional, Dict, List, Set, Tuple, cast
 import overpy
 from diskcache import Cache
 
-from configuration import WARSAW_PUBLIC_TRANSPORT_ID, OVERPASS_URL, cacheDirectory
+from configuration import OVERPASS_URL, cacheDirectory
 from model.stopData import StopData
 from model.types import StopName, RouteRef, StopRef
 from osm.utils import elementUrl, coordinatesOfStop
+from warsaw.warsawConstants import WARSAW_PUBLIC_TRANSPORT_ID, WKD_WIKIDATA, KM_WIKIDATA
 from warsaw.wtpScraper import wtpDomain, WTPLink, scrapeLink
 
 mismatchOSMNameRef = set()
@@ -110,7 +111,11 @@ def analyzeOSMRelations() -> OSMResults:
         ):
             continue
         if "url" not in tags:
-            missingRouteUrl.add((elementUrl(route), tags.get("name", "")))
+            if not (
+                "operator:wikidata" in tags
+                and tags["operator:wikidata"] in [KM_WIKIDATA, WKD_WIKIDATA]
+            ):
+                missingRouteUrl.add((elementUrl(route), tags.get("name", "")))
             continue
         if "network" in tags and tags["network"] != "ZTM Warszawa":
             unexpectedNetwork.add((elementUrl(route), tags["network"]))
