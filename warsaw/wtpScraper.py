@@ -1,3 +1,4 @@
+import re
 from dataclasses import dataclass
 from typing import Optional, Tuple, List, Set
 from urllib import parse
@@ -199,12 +200,20 @@ def scrapeHomepage():
     wtpSeenLinks.update(cachedScrapeHomepage())
 
 
+stopNameRegex = re.compile(r"^(.*) (\d\d)$")
+
+
 def lastStopRef(lastStopName: StopName, previousRef: StopRef) -> str:
-    key = (lastStopName, previousRef)
+    match = re.match(stopNameRegex, lastStopName)
+    if match is None:
+        return MISSING_REF
+    lastStopAreaName = match.group(1)
+    lastStopLocalRef = match.group(2)
+    key = (lastStopAreaName, previousRef)
     if key in lastStopRefAfter:
-        return lastStopRefAfter[key]
-    elif lastStopName in lastStopRefs:
-        return lastStopRefs[lastStopName]
+        return f"{lastStopRefAfter[key]}{lastStopLocalRef}"
+    elif lastStopAreaName in lastStopRefs:
+        return f"{lastStopRefs[lastStopAreaName]}{lastStopLocalRef}"
     else:
         return MISSING_REF
 
