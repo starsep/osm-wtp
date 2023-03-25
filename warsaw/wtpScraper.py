@@ -158,6 +158,9 @@ def cachedParseWebsite(htmlContent: str, link: str) -> CachedWTPResult:
         manyLastStops.add((link, str(lastStop)))
     for stopLink in lastStop[:1]:
         stopName = stopLink.text.strip()
+        if len(stops) == 0:
+            print(f"Error empty stops: {link}")
+            continue
         stopRef = lastStopRef(lastStopName=stopName, previousRef=stops[-1].ref)
         if stopRef == MISSING_REF:
             missingLastStopRefNames.add((stopName, stops[-1].ref))
