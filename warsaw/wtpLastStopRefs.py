@@ -186,7 +186,7 @@ lastStopRefs: Dict[str, str] = {
     "os.Górczewska": "5050",
     "os.Kabaty": "3400",
     "os.Młodych": "1208",
-    "Os. Nowy Mokotów": "3409",
+    "os. Nowy Mokotów": "3409",
     "Osmańska-DHL": "3342",
     "Ostroroga": "5124",
     "os.Niepodległości": "1393",
