@@ -42,6 +42,7 @@
             <a href="{{ variant.operatorLink }}">WTP</a>
             <a href="https://osm.org/relation/{{ variant.osmId }}">OSM</a>
             <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r{{ variant.osmId }}">JOSM</a>
+            <a href="https://relatify.monicz.dev/?relation={{ variant.osmId }}">Relatify</a>
         </h3>
         {% endif %}
         {% if variantResult.diffRows %}
