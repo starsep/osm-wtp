@@ -290,6 +290,7 @@ lastStopRefs: Dict[str, str] = {
     "Sulejówek Miłosna-Pomnik": "2436",
     "Szczęśliwice": "4119",
     "Śniegockiej": "7070",
+    "Świderska": "1469",
     "Tarchomin": "1277",
     "Targowisko": "3464",
     "Terminal Autokarowy": "4202",
