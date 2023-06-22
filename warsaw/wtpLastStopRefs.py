@@ -197,6 +197,7 @@ lastStopRefs: Dict[str, str] = {
     "Ośrodek Szkoleniowy": "2195",
     "Otwock": "2918",
     "Palmiry": "6401",
+    "Palmiry-Muzeum": "6400",
     "Paluch": "4026",
     "Park Postępu": "3412",
     "Pastuszków": "2420",
