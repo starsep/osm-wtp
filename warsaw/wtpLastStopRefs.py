@@ -262,6 +262,7 @@ lastStopRefs: Dict[str, str] = {
     "rondo ONZ": "7088",
     'rondo "Radosława"': "7091",
     "rondo Starzyńskiego": "1006",
+    "rondo Żaba": "1077",
     "Rubinowa": "3476",
     "Rynia": "1365",
     "Rzakta": "2394",
