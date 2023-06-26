@@ -115,6 +115,7 @@ lastStopRefs: Dict[str, str] = {
     "Groty": "5083",
     "Gwiaździsta": "6082",
     "Hoserów": "3158",
+    "Instalatorów": "4106",
     "Jastrzębiec": "4816",
     "Julianowska-Cmentarz": "3795",
     "Juranda ze Spychowa-szkoła": "1353",
