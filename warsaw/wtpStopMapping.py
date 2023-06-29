@@ -9,4 +9,9 @@ wtpStopMapping: Dict[Tuple[StopRef, StopName], Tuple[StopRef, StopName]] = {
     ("335302", "Oś Królewska 02"): ("335352", "Oś Królewska 52"),  # line 379
     # Lines: 120, 314, N14
     ("129301", "Kobiałka-Szkoła 01"): ("129351", "Kobiałka-Szkoła 51"),
+    # Lines: 116, 161, 164, 519, 522, N31, N81 
+    ("304201", "Sobieskiego 01"): ("304251", "Sobieskiego 51"),
+    ("304202", "Sobieskiego 02"): ("304252", "Sobieskiego 52"),
+    ("304203", "Sobieskiego 03"): ("304253", "Sobieskiego 53"),
+    ("304204", "Sobieskiego 04"): ("304254", "Sobieskiego 54"),
 }
