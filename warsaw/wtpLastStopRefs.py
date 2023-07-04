@@ -96,6 +96,7 @@ lastStopRefs: Dict[str, str] = {
     "Dw.Wschodni (Lubelska)": "2120",
     "Dw.Zachodni": "4044",
     "Dw.Zachodni (Tunelowa)": "5121",
+    "Dziekanówek": "6660",
     "Dziekanów Leśny": "6168",
     "EC Siekierki": "3079",
     "Elsnerów": "1051",
