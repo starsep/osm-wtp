@@ -7,7 +7,7 @@ from distance import GeoPoint, geoDistance
 from model.types import StopRef, StopName
 from osm.OSMRelationAnalyzer import osmStopsWithLocation, OSMStop
 
-gtfsPath = Path("../GTFS-Warsaw")
+gtfsPath = Path("./GTFS-Warsaw")
 
 
 @dataclass
