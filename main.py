@@ -64,7 +64,7 @@ def processData():
         startTime=startTime.isoformat(timespec="seconds"),
         generationSeconds=generationSeconds,
     )
-    with Path("../osm-wtp/index.html").open("w") as f:
+    with Path("osm-wtp/index.html").open("w") as f:
         template = env.get_template("index.j2")
         f.write(
             template.render(
@@ -82,7 +82,7 @@ def processData():
                 **sharedContext
             )
         )
-    with Path("../osm-wtp/stops.html").open("w") as f:
+    with Path("osm-wtp/stops.html").open("w") as f:
         template = env.get_template("stops.j2")
         f.write(
             template.render(
