@@ -5,6 +5,7 @@ import overpy
 from diskcache import Cache
 
 from configuration import OVERPASS_URL, cacheDirectory
+from distance import GeoPoint
 from model.stopData import StopData
 from model.types import StopName, RouteRef, StopRef
 from osm.utils import elementUrl, coordinatesOfStop
@@ -69,11 +70,9 @@ class VariantResult:
 
 
 @dataclass
-class OSMStop:
+class OSMStop(GeoPoint):
     ref: StopRef
     name: StopName
-    lat: float
-    lon: float
 
 
 allOSMRefs = set()

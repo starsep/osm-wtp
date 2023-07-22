@@ -1,10 +1,9 @@
 import csv
 from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Dict, Set, Tuple
+from typing import List, Dict, Tuple
 
-from pyproj import Geod
-
+from distance import GeoPoint, geoDistance
 from model.types import StopRef, StopName
 from osm.OSMRelationAnalyzer import osmStopsWithLocation, OSMStop
 
@@ -12,19 +11,13 @@ gtfsPath = Path("../GTFS-Warsaw")
 
 
 @dataclass
-class GTFSStop:
+class GTFSStop(GeoPoint):
     ref: StopRef
     name: StopName
-    lat: float
-    lon: float
 
 
-wgs84Geod = Geod(ellps="WGS84")
 STOP_DISTANCE_THRESHOLD = 100.0  # metres
 
-
-def stopsDistance(osmStop: OSMStop, gtfsStop: GTFSStop) -> float:
-    return wgs84Geod.inv(osmStop.lon, osmStop.lat, gtfsStop.lon, gtfsStop.lat)[2]
 
 
 @dataclass
@@ -44,7 +37,7 @@ def compareOSMAndGTFSStops() -> OSMAndGTFSComparisonResult:
     commonRefs = gtfsStops.keys() & osmStops.keys()
     farAwayStops = []
     for ref in sorted(commonRefs):
-        distance = stopsDistance(osmStop=osmStops[ref], gtfsStop=gtfsStops[ref])
+        distance = geoDistance(osmStops[ref], gtfsStops[ref])
         if distance > STOP_DISTANCE_THRESHOLD:
             farAwayStops.append((ref, int(round(distance))))
     return OSMAndGTFSComparisonResult(

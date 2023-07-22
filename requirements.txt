@@ -12,7 +12,6 @@ certifi==2022.12.7
     # via
     #   httpcore
     #   httpx
-    #   pyproj
 diskcache==5.4.0
     # via -r requirements.in
 geojson==2.5.0
@@ -32,8 +31,6 @@ jinja2==3.1.2
 markupsafe==2.1.1
     # via jinja2
 overpy==0.6
-    # via -r requirements.in
-pyproj==3.4.1
     # via -r requirements.in
 rfc3986[idna2008]==1.5.0
     # via httpx
