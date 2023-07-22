@@ -1,0 +1,12 @@
+cache
+.git
+.ruff_cache
+__pycache__
+.idea
+.dateOfLastRun
+.gitignore
+.github
+GTFS-Warsaw
+osm-wtp
+.dockerignore
+Dockerfile

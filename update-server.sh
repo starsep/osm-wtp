@@ -1,33 +1,20 @@
 #!/usr/bin/env bash
+set -eu
 date=$(/bin/date '+%Y%m%d')
 touch .dateOfLastRun
 if [[ "$(cat .dateOfLastRun)" != "$date" ]]; then
-    rm -rf cache
+    rm -rf cache/scraper/wtp
 fi
-mkdir -p ../GTFS-Warsaw
-cd ../GTFS-Warsaw
-OLD_HASH=$(md5sum warsaw.zip)
-wget -c -O warsaw.zip https://mkuran.pl/gtfs/warsaw.zip
-if [[ $(md5sum warsaw.zip) != "$OLD_HASH" ]]; then
-	7z x -y warsaw.zip
-	chmod 0644 -- *
-fi
-cd ../osm-wtp-compare
-git pull
+./updateGTFSWarsaw.sh
+git clone https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/starsep/osm-wtp/ --depth 1
 rm -rf cache/overpass
-source .venv/bin/activate
-pip install -r requirements.txt
 python main.py
-cd ../osm-wtp || return
-git config user.name "OSM WTP Bot"
-git config user.email "<>"
-mv index.html index2.html
-mv stops.html stops2.html
-git pull
-mv index2.html index.html
-mv stops2.html stops.html
-git add *.html
-git commit -m "Update $date"
-git push origin main
-cd ../osm-wtp-compare || return
+(
+    cd osm-wtp || exit 1
+    git config user.name "OSM WTP Bot"
+    git config user.email "<>"
+    git add -- *.html
+    git commit -m "Update $date"
+    git push origin main
+)
 echo "$date" > .dateOfLastRun
