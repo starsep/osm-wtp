@@ -10,7 +10,7 @@ You can use `--entrypoint "python main.py"` for development.
 ```
 docker build -t osm-wtp-compare .
 
-docker run --rm -it \
+docker run --rm \
     -v "$(pwd)/GTFS-Warsaw:/app/GTFS-Warsaw" \
     -v "$(pwd)/cache:/app/cache" \
     -v "$(pwd)/.dateOfLastRun:/app/.dateOfLastRun" \
