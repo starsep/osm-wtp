@@ -13,7 +13,6 @@ docker build -t osm-wtp-compare .
 docker run --rm \
     -v "$(pwd)/GTFS-Warsaw:/app/GTFS-Warsaw" \
     -v "$(pwd)/cache:/app/cache" \
-    -v "$(pwd)/.dateOfLastRun:/app/.dateOfLastRun" \
     --env GITHUB_USERNAME=example \
     --env GITHUB_TOKEN=12345 \
     -t osm-wtp-compare

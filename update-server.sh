@@ -1,8 +1,9 @@
 #!/usr/bin/env bash
 set -eu
 date=$(/bin/date '+%Y%m%d')
-touch .dateOfLastRun
-if [[ "$(cat .dateOfLastRun)" != "$date" ]]; then
+mkdir -p cache
+touch cache/dateOfLastRun
+if [[ "$(cat cache/dateOfLastRun)" != "$date" ]]; then
     rm -rf cache/scraper/wtp
 fi
 ./updateGTFSWarsaw.sh
@@ -17,4 +18,4 @@ python main.py
     git commit -m "Update $date"
     git push origin main
 )
-echo "$date" > .dateOfLastRun
+echo "$date" > cache/dateOfLastRun
