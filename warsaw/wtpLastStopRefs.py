@@ -176,6 +176,7 @@ lastStopRefs: Dict[str, str] = {
     "Młociny-UKSW": "6145",
     "Młynów": "5067",
     "Mysiadło": "3160",
+    "Myśliborska": "1256",
     "Namysłowska": "1075",
     "Natolin Płn.": "3142",
     "Nowe Bemowo": "5161",
