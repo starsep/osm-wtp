@@ -105,8 +105,7 @@ def analyzeOSMRelations() -> OSMResults:
             or "route" not in tags
             or tags["type"] != "route"
             or routeRef is None
-            or tags["route"] == "tracks"
-            or tags["route"] == "subway"
+            or tags["route"] in ["tracks", "subway", "train"]
         ):
             continue
         if "url" not in tags:
