@@ -4,7 +4,7 @@ date=$(/bin/date '+%Y%m%d')
 mkdir -p cache
 touch cache/dateOfLastRun
 if [[ "$(cat cache/dateOfLastRun)" != "$date" ]]; then
-    rm -rf cache/scraper/wtp
+    rm -rf cache/scraper
 fi
 ./updateGTFSWarsaw.sh
 git clone https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/starsep/osm-wtp/ --depth 1
