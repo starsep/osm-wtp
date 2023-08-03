@@ -19,7 +19,6 @@ class GTFSStop(GeoPoint):
 STOP_DISTANCE_THRESHOLD = 100.0  # metres
 
 
-
 @dataclass
 class OSMAndGTFSComparisonResult:
     osmStops: Dict[StopRef, OSMStop]

@@ -246,7 +246,10 @@ def matchWayNode(
         currentWay, previousWay, otherErrors
     ):
         return True
-    if "no" in [previousWay.tags.get("oneway:bus", ""), previousWay.tags.get("oneway:psv", "")]:
+    if "no" in [
+        previousWay.tags.get("oneway:bus", ""),
+        previousWay.tags.get("oneway:psv", ""),
+    ]:
         return True
     previousStart = previousWay.nodes[0].id
     previousEnd = previousWay.nodes[-1].id
