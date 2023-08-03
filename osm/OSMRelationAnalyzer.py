@@ -67,6 +67,7 @@ class VariantResult:
     short: bool
     unknownRoles: Set[str]
     otherErrors: Set[str]
+    routeType: str
 
 
 @dataclass
@@ -204,6 +205,7 @@ def analyzeOSMRelations() -> OSMResults:
                 short=scrapingResult.short,
                 unknownRoles=unknownRoles,
                 otherErrors=otherErrors,
+                routeType=route.tags["route"],
             )
         )
     return results
