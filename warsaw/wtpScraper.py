@@ -91,7 +91,7 @@ wtpManyLastStops: Set[Tuple[str, str]] = set()
 wtpMissingLastStopRefNames: Set[Tuple[str, str]] = set()
 
 
-# @wtpCache.memoize()
+@wtpCache.memoize()
 def cachedScrapeLink(link: str) -> CachedWTPResult:
     htmlContent = fetchWebsite(link)
     return cachedParseWebsite(htmlContent=htmlContent, link=link)
