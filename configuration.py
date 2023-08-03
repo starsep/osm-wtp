@@ -1,6 +1,5 @@
 from pathlib import Path
 
-from diskcache import Cache
 
 MISSING_REF = "-"
 cacheDirectory = Path("cache")
