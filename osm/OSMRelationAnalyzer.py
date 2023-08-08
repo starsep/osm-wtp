@@ -1,8 +1,11 @@
+import logging
 from dataclasses import dataclass
 from typing import Optional, Dict, List, Set, Tuple, cast
 
 import overpy
 from diskcache import Cache
+from funcy import log_durations
+from tqdm import tqdm
 
 from configuration import OVERPASS_URL, cacheDirectory
 from distance import GeoPoint
@@ -18,8 +21,10 @@ overpassApi = overpy.Overpass(url=OVERPASS_URL)
 cacheOverpass = Cache(str(cacheDirectory / "overpass"))
 
 
+@log_durations(logging.info)
 @cacheOverpass.memoize()
 def getRelationDataFromOverpass():
+    print("Downloading data from Overpass")
     query = f"""
     [out:xml][timeout:250];
     (
@@ -96,9 +101,11 @@ osmRefToName: Dict[StopRef, Set[StopName]] = dict()
 OSMResults = Dict[RouteRef, List[VariantResult]]
 
 
+@log_durations(logging.info)
 def analyzeOSMRelations() -> OSMResults:
+    logging.info("Starting analyzeOSMRelations")
     results: OSMResults = {}
-    for route in getRelationDataFromOverpass().relations:
+    for route in tqdm(getRelationDataFromOverpass().relations):
         tags = route.tags
         routeRef = parseRef(tags)
         if (

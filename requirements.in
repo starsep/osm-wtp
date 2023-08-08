@@ -1,6 +1,8 @@
 beautifulsoup4
 diskcache
+funcy
 geojson
 httpx
 jinja2
 overpy
+tqdm

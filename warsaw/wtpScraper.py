@@ -1,9 +1,11 @@
+import logging
 import re
 from dataclasses import dataclass
 from typing import Optional, Tuple, List, Set
 from urllib import parse
 
 from bs4 import BeautifulSoup
+from funcy import log_durations
 
 from configuration import MISSING_REF
 from model.types import StopName, StopRef
@@ -199,7 +201,9 @@ def cachedScrapeHomepage() -> List[Tuple[str, str, str]]:
     return result
 
 
+@log_durations(logging.info)
 def scrapeHomepage():
+    logging.info("Scraping WTP homepage")
     wtpSeenLinks.update(cachedScrapeHomepage())
 
 
