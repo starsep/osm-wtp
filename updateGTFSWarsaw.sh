@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 set -eu
 cd GTFS-Warsaw || exit 1
+touch warsaw.zip
 OLD_HASH=$(md5sum warsaw.zip)
 wget -c -O warsaw.zip https://mkuran.pl/gtfs/warsaw.zip
 if [[ $(md5sum warsaw.zip) != "$OLD_HASH" ]]; then

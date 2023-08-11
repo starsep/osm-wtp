@@ -85,7 +85,7 @@
 
     {% if osmStopRefsNotInGTFS %}
         <h2>Przystanki w OSM niebędące w GTFS</h2>
-        {% for osmStopRef in osmStopRefsNotInGTFS %}
+        {% for osmStopRef in osmStopRefsNotInGTFS|sort %}
             {% set osmStop = osmStops[osmStopRef] %}
             <span>{{ osmStop.ref }}: {{ osmStop.name }}</span>
         {% endfor %}

@@ -1,12 +1,12 @@
-import logging
 import re
 from dataclasses import dataclass
 from typing import Optional, Tuple, List, Set
 from urllib import parse
 
 from bs4 import BeautifulSoup
-from funcy import log_durations
 
+import logger
+from logger import log_duration
 from configuration import MISSING_REF
 from model.types import StopName, StopRef
 from warsaw.wtpLastStopRefs import lastStopRefs, lastStopRefAfter
@@ -41,7 +41,7 @@ class WTPLink:
     variant: str
 
     def url(self) -> str:
-        return f"https://{wtpDomain}/rozklady-jazdy/?{wtpModeArg}=3&{wtpLineArg}={self.line}&{wtpDirectionArg}={self.direction}&{wtpVariantArg}={self.variant}"
+        return f"https://www.{wtpDomain}/rozklady-jazdy/?{wtpModeArg}=3&{wtpLineArg}={self.line}&{wtpDirectionArg}={self.direction}&{wtpVariantArg}={self.variant}"
 
     def toTuple(self) -> Tuple[str, str, str]:
         return self.line, self.direction, self.variant
@@ -188,12 +188,12 @@ def cachedParseWebsite(htmlContent: str, link: str) -> CachedWTPResult:
 @wtpCache.memoize()
 def cachedScrapeHomepage() -> List[Tuple[str, str, str]]:
     mainContent = BeautifulSoup(
-        fetchWebsite("https://wtp.waw.pl/rozklady-jazdy/"), features="html.parser"
+        fetchWebsite(f"https://www.{wtpDomain}/rozklady-jazdy/"), features="html.parser"
     )
     result: List[Tuple[str, str, str]] = []
     for wtpLink in mainContent.select("a"):
         url = wtpLink.get("href")
-        if "wtp.waw.pl" not in url:
+        if wtpDomain not in url:
             continue
         parsedUrl = WTPLink.parseWTPRouteLink(url)
         if parsedUrl is not None:
@@ -201,9 +201,9 @@ def cachedScrapeHomepage() -> List[Tuple[str, str, str]]:
     return result
 
 
-@log_durations(logging.info)
+@log_duration
 def scrapeHomepage():
-    logging.info("Scraping WTP homepage")
+    logger.info("🔧 Scraping WTP homepage")
     wtpSeenLinks.update(cachedScrapeHomepage())
 
 

@@ -1,4 +1,3 @@
-import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Set
@@ -10,6 +9,7 @@ from jinja2 import (
     StrictUndefined,
 )
 
+import logger
 from compare.comparator import compareStops
 from gtfs.osmGTFSStopsComparer import compareOSMAndGTFSStops, STOP_DISTANCE_THRESHOLD
 from osm.OSMRelationAnalyzer import (
@@ -117,6 +117,5 @@ def processData():
 
 
 if __name__ == "__main__":
-    logging.basicConfig(level=logging.INFO)
-    logging.info("Starting osm-wtp-compare")
+    logger.info("🎬 Starting osm-wtp-compare")
     processData()

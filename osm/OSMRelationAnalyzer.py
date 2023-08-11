@@ -1,39 +1,25 @@
-import logging
 from dataclasses import dataclass
 from typing import Optional, Dict, List, Set, Tuple, cast
 
-import overpy
-from diskcache import Cache
-from funcy import log_durations
 from tqdm import tqdm
 
-from configuration import OVERPASS_URL, cacheDirectory
+import logger
 from distance import GeoPoint
+from logger import log_duration
 from model.stopData import StopData
 from model.types import StopName, RouteRef, StopRef
-from osm.utils import elementUrl, coordinatesOfStop
-from warsaw.warsawConstants import WARSAW_PUBLIC_TRANSPORT_ID, WKD_WIKIDATA, KM_WIKIDATA
+from osm.overpass import (
+    Node,
+    Element,
+    parseOverpassData,
+    getOverpassHttpx,
+    OverpassResult,
+    Way,
+)
+from warsaw.warsawConstants import WKD_WIKIDATA, KM_WIKIDATA
 from warsaw.wtpScraper import wtpDomain, WTPLink, scrapeLink
 
 mismatchOSMNameRef = set()
-
-overpassApi = overpy.Overpass(url=OVERPASS_URL)
-cacheOverpass = Cache(str(cacheDirectory / "overpass"))
-
-
-@log_durations(logging.info)
-@cacheOverpass.memoize()
-def getRelationDataFromOverpass():
-    print("Downloading data from Overpass")
-    query = f"""
-    [out:xml][timeout:250];
-    (
-        relation(id:{WARSAW_PUBLIC_TRANSPORT_ID});
-    );
-    (._;>>;);
-    out body;
-    """
-    return overpassApi.query(query)
 
 
 def parseRef(tags) -> Optional[str]:
@@ -101,11 +87,12 @@ osmRefToName: Dict[StopRef, Set[StopName]] = dict()
 OSMResults = Dict[RouteRef, List[VariantResult]]
 
 
-@log_durations(logging.info)
+@log_duration
 def analyzeOSMRelations() -> OSMResults:
-    logging.info("Starting analyzeOSMRelations")
+    logger.info("🔍 Starting analyzeOSMRelations")
     results: OSMResults = {}
-    for route in tqdm(getRelationDataFromOverpass().relations):
+    overpassResult = parseOverpassData(getOverpassHttpx())
+    for route in tqdm(overpassResult.relations.values()):
         tags = route.tags
         routeRef = parseRef(tags)
         if (
@@ -121,13 +108,13 @@ def analyzeOSMRelations() -> OSMResults:
                 "operator:wikidata" in tags
                 and tags["operator:wikidata"] in [KM_WIKIDATA, WKD_WIKIDATA]
             ):
-                missingRouteUrl.add((elementUrl(route), tags.get("name", "")))
+                missingRouteUrl.add((route.url, tags.get("name", "")))
             continue
         if "network" in tags and tags["network"] != "ZTM Warszawa":
-            unexpectedNetwork.add((elementUrl(route), tags["network"]))
+            unexpectedNetwork.add((route.url, tags["network"]))
         link = tags["url"]
         if wtpDomain not in link:
-            unexpectedLink.add((elementUrl(route), link))
+            unexpectedLink.add((route.url, link))
             continue
         parsedLink = WTPLink.parseWTPRouteLink(link)
         if parsedLink is not None:
@@ -137,47 +124,47 @@ def analyzeOSMRelations() -> OSMResults:
             osmOperatorLinks.add(parsedLinkTuple)
         scrapingResult = scrapeLink(link)
         if scrapingResult.notAvailable:
-            invalidOperatorVariants.add((link, elementUrl(route)))
+            invalidOperatorVariants.add((link, route.url))
             continue
         osmStops = []
         unknownRoles = set()
         otherErrors: Set[str] = set()
-        stopNodes: Set[overpy.Node] = set()
-        routeWays: List[overpy.Element] = list()
+        stopNodes: Set[Node] = set()
+        routeWays: List[Element] = list()
         for member in route.members:
             role: str = member.role
-            element = member.resolve()
+            element = overpassResult.resolve(member)
             tags = element.tags
             if role is None or len(role) == 0:
                 routeWays.append(element)
             elif role.startswith("platform") or role.startswith("stop"):
-                element = member.resolve()
+                element = overpassResult.resolve(member)
                 for tag in element.tags:
                     if "disused" in tag:
-                        disusedStop.add(elementUrl(element))
+                        disusedStop.add(element.url)
                 osmStopRef = parseRef(tags)
                 osmStopName = parseName(tags)
                 if osmStopName is None:
                     if not ("railway" in tags and tags["railway"] == "platform"):
-                        missingName.add(elementUrl(element))
+                        missingName.add(element.url)
                     if osmStopRef is None:
-                        missingStopRef.add((elementUrl(element), ""))
+                        missingStopRef.add((element.url, ""))
                     continue
                 if osmStopRef is None:
-                    missingStopRef.add((elementUrl(element), osmStopName))
+                    missingStopRef.add((element.url, osmStopName))
                     continue
                 if len(osmStopRef) != 6:
                     if "network" in tags and tags["network"] == "ZTM Warszawa":
-                        unexpectedStopRef.add((elementUrl(element), osmStopRef))
+                        unexpectedStopRef.add((element.url, osmStopRef))
                     continue
                 if osmStopRef not in osmRefToName:
                     osmRefToName[osmStopRef] = set()
                 osmRefToName[osmStopRef].add(osmStopName)
                 stop = StopData(name=osmStopName, ref=osmStopRef)
-                checkOSMNameMatchesRef(stop, elementUrl(element))
+                checkOSMNameMatchesRef(stop, element.url)
                 # prefer stop to platform
                 if osmStopRef not in osmStopsWithLocation or role == "stop":
-                    coords = coordinatesOfStop(element)
+                    coords = element.center(overpassResult)
                     if coords is not None:
                         lat, lon = coords
                         osmStopsWithLocation[osmStopRef] = OSMStop(
@@ -190,13 +177,13 @@ def analyzeOSMRelations() -> OSMResults:
                     osmStops.append(stop)
                     allOSMRefs.add(stop.ref)
                 if role.startswith("stop"):
-                    if type(element) != overpy.Node:
+                    if element.type != "node":
                         otherErrors.add("Stop niebędący punktem")
                     else:
-                        stopNodes.add(element)
+                        stopNodes.add(cast(Node, element))
             elif len(role) > 0:
                 unknownRoles.add(role)
-        validateRoute(routeWays, stopNodes, otherErrors)
+        validateRoute(routeWays, stopNodes, otherErrors, overpassResult)
         if routeRef not in results:
             results[routeRef] = []
         results[routeRef].append(
@@ -219,14 +206,17 @@ def analyzeOSMRelations() -> OSMResults:
 
 
 def validateRoute(
-    routeWays: List[overpy.Element], stopNodes: Set[overpy.Node], otherErrors: Set[str]
+    routeWays: List[Element],
+    stopNodes: Set[Node],
+    otherErrors: Set[str],
+    overpassResult: OverpassResult,
 ):
-    variantWayNodes: Set[overpy.Node] = set()
-    validatedWays: List[overpy.Way] = []
+    variantWayNodes: Set[Node] = set()
+    validatedWays: List[Way] = []
     for way in routeWays:
-        if type(way) == overpy.Way:
-            way = cast(overpy.Way, way)
-            validateWay(way, otherErrors, variantWayNodes)
+        if way.type == "way":
+            way = cast(Way, way)
+            validateWay(way, otherErrors, variantWayNodes, overpassResult)
             validatedWays.append(way)
         else:
             otherErrors.add("Element bez roli niebędący linią")
@@ -236,7 +226,7 @@ def validateRoute(
     )
 
 
-def validateRouteGeometry(validatedWays: List[overpy.Way], otherErrors: Set[str]):
+def validateRouteGeometry(validatedWays: List[Way], otherErrors: Set[str]):
     # TODO: direction
     previousWay = validatedWays[0]
     for way in validatedWays[1:]:
@@ -247,9 +237,7 @@ def validateRouteGeometry(validatedWays: List[overpy.Way], otherErrors: Set[str]
         previousWay = way
 
 
-def matchWayNode(
-    previousWay: overpy.Way, currentWay: overpy.Way, otherErrors: Set[str]
-) -> bool:
+def matchWayNode(previousWay: Way, currentWay: Way, otherErrors: Set[str]) -> bool:
     if matchRoundabout(previousWay, currentWay, otherErrors) or matchRoundabout(
         currentWay, previousWay, otherErrors
     ):
@@ -259,10 +247,10 @@ def matchWayNode(
         previousWay.tags.get("oneway:psv", ""),
     ]:
         return True
-    previousStart = previousWay.nodes[0].id
-    previousEnd = previousWay.nodes[-1].id
-    currentStart = currentWay.nodes[0].id
-    currentEnd = currentWay.nodes[-1].id
+    previousStart = previousWay.nodes[0]
+    previousEnd = previousWay.nodes[-1]
+    currentStart = currentWay.nodes[0]
+    currentEnd = currentWay.nodes[-1]
     if previousEnd == currentStart or previousEnd == currentEnd:
         if "oneway" in previousWay.tags and previousWay.tags["oneway"] == "-1":
             otherErrors.add("Jednokierunkowa droga używana pod prąd")
@@ -274,28 +262,29 @@ def matchWayNode(
     return False
 
 
-def matchRoundabout(
-    roundabout: overpy.Way, way: overpy.Way, otherErrors: Set[str]
-) -> bool:
+def matchRoundabout(roundabout: Way, way: Way, otherErrors: Set[str]) -> bool:
     if (
         "junction" not in roundabout.tags
         or roundabout.tags["junction"] != "roundabout"
-        or roundabout.nodes[0].id != roundabout.nodes[-1].id
+        or roundabout.nodes[0] != roundabout.nodes[-1]
     ):
         return False
-    endingWayNodes = [way.nodes[0].id, way.nodes[-1].id]
+    endingWayNodes = [way.nodes[0], way.nodes[-1]]
     for node in roundabout.nodes:
-        if node.id in endingWayNodes:
+        if node in endingWayNodes:
             otherErrors.add("Niepodzielone rondo jest częścią trasy")
             return True
     return False
 
 
 def validateWay(
-    way: overpy.Way, otherErrors: Set[str], variantWayNodes: Set[overpy.Node]
+    way: Way,
+    otherErrors: Set[str],
+    variantWayNodes: Set[Node],
+    overpassResult: OverpassResult,
 ):
     for node in way.nodes:
-        variantWayNodes.add(node)
+        variantWayNodes.add(overpassResult.nodes[node])
     tags = way.tags
     if "highway" not in tags and "railway" not in tags:
         otherErrors.add("Trasa przebiega przez element bez tagu highway/railway")
@@ -323,8 +312,8 @@ def validateAccessTags(tags, otherErrors: Set[str]):
 
 
 def checkStopNodesWithinRoute(
-    stopNodes: Set[overpy.Node],
-    variantWayNodes: Set[overpy.Node],
+    stopNodes: Set[Node],
+    variantWayNodes: Set[Node],
     otherErrors: Set[str],
 ):
     stopsNotWithinRoute = stopNodes - variantWayNodes
