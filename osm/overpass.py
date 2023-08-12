@@ -84,8 +84,7 @@ class OverpassResult:
         raise ValueError(member.type)
 
 
-@log_duration
-def getOverpassHttpx():
+def _getOverpassHttpx():
     query = f"""
     [out:json][timeout:250];
     (
@@ -94,14 +93,15 @@ def getOverpassHttpx():
     (._;>>;);
     out body;
     """
-    logger.info("⏬ Downloading data from Overpass")
-    response = httpx.post(OVERPASS_URL, data=dict(data=query))
-    response.raise_for_status()
-    return json.loads(response.text)["elements"]
+    with log_duration("Downloading data from Overpass"):
+        response = httpx.post(OVERPASS_URL, data=dict(data=query))
+        response.raise_for_status()
+    with log_duration("Parsing Overpass JSON"):
+        return json.loads(response.text)["elements"]
 
 
 @log_duration
-def parseOverpassData(parsedElements: List):
+def _parseOverpassData(parsedElements: List[Dict]):
     nodes, ways, relations = dict(), dict(), dict()
     for element in parsedElements:
         if element["type"] == "node":
@@ -133,3 +133,8 @@ def parseOverpassData(parsedElements: List):
                 tags=KeyDict(element.get("tags", dict())),
             )
     return OverpassResult(nodes=nodes, ways=ways, relations=relations)
+
+
+def downloadOverpassData():
+    logger.info("⏬ Overpass Download")
+    return _parseOverpassData(_getOverpassHttpx())

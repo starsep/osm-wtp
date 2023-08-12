@@ -6,4 +6,3 @@ def info(message: str):
 
 
 log_duration = log_durations(lambda msg: info("⌛ " + msg))
-with_duration = log_durations(lambda msg: info("⌛ " + msg))

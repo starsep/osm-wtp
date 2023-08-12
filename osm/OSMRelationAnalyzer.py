@@ -11,10 +11,9 @@ from model.types import StopName, RouteRef, StopRef
 from osm.overpass import (
     Node,
     Element,
-    parseOverpassData,
-    getOverpassHttpx,
     OverpassResult,
     Way,
+    downloadOverpassData,
 )
 from warsaw.warsawConstants import WKD_WIKIDATA, KM_WIKIDATA
 from warsaw.wtpScraper import wtpDomain, WTPLink, scrapeLink
@@ -91,7 +90,7 @@ OSMResults = Dict[RouteRef, List[VariantResult]]
 def analyzeOSMRelations() -> OSMResults:
     logger.info("🔍 Starting analyzeOSMRelations")
     results: OSMResults = {}
-    overpassResult = parseOverpassData(getOverpassHttpx())
+    overpassResult = downloadOverpassData()
     for route in tqdm(overpassResult.relations.values()):
         tags = route.tags
         routeRef = parseRef(tags)
