@@ -14,9 +14,10 @@ from osm.overpass import (
     OverpassResult,
     Way,
     downloadOverpassData,
+    Relation,
 )
 from warsaw.warsawConstants import WKD_WIKIDATA, KM_WIKIDATA
-from warsaw.wtpScraper import wtpDomain, WTPLink, scrapeLink
+from warsaw.wtpScraper import wtpDomain, WTPLink, scrapeLink, WTPResult
 
 mismatchOSMNameRef = set()
 
@@ -48,7 +49,7 @@ def checkOSMNameMatchesRef(stop: StopData, url: str):
 class VariantResult:
     ref: RouteRef
     osmName: str
-    osmId: str
+    osmId: int
     operatorLink: str
     osmStops: List[StopData]
     operatorStops: List[StopData]
@@ -86,45 +87,74 @@ osmRefToName: Dict[StopRef, Set[StopName]] = dict()
 OSMResults = Dict[RouteRef, List[VariantResult]]
 
 
+@dataclass(frozen=True)
+class ScrapedOSMRoute:
+    route: Relation
+    wtpResult: WTPResult
+    routeRef: str
+    link: str
+
+
+def _scrapeOSMRoute(route: Relation) -> Optional[ScrapedOSMRoute]:
+    tags = route.tags
+    routeRef = parseRef(tags)
+    if (
+        "type" not in tags
+        or "route" not in tags
+        or tags["type"] != "route"
+        or routeRef is None
+        or tags["route"] in ["tracks", "subway", "train"]
+    ):
+        return None
+    if "url" not in tags:
+        if not (
+            "operator:wikidata" in tags
+            and tags["operator:wikidata"] in [KM_WIKIDATA, WKD_WIKIDATA]
+        ):
+            missingRouteUrl.add((route.url, tags.get("name", "")))
+        return None
+    if "network" in tags and tags["network"] != "ZTM Warszawa":
+        unexpectedNetwork.add((route.url, tags["network"]))
+    link = tags["url"]
+    if wtpDomain not in link:
+        unexpectedLink.add((route.url, link))
+        return None
+    parsedLink = WTPLink.parseWTPRouteLink(link)
+    if parsedLink is not None:
+        parsedLinkTuple = parsedLink.toTuple()
+        if parsedLinkTuple in osmOperatorLinks:
+            wtpLinkDuplicates.add(WTPLink.fromTuple(parsedLinkTuple).url())
+        osmOperatorLinks.add(parsedLinkTuple)
+    scrapingResult = scrapeLink(link)
+    if scrapingResult.notAvailable:
+        invalidOperatorVariants.add((link, route.url))
+        return None
+    return ScrapedOSMRoute(
+        route=route, wtpResult=scrapingResult, routeRef=routeRef, link=link
+    )
+
+
+@log_duration
+def scrapeOSMRoutes(overpassResult: OverpassResult) -> List[ScrapedOSMRoute]:
+    result = []
+    for route in tqdm(overpassResult.relations.values()):
+        scrapedOSMRoute = _scrapeOSMRoute(route)
+        if scrapedOSMRoute is not None:
+            result.append(scrapedOSMRoute)
+    return result
+
+
 @log_duration
 def analyzeOSMRelations() -> OSMResults:
     logger.info("🔍 Starting analyzeOSMRelations")
     results: OSMResults = {}
     overpassResult = downloadOverpassData()
-    for route in tqdm(overpassResult.relations.values()):
-        tags = route.tags
-        routeRef = parseRef(tags)
-        if (
-            "type" not in tags
-            or "route" not in tags
-            or tags["type"] != "route"
-            or routeRef is None
-            or tags["route"] in ["tracks", "subway", "train"]
-        ):
-            continue
-        if "url" not in tags:
-            if not (
-                "operator:wikidata" in tags
-                and tags["operator:wikidata"] in [KM_WIKIDATA, WKD_WIKIDATA]
-            ):
-                missingRouteUrl.add((route.url, tags.get("name", "")))
-            continue
-        if "network" in tags and tags["network"] != "ZTM Warszawa":
-            unexpectedNetwork.add((route.url, tags["network"]))
-        link = tags["url"]
-        if wtpDomain not in link:
-            unexpectedLink.add((route.url, link))
-            continue
-        parsedLink = WTPLink.parseWTPRouteLink(link)
-        if parsedLink is not None:
-            parsedLinkTuple = parsedLink.toTuple()
-            if parsedLinkTuple in osmOperatorLinks:
-                wtpLinkDuplicates.add(WTPLink.fromTuple(parsedLinkTuple).url())
-            osmOperatorLinks.add(parsedLinkTuple)
-        scrapingResult = scrapeLink(link)
-        if scrapingResult.notAvailable:
-            invalidOperatorVariants.add((link, route.url))
-            continue
+    scrapedOSMRoutes = scrapeOSMRoutes(overpassResult)
+    for scrapedRoute in tqdm(scrapedOSMRoutes):
+        route = scrapedRoute.route
+        routeRef = scrapedRoute.routeRef
+        link = scrapedRoute.link
+        scrapingResult = scrapedRoute.wtpResult
         osmStops = []
         unknownRoles = set()
         otherErrors: Set[str] = set()
