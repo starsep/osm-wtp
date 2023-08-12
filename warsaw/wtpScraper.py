@@ -9,7 +9,6 @@ import logger
 from logger import log_duration
 from configuration import MISSING_REF
 from model.types import StopName, StopRef
-from warsaw.wtpLastStopRefs import lastStopRefs, lastStopRefAfter
 from model.stopData import StopData
 from scraper.scraper import cache, parseLinkArguments, fetchWebsite
 from warsaw.wtpStopMapping import wtpStopMapping
@@ -161,12 +160,9 @@ def cachedParseWebsite(htmlContent: str, link: str) -> CachedWTPResult:
     for stopLink in lastStop[:1]:
         stopName = stopLink.text.strip()
         if len(stops) == 0:
-            print(f"Error empty stops: {link}")
+            logger.error(f"Empty stops: {link}")
             continue
-        stopRef = lastStopRef(lastStopName=stopName, previousRef=stops[-1].ref)
-        if stopRef == MISSING_REF:
-            missingLastStopRefNames.add((stopName, stops[-1].ref))
-        stopRef, stopName = mapWtpStop(stopRef, stopName)
+        stopRef = MISSING_REF
         stopRefs.add(stopRef)
         stops.append(StopData(name=stopName, ref=stopRef))
     return CachedWTPResult(
@@ -205,24 +201,6 @@ def cachedScrapeHomepage() -> List[Tuple[str, str, str]]:
 def scrapeHomepage():
     logger.info("🔧 Scraping WTP homepage")
     wtpSeenLinks.update(cachedScrapeHomepage())
-
-
-stopNameRegex = re.compile(r"^(.*) (\d\d)$")
-
-
-def lastStopRef(lastStopName: StopName, previousRef: StopRef) -> str:
-    match = re.match(stopNameRegex, lastStopName)
-    if match is None:
-        return MISSING_REF
-    lastStopAreaName = match.group(1)
-    lastStopLocalRef = match.group(2)
-    key = (lastStopAreaName, previousRef)
-    if key in lastStopRefAfter:
-        return f"{lastStopRefAfter[key]}{lastStopLocalRef}"
-    elif lastStopAreaName in lastStopRefs:
-        return f"{lastStopRefs[lastStopAreaName]}{lastStopLocalRef}"
-    else:
-        return MISSING_REF
 
 
 def mapWtpStop(wtpStopRef: StopRef, wtpStopName: StopName) -> Tuple[StopRef, StopName]:

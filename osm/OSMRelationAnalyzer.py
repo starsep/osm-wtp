@@ -17,7 +17,13 @@ from osm.overpass import (
     Relation,
 )
 from warsaw.warsawConstants import WKD_WIKIDATA, KM_WIKIDATA
-from warsaw.wtpScraper import wtpDomain, WTPLink, scrapeLink, WTPResult
+from warsaw.wtpLastStopRefs import (
+    LastStopRefsResult,
+    ScrapedOSMRoute,
+    generateLastStopRefs,
+    lastStopRef,
+)
+from warsaw.wtpScraper import wtpDomain, WTPLink, scrapeLink
 
 mismatchOSMNameRef = set()
 
@@ -87,14 +93,6 @@ osmRefToName: Dict[StopRef, Set[StopName]] = dict()
 OSMResults = Dict[RouteRef, List[VariantResult]]
 
 
-@dataclass(frozen=True)
-class ScrapedOSMRoute:
-    route: Relation
-    wtpResult: WTPResult
-    routeRef: str
-    link: str
-
-
 def _scrapeOSMRoute(route: Relation) -> Optional[ScrapedOSMRoute]:
     tags = route.tags
     routeRef = parseRef(tags)
@@ -126,7 +124,7 @@ def _scrapeOSMRoute(route: Relation) -> Optional[ScrapedOSMRoute]:
             wtpLinkDuplicates.add(WTPLink.fromTuple(parsedLinkTuple).url())
         osmOperatorLinks.add(parsedLinkTuple)
     scrapingResult = scrapeLink(link)
-    if scrapingResult.notAvailable:
+    if scrapingResult.notAvailable or len(scrapingResult.stops) == 0:
         invalidOperatorVariants.add((link, route.url))
         return None
     return ScrapedOSMRoute(
@@ -145,11 +143,26 @@ def scrapeOSMRoutes(overpassResult: OverpassResult) -> List[ScrapedOSMRoute]:
 
 
 @log_duration
+def addLastStopRefs(
+    scrapedRoutes: List[ScrapedOSMRoute],
+    lastStopRefsResult: LastStopRefsResult,
+):
+    for route in scrapedRoutes:
+        route.wtpResult.stops[-1].ref = lastStopRef(
+            route.wtpResult.stops[-1].name,
+            route.wtpResult.stops[-2].ref,
+            lastStopRefsResult,
+        )
+
+
+@log_duration
 def analyzeOSMRelations() -> OSMResults:
     logger.info("🔍 Starting analyzeOSMRelations")
     results: OSMResults = {}
     overpassResult = downloadOverpassData()
     scrapedOSMRoutes = scrapeOSMRoutes(overpassResult)
+    lastStopRefs = generateLastStopRefs(scrapedRoutes=scrapedOSMRoutes)
+    addLastStopRefs(scrapedOSMRoutes, lastStopRefs)
     for scrapedRoute in tqdm(scrapedOSMRoutes):
         route = scrapedRoute.route
         routeRef = scrapedRoute.routeRef

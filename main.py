@@ -11,6 +11,7 @@ from jinja2 import (
 
 import logger
 from compare.comparator import compareStops
+from configuration import MISSING_REF
 from gtfs.osmGTFSStopsComparer import compareOSMAndGTFSStops, STOP_DISTANCE_THRESHOLD
 from osm.OSMRelationAnalyzer import (
     analyzeOSMRelations,
@@ -103,7 +104,7 @@ def processData():
                 missingStopRef=missingStopRef,
                 missingRefsInOSM=[
                     (ref, list(compareResults.operatorRefToName[ref])[0])
-                    for ref in sorted(wtpStopRefs - allOSMRefs)
+                    for ref in sorted(wtpStopRefs - allOSMRefs - set(MISSING_REF))
                 ],
                 unexpectedStopRef=unexpectedStopRef,
                 wtpStopMapping=wtpStopMapping,
