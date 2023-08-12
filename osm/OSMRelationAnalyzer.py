@@ -16,10 +16,10 @@ from osm.overpass import (
     downloadOverpassData,
     Relation,
 )
+from warsaw.scrapedOSMRoute import ScrapedOSMRoute
 from warsaw.warsawConstants import WKD_WIKIDATA, KM_WIKIDATA
 from warsaw.wtpLastStopRefs import (
     LastStopRefsResult,
-    ScrapedOSMRoute,
     generateLastStopRefs,
     lastStopRef,
 )

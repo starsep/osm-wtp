@@ -8,16 +8,7 @@ from logger import log_duration
 from configuration import MISSING_REF
 from model.stopData import StopData
 from model.types import StopName, StopRef
-from osm.overpass import Relation
-from warsaw.wtpScraper import WTPResult
-
-
-@dataclass(frozen=True)
-class ScrapedOSMRoute:
-    route: Relation
-    wtpResult: WTPResult
-    routeRef: str
-    link: str
+from warsaw.scrapedOSMRoute import ScrapedOSMRoute
 
 
 @dataclass(frozen=True)
