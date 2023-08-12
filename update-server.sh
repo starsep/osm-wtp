@@ -8,7 +8,6 @@ if [[ "$(cat cache/dateOfLastRun)" != "$date" ]]; then
 fi
 ./updateGTFSWarsaw.sh
 git clone https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/starsep/osm-wtp/ --depth 1
-rm -rf cache/overpass
 python main.py
 (
     cd osm-wtp || exit 1
