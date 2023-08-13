@@ -1,11 +1,6 @@
 #!/usr/bin/env bash
 set -eu
 date=$(/bin/date '+%Y%m%d')
-mkdir -p cache
-touch cache/dateOfLastRun
-if [[ "$(cat cache/dateOfLastRun)" != "$date" ]]; then
-    rm -rf cache/WTP
-fi
 ./updateGTFSWarsaw.sh
 git clone https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/starsep/osm-wtp/ --depth 1
 python main.py
@@ -17,4 +12,3 @@ python main.py
     git commit -m "Update $date"
     git push origin main
 )
-echo "$date" > cache/dateOfLastRun

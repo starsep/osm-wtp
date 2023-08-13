@@ -2,12 +2,14 @@ from dataclasses import dataclass
 from typing import Optional, Tuple, List, Set
 from urllib import parse
 
+import httpx
 from bs4 import BeautifulSoup
 from diskcache import Cache
+from httpx import Client
 
 import logger
 from logger import log_duration
-from configuration import MISSING_REF, cacheDirectory
+from configuration import MISSING_REF, cacheDirectory, EXPIRE_WTP_SECONDS
 from model.types import StopName, StopRef
 from model.stopData import StopData
 from scraper.scraper import parseLinkArguments, fetchWebsite
@@ -92,18 +94,20 @@ wtpManyLastStops: Set[Tuple[str, str]] = set()
 wtpMissingLastStopRefNames: Set[Tuple[str, str]] = set()
 
 
-@wtpCache.memoize()
-def cachedScrapeLink(link: str) -> CachedWTPResult:
-    htmlContent = fetchWebsite(link)
-    return cachedParseWebsite(htmlContent=htmlContent, inputUrl=link)
+@wtpCache.memoize(expire=EXPIRE_WTP_SECONDS, ignore={"httpClient"})
+def cachedScrapeLink(link: str, httpClient: Client) -> CachedWTPResult:
+    htmlContent = fetchWebsite(link, httpClient=httpClient)
+    return cachedParseWebsite(
+        htmlContent=htmlContent, inputUrl=link, httpClient=httpClient
+    )
 
 
-def scrapeLink(link: str) -> Optional[WTPResult]:
+def scrapeLink(link: str, httpClient: Client) -> Optional[WTPResult]:
     parsedLink = WTPLink.parseWTPRouteLink(link)
     if parsedLink is None:
         logger.error(f"Couldn't parse link {link}")
         return None
-    cachedResult = cachedScrapeLink(parsedLink.url())
+    cachedResult = cachedScrapeLink(parsedLink.url(), httpClient=httpClient)
     wtpSeenLinks.update(cachedResult.seenLinks)
     wtpStopRefs.update(cachedResult.stopRefs)
     wtpMissingLastStop.update(cachedResult.missingLastStop)
@@ -112,7 +116,9 @@ def scrapeLink(link: str) -> Optional[WTPResult]:
     return cachedResult.wtpResult
 
 
-def cachedParseWebsite(htmlContent: str, inputUrl: str) -> CachedWTPResult:
+def cachedParseWebsite(
+    htmlContent: str, inputUrl: str, httpClient: Client
+) -> CachedWTPResult:
     parser = BeautifulSoup(htmlContent, features="html.parser")
     stopRefs: Set[str] = set()
     seenLinks: Set[Tuple[str, str, str]] = set()
@@ -136,7 +142,8 @@ def cachedParseWebsite(htmlContent: str, inputUrl: str) -> CachedWTPResult:
         anotherDateLinkArgs = parseLinkArguments(anotherDateLink)
         if wtpDateArg in anotherDateLinkArgs:
             return cachedScrapeLink(
-                inputUrl + f"&{wtpDateArg}={anotherDateLinkArgs[wtpDateArg][0]}"
+                inputUrl + f"&{wtpDateArg}={anotherDateLinkArgs[wtpDateArg][0]}",
+                httpClient=httpClient,
             )
     for link in parser.select("a"):
         url = link.get("href")
@@ -185,11 +192,15 @@ def cachedParseWebsite(htmlContent: str, inputUrl: str) -> CachedWTPResult:
     )
 
 
-@wtpCache.memoize()
+@wtpCache.memoize(expire=EXPIRE_WTP_SECONDS)
 def cachedScrapeHomepage() -> List[Tuple[str, str, str]]:
-    mainContent = BeautifulSoup(
-        fetchWebsite(f"https://www.{wtpDomain}/rozklady-jazdy/"), features="html.parser"
-    )
+    with httpx.Client() as httpClient:
+        mainContent = BeautifulSoup(
+            fetchWebsite(
+                f"https://www.{wtpDomain}/rozklady-jazdy/", httpClient=httpClient
+            ),
+            features="html.parser",
+        )
     result: List[Tuple[str, str, str]] = []
     for wtpLink in mainContent.select("a"):
         url = wtpLink.get("href")

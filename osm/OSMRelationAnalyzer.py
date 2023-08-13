@@ -1,6 +1,8 @@
 from dataclasses import dataclass
 from typing import Optional, Dict, List, Set, Tuple, cast
 
+import httpx
+from httpx import Client
 from tqdm import tqdm
 
 import logger
@@ -93,7 +95,7 @@ osmRefToName: Dict[StopRef, Set[StopName]] = dict()
 OSMResults = Dict[RouteRef, List[VariantResult]]
 
 
-def _scrapeOSMRoute(route: Relation) -> Optional[ScrapedOSMRoute]:
+def _scrapeOSMRoute(route: Relation, httpClient: Client) -> Optional[ScrapedOSMRoute]:
     tags = route.tags
     routeRef = parseRef(tags)
     if (
@@ -123,7 +125,7 @@ def _scrapeOSMRoute(route: Relation) -> Optional[ScrapedOSMRoute]:
         if parsedLinkTuple in osmOperatorLinks:
             wtpLinkDuplicates.add(WTPLink.fromTuple(parsedLinkTuple).url())
         osmOperatorLinks.add(parsedLinkTuple)
-    scrapingResult = scrapeLink(link)
+    scrapingResult = scrapeLink(link, httpClient=httpClient)
     if (
         scrapingResult is None
         or scrapingResult.unavailable
@@ -140,10 +142,11 @@ def _scrapeOSMRoute(route: Relation) -> Optional[ScrapedOSMRoute]:
 def scrapeOSMRoutes(overpassResult: OverpassResult) -> List[ScrapedOSMRoute]:
     logger.info("🔧 Scraping WTP Routes")
     result = []
-    for route in tqdm(overpassResult.relations.values()):
-        scrapedOSMRoute = _scrapeOSMRoute(route)
-        if scrapedOSMRoute is not None:
-            result.append(scrapedOSMRoute)
+    with httpx.Client() as httpClient:
+        for route in tqdm(overpassResult.relations.values()):
+            scrapedOSMRoute = _scrapeOSMRoute(route, httpClient=httpClient)
+            if scrapedOSMRoute is not None:
+                result.append(scrapedOSMRoute)
     return result
 
 
