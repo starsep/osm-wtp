@@ -124,7 +124,11 @@ def _scrapeOSMRoute(route: Relation) -> Optional[ScrapedOSMRoute]:
             wtpLinkDuplicates.add(WTPLink.fromTuple(parsedLinkTuple).url())
         osmOperatorLinks.add(parsedLinkTuple)
     scrapingResult = scrapeLink(link)
-    if scrapingResult.notAvailable or len(scrapingResult.stops) == 0:
+    if (
+        scrapingResult is None
+        or scrapingResult.notAvailable
+        or len(scrapingResult.stops) == 0
+    ):
         invalidOperatorVariants.add((link, route.url))
         return None
     return ScrapedOSMRoute(
@@ -134,6 +138,7 @@ def _scrapeOSMRoute(route: Relation) -> Optional[ScrapedOSMRoute]:
 
 @log_duration
 def scrapeOSMRoutes(overpassResult: OverpassResult) -> List[ScrapedOSMRoute]:
+    logger.info("🔧 Scraping WTP Routes")
     result = []
     for route in tqdm(overpassResult.relations.values()):
         scrapedOSMRoute = _scrapeOSMRoute(route)

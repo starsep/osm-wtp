@@ -1,16 +1,16 @@
-import re
 from dataclasses import dataclass
 from typing import Optional, Tuple, List, Set
 from urllib import parse
 
 from bs4 import BeautifulSoup
+from diskcache import Cache
 
 import logger
 from logger import log_duration
-from configuration import MISSING_REF
+from configuration import MISSING_REF, cacheDirectory
 from model.types import StopName, StopRef
 from model.stopData import StopData
-from scraper.scraper import cache, parseLinkArguments, fetchWebsite
+from scraper.scraper import parseLinkArguments, fetchWebsite
 from warsaw.wtpStopMapping import wtpStopMapping
 
 lineNotAvailableToday = "Najbliższy dzień z dostępnym rozkładem dla wybranej linii to"
@@ -29,8 +29,7 @@ wtpVariantArg = "wtp_vr"
 wtpDateArg = "wtp_dt"
 wtpDomain = "wtp.waw.pl"
 
-
-wtpCache = cache("WTP")
+wtpCache = Cache(cacheDirectory / "WTP")
 
 
 @dataclass
@@ -92,14 +91,18 @@ wtpManyLastStops: Set[Tuple[str, str]] = set()
 wtpMissingLastStopRefNames: Set[Tuple[str, str]] = set()
 
 
-# @wtpCache.memoize()
+@wtpCache.memoize()
 def cachedScrapeLink(link: str) -> CachedWTPResult:
     htmlContent = fetchWebsite(link)
-    return cachedParseWebsite(htmlContent=htmlContent, link=link)
+    return cachedParseWebsite(htmlContent=htmlContent, inputUrl=link)
 
 
-def scrapeLink(link: str) -> WTPResult:
-    cachedResult = cachedScrapeLink(link)
+def scrapeLink(link: str) -> Optional[WTPResult]:
+    parsedLink = WTPLink.parseWTPRouteLink(link)
+    if parsedLink is None:
+        logger.error(f"Couldn't parse link {link}")
+        return None
+    cachedResult = cachedScrapeLink(parsedLink.url())
     wtpSeenLinks.update(cachedResult.seenLinks)
     wtpStopRefs.update(cachedResult.stopRefs)
     wtpMissingLastStop.update(cachedResult.missingLastStop)
@@ -108,7 +111,7 @@ def scrapeLink(link: str) -> WTPResult:
     return cachedResult.wtpResult
 
 
-def cachedParseWebsite(htmlContent: str, link: str) -> CachedWTPResult:
+def cachedParseWebsite(htmlContent: str, inputUrl: str) -> CachedWTPResult:
     parser = BeautifulSoup(htmlContent, features="html.parser")
     stopRefs: Set[str] = set()
     seenLinks: Set[Tuple[str, str, str]] = set()
@@ -132,7 +135,7 @@ def cachedParseWebsite(htmlContent: str, link: str) -> CachedWTPResult:
         anotherDateLinkArgs = parseLinkArguments(anotherDateLink)
         if wtpDateArg in anotherDateLinkArgs:
             return cachedScrapeLink(
-                link + f"&{wtpDateArg}={anotherDateLinkArgs[wtpDateArg][0]}"
+                inputUrl + f"&{wtpDateArg}={anotherDateLinkArgs[wtpDateArg][0]}"
             )
     for link in parser.select("a"):
         url = link.get("href")
@@ -154,13 +157,13 @@ def cachedParseWebsite(htmlContent: str, link: str) -> CachedWTPResult:
     # handle last stop without link
     lastStop = parser.select("div.timetable-route-point.name.active.follow.disabled")
     if len(lastStop) == 0:
-        missingLastStop.add(link)
+        missingLastStop.add(inputUrl)
     if len(lastStop) > 1:
-        manyLastStops.add((link, str(lastStop)))
+        manyLastStops.add((inputUrl, str(lastStop)))
     for stopLink in lastStop[:1]:
         stopName = stopLink.text.strip()
         if len(stops) == 0:
-            logger.error(f"Empty stops: {link}")
+            logger.error(f"Empty stops: {inputUrl}")
             continue
         stopRef = MISSING_REF
         stopRefs.add(stopRef)
