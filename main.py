@@ -11,7 +11,7 @@ from jinja2 import (
 
 import logger
 from compare.comparator import compareStops
-from configuration import MISSING_REF
+from configuration import MISSING_REF, outputDirectory
 from gtfs.osmGTFSStopsComparer import compareOSMAndGTFSStops, STOP_DISTANCE_THRESHOLD
 from osm.OSMRelationAnalyzer import (
     analyzeOSMRelations,
@@ -66,7 +66,7 @@ def processData():
         startTime=startTime.isoformat(timespec="seconds"),
         generationSeconds=generationSeconds,
     )
-    with Path("osm-wtp/index.html").open("w") as f:
+    with Path(outputDirectory, "index.html").open("w") as f:
         template = env.get_template("index.j2")
         f.write(
             template.render(
@@ -84,7 +84,7 @@ def processData():
                 **sharedContext
             )
         )
-    with Path("osm-wtp/stops.html").open("w") as f:
+    with Path(outputDirectory, "stops.html").open("w") as f:
         template = env.get_template("stops.j2")
         f.write(
             template.render(
