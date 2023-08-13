@@ -101,7 +101,7 @@ def _scrapeOSMRoute(route: Relation) -> Optional[ScrapedOSMRoute]:
         or "route" not in tags
         or tags["type"] != "route"
         or routeRef is None
-        or tags["route"] in ["tracks", "subway", "train"]
+        or tags["route"] in ["tracks", "subway", "train", "railway"]
     ):
         return None
     if "url" not in tags:
