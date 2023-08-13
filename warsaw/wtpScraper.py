@@ -20,6 +20,7 @@ lineNotAvailableTodayPattern = (
 variantNotAvailable = (
     "Wybrany wariant trasy jest niedostępny dla określonego kierunku linii"
 )
+lineNotAvailable = "Wybrana linia nie została znaleziona"
 
 
 wtpModeArg = "wtp_md"
@@ -118,7 +119,7 @@ def cachedParseWebsite(htmlContent: str, inputUrl: str) -> CachedWTPResult:
     missingLastStop: Set[str] = set()
     manyLastStops: Set[Tuple[str, str]] = set()
     missingLastStopRefNames: Set[Tuple[str, str]] = set()
-    if variantNotAvailable in htmlContent:
+    if variantNotAvailable in htmlContent or lineNotAvailable in htmlContent:
         return CachedWTPResult(
             wtpResult=WTPResult(
                 notAvailable=True, detour=False, new=False, short=False, stops=[]
