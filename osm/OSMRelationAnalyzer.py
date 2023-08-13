@@ -126,7 +126,7 @@ def _scrapeOSMRoute(route: Relation) -> Optional[ScrapedOSMRoute]:
     scrapingResult = scrapeLink(link)
     if (
         scrapingResult is None
-        or scrapingResult.notAvailable
+        or scrapingResult.unavailable
         or len(scrapingResult.stops) == 0
     ):
         invalidOperatorVariants.add((link, route.url))

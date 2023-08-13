@@ -13,14 +13,14 @@ from model.stopData import StopData
 from scraper.scraper import parseLinkArguments, fetchWebsite
 from warsaw.wtpStopMapping import wtpStopMapping
 
-lineNotAvailableToday = "Najbliższy dzień z dostępnym rozkładem dla wybranej linii to"
-lineNotAvailableTodayPattern = (
-    f'div.timetable-message:-soup-contains("{lineNotAvailableToday}")'
+lineUnavailableToday = "Najbliższy dzień z dostępnym rozkładem dla wybranej linii to"
+lineUnavailableTodayPattern = (
+    f'div.timetable-message:-soup-contains("{lineUnavailableToday}")'
 )
-variantNotAvailable = (
+variantUnavailable = (
     "Wybrany wariant trasy jest niedostępny dla określonego kierunku linii"
 )
-lineNotAvailable = "Wybrana linia nie została znaleziona"
+lineUnavailable = "Wybrana linia nie została znaleziona"
 
 
 wtpModeArg = "wtp_md"
@@ -68,7 +68,7 @@ class WTPLink:
 
 @dataclass
 class WTPResult:
-    notAvailable: bool
+    unavailable: bool
     detour: bool
     new: bool
     short: bool
@@ -119,10 +119,10 @@ def cachedParseWebsite(htmlContent: str, inputUrl: str) -> CachedWTPResult:
     missingLastStop: Set[str] = set()
     manyLastStops: Set[Tuple[str, str]] = set()
     missingLastStopRefNames: Set[Tuple[str, str]] = set()
-    if variantNotAvailable in htmlContent or lineNotAvailable in htmlContent:
+    if variantUnavailable in htmlContent or lineUnavailable in htmlContent:
         return CachedWTPResult(
             wtpResult=WTPResult(
-                notAvailable=True, detour=False, new=False, short=False, stops=[]
+                unavailable=True, detour=False, new=False, short=False, stops=[]
             ),
             stopRefs=stopRefs,
             seenLinks=seenLinks,
@@ -130,9 +130,9 @@ def cachedParseWebsite(htmlContent: str, inputUrl: str) -> CachedWTPResult:
             manyLastStops=manyLastStops,
             missingLastStopRefNames=missingLastStopRefNames,
         )
-    notAvailableDiv = parser.select(lineNotAvailableTodayPattern)
-    if len(notAvailableDiv) > 0:
-        anotherDateLink = notAvailableDiv[0].select("a")[0].get("href")
+    unavailableDiv = parser.select(lineUnavailableTodayPattern)
+    if len(unavailableDiv) > 0:
+        anotherDateLink = unavailableDiv[0].select("a")[0].get("href")
         anotherDateLinkArgs = parseLinkArguments(anotherDateLink)
         if wtpDateArg in anotherDateLinkArgs:
             return cachedScrapeLink(
@@ -171,7 +171,7 @@ def cachedParseWebsite(htmlContent: str, inputUrl: str) -> CachedWTPResult:
         stops.append(StopData(name=stopName, ref=stopRef))
     return CachedWTPResult(
         WTPResult(
-            notAvailable=False,
+            unavailable=False,
             detour=len(parser.select("div.timetable-route-point.active.detour")) > 0,
             new=len(parser.select("div.timetable-route-point.active.new")) > 0,
             short=len(parser.select("div.timetable-route-point.active.short")) > 0,
