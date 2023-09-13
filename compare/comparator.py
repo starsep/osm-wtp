@@ -47,6 +47,7 @@ def compareStops(osmResults: OSMResults) -> CompareResult:
         detourOnlyErrors = True
         variantResults = []
         routeMismatch = False
+        error = False
         for variant in osmResults[routeRef]:
             osmRefs: List[StopRef] = [stop.ref for stop in variant.osmStops]
             operatorRefs: List[StopRef] = [stop.ref for stop in variant.operatorStops]
@@ -60,7 +61,7 @@ def compareStops(osmResults: OSMResults) -> CompareResult:
             diffRows = buildDiffRows(osmRefs, operatorRefs, operatorRefToName)
             if osmRefs != operatorRefs and (not variant.detour):
                 detourOnlyErrors = False
-            error = len(otherErrors) > 0 or len(diffRows) > 0
+            error |= len(otherErrors) > 0 or len(diffRows) > 0
             if error:
                 variantResults.append(
                     RenderVariantResult(
