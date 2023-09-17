@@ -74,8 +74,12 @@ def generateLastStopRefs(scrapedRoutes: List[ScrapedOSMRoute]) -> LastStopRefsRe
                 addAdjacentStop(nextStop)
     # Stop Zgoda 01 in Piaseczno is the only case where a stop group has only lines ending in it
     uniqueRefForName: Dict[str, str] = dict(Zgoda=3701)
+
+    def extractName(nameRef: Tuple[str, str]) -> str:
+        return nameRef[0]
+
     for stopGroupName, nameRefTuples in groupby(
-        lastStopsRefsAfter.keys(), lambda key: key[0]
+        sorted(lastStopsRefsAfter.keys(), key=extractName), key=extractName
     ):
         refsForStopGroupName = set(
             lastStopsRefsAfter[nameRefTuple] for nameRefTuple in nameRefTuples
