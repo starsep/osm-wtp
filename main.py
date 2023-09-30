@@ -50,7 +50,18 @@ def processData():
     notLinkedWtpUrls: Set[str] = set()
     for link in wtpSeenLinks - osmOperatorLinks:
         wtpLinkParams = WTPLink.fromTuple(link)
-        if wtpLinkParams.line not in ["M1", "M2"]:
+        if wtpLinkParams.line not in [
+            "M1",
+            "M2",
+            "S1",
+            "S10",
+            "S2",
+            "S20",
+            "S3",
+            "S30",
+            "S4",
+            "S40",
+        ]:
             notLinkedWtpUrls.add(wtpLinkParams.url())
     osmAndGTFSComparisonResult = compareOSMAndGTFSStops()
     env = Environment(
