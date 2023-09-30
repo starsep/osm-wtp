@@ -30,6 +30,7 @@ from osm.OSMRelationAnalyzer import (
     unexpectedStopRef,
     wtpLinkDuplicates,
 )
+from warsaw.compareApiRoutesWithOSM import compareApiRoutesWithOSM
 from warsaw.wtpScraper import (
     WTPLink,
     wtpSeenLinks,
@@ -46,6 +47,7 @@ startTime = datetime.now()
 def processData():
     scrapeHomepage()
     osmResults = analyzeOSMRelations()
+    # compareApiRoutesWithOSM(osmResults)
     compareResults = compareStops(osmResults=osmResults)
     notLinkedWtpUrls: Set[str] = set()
     for link in wtpSeenLinks - osmOperatorLinks:
@@ -92,7 +94,7 @@ def processData():
                 unexpectedLink=unexpectedLink,
                 unexpectedNetwork=unexpectedNetwork,
                 wtpLinkDuplicates=wtpLinkDuplicates,
-                **sharedContext
+                **sharedContext,
             )
         )
     with Path(outputDirectory, "stops.html").open("w") as f:
@@ -123,7 +125,7 @@ def processData():
                 gtfsStops=osmAndGTFSComparisonResult.gtfsStops,
                 osmStopRefsNotInGTFS=osmAndGTFSComparisonResult.osmStopRefsNotInGTFS,
                 gtfsStopRefsNotInOSM=osmAndGTFSComparisonResult.gtfsStopRefsNotInOSM,
-                **sharedContext
+                **sharedContext,
             )
         )
 

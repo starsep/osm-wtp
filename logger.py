@@ -5,6 +5,10 @@ def info(message: str):
     print(message)
 
 
+def warn(message: str):
+    print(message)
+
+
 def error(message: str):
     print(message)
 
