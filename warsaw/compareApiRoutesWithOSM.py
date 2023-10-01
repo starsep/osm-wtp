@@ -4,6 +4,7 @@ from osm.OSMRelationAnalyzer import VariantResult
 from warsaw.fetchApiRoutes import fetchApiRoutes
 
 
+# http://localhost:8111/load_object?objects=r16280027&addtags=gtfs:shape_id:like=RA%25/10/TP-WYS
 def compareApiRoutesWithOSM(osmResults: dict[RouteRef, list[VariantResult]]):
     apiResults = fetchApiRoutes()
     for routeRef, variants in osmResults.items():
@@ -24,4 +25,7 @@ def compareApiRoutesWithOSM(osmResults: dict[RouteRef, list[VariantResult]]):
             else:
                 logger.info(
                     f"Match for {variant.osmName} ({variant.osmId}) ===> {match.routeRef} {match.variantId}"
+                )
+                print(
+                    f"http://localhost:8111/load_object?objects=r{variant.osmId}&addtags=gtfs:shape_id:like=RA%25/{match.routeRef}/{match.variantId}"
                 )
