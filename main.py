@@ -12,7 +12,11 @@ from jinja2 import (
 import logger
 from compare.comparator import compareStops
 from configuration import MISSING_REF, outputDirectory
-from gtfs.osmGTFSStopsComparer import compareOSMAndGTFSStops, STOP_DISTANCE_THRESHOLD
+from gtfs.osmGTFSStopsComparer import (
+    compareOSMAndGTFSStops,
+    STOP_DISTANCE_THRESHOLD,
+    loadGTFSStops,
+)
 from osm.OSMRelationAnalyzer import (
     analyzeOSMRelations,
     osmRefToName,
@@ -48,7 +52,8 @@ startTime = datetime.now()
 def processData():
     scrapeHomepage()
     apiResults = fetchApiRoutes()
-    osmResults = analyzeOSMRelations(apiResults)
+    gtfsStops = loadGTFSStops()
+    osmResults = analyzeOSMRelations(apiResults, gtfsStops)
     # compareApiRoutesWithOSM(apiResults, osmResults)
     compareResults = compareStops(osmResults=osmResults)
     notLinkedWtpUrls: Set[str] = set()
@@ -67,7 +72,7 @@ def processData():
             "S40",
         ]:
             notLinkedWtpUrls.add(wtpLinkParams.url())
-    osmAndGTFSComparisonResult = compareOSMAndGTFSStops()
+    osmAndGTFSComparisonResult = compareOSMAndGTFSStops(gtfsStops)
     env = Environment(
         loader=FileSystemLoader(searchpath="./templates"),
         autoescape=select_autoescape(),

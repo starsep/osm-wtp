@@ -1,36 +1,22 @@
 import csv
-from dataclasses import dataclass
 from pathlib import Path
-from typing import List, Dict, Tuple
+from typing import Dict
 
-from distance import GeoPoint, geoDistance
-from model.types import StopRef, StopName
-from osm.OSMRelationAnalyzer import osmStopsWithLocation, OSMStop
+from distance import geoDistance
+from model.gtfs import GTFSStop, OSMAndGTFSComparisonResult
+from model.types import StopRef
+from osm.OSMRelationAnalyzer import osmStopsWithLocation
 
 gtfsPath = Path("./GTFS-Warsaw")
-
-
-@dataclass
-class GTFSStop(GeoPoint):
-    ref: StopRef
-    name: StopName
 
 
 STOP_DISTANCE_THRESHOLD = 100.0  # metres
 
 
-@dataclass
-class OSMAndGTFSComparisonResult:
-    osmStops: Dict[StopRef, OSMStop]
+def compareOSMAndGTFSStops(
     gtfsStops: Dict[StopRef, GTFSStop]
-    osmStopRefsNotInGTFS: List[StopRef]
-    gtfsStopRefsNotInOSM: List[StopRef]
-    farAwayStops: List[Tuple[StopRef, int]]
-
-
-def compareOSMAndGTFSStops() -> OSMAndGTFSComparisonResult:
+) -> OSMAndGTFSComparisonResult:
     osmStops = osmStopsWithLocation
-    gtfsStops = loadGTFSStops()
     osmStopRefsNotInGTFS = list(sorted(osmStops.keys() - gtfsStops.keys()))
     gtfsStopRefsNotInOSM = list(sorted(gtfsStops.keys() - osmStops.keys()))
     commonRefs = gtfsStops.keys() & osmStops.keys()

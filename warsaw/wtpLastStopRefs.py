@@ -4,8 +4,10 @@ from itertools import groupby
 from typing import Dict, Tuple, List
 
 import logger
+from distance import geoDistance
 from logger import log_duration
 from configuration import MISSING_REF
+from model.gtfs import GTFSStop
 from model.stopData import StopData
 from model.types import StopName, StopRef, RouteRef
 from warsaw.fetchApiRoutes import APIUMWarszawaRouteResult
@@ -28,6 +30,7 @@ def lastStopRef(
     routeRef: RouteRef,
     stops: List[StopData],
     apiResults: dict[RouteRef, List[APIUMWarszawaRouteResult]],
+    gtfsStops: Dict[StopRef, GTFSStop],
 ) -> str:
     match = re.match(stopNameRegex, lastStopName)
     if match is None:
@@ -41,11 +44,32 @@ def lastStopRef(
     elif key in lastStopRefsResult.lastStopsRefsAfter:
         return f"{lastStopRefsResult.lastStopsRefsAfter[key]}{lastStopLocalRef}"
     else:
+        # find last stop ref from API UM Warszawa route
         if routeRef in apiResults:
             stopRefsWithoutLastOne = [stop.ref for stop in stops[:-1]]
             for variant in apiResults[routeRef]:
                 if variant.stopRefs[:-1] == stopRefsWithoutLastOne:
                     return variant.stopRefs[-1]
+        if previousRef in gtfsStops:
+            # find the closest last stop ref from GTFS
+            previousGtfsStop = gtfsStops[previousRef]
+            potentialLastGTFSStops = [
+                gtfsStop
+                for gtfsStop in gtfsStops.values()
+                if lastStopName in gtfsStop.name
+            ]
+            bestDistance = 20000.0
+            best = None
+            for gtfsStop in potentialLastGTFSStops:
+                distance = geoDistance(previousGtfsStop, gtfsStop)
+                if distance < bestDistance:
+                    bestDistance = distance
+                    best = gtfsStop
+            if best is not None:
+                logger.info(
+                    f"For last stop {lastStopName} after {previousRef} matched the closest stop from previous stop ({bestDistance}m) from GTFS => {best.name} {best.ref}"
+                )
+                return best.ref
         logger.error(
             f"Couldn't find ref for last stop {lastStopName} after {previousRef}"
         )

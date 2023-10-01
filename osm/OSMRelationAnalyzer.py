@@ -8,6 +8,8 @@ from tqdm import tqdm
 import logger
 from distance import GeoPoint
 from logger import log_duration
+from model.gtfs import GTFSStop
+from model.osm import OSMStop
 from model.stopData import StopData
 from model.types import StopName, RouteRef, StopRef
 from osm.overpass import (
@@ -68,12 +70,6 @@ class VariantResult:
     unknownRoles: Set[str]
     otherErrors: Set[str]
     routeType: str
-
-
-@dataclass
-class OSMStop(GeoPoint):
-    ref: StopRef
-    name: StopName
 
 
 allOSMRefs = set()
@@ -156,6 +152,7 @@ def addLastStopRefs(
     scrapedRoutes: List[ScrapedOSMRoute],
     lastStopRefsResult: LastStopRefsResult,
     apiResults: dict[RouteRef, List[APIUMWarszawaRouteResult]],
+    gtfsStops: Dict[StopRef, GTFSStop],
 ):
     for route in scrapedRoutes:
         route.wtpResult.stops[-1].ref = lastStopRef(
@@ -165,19 +162,21 @@ def addLastStopRefs(
             route.routeRef,
             route.wtpResult.stops,
             apiResults,
+            gtfsStops,
         )
 
 
 @log_duration
 def analyzeOSMRelations(
-    apiResults: dict[RouteRef, List[APIUMWarszawaRouteResult]]
+    apiResults: dict[RouteRef, List[APIUMWarszawaRouteResult]],
+    gtfsStops: Dict[StopRef, GTFSStop],
 ) -> OSMResults:
     logger.info("🔍 Starting analyzeOSMRelations")
     results: OSMResults = {}
     overpassResult = downloadOverpassData()
     scrapedOSMRoutes = scrapeOSMRoutes(overpassResult)
     lastStopRefs = generateLastStopRefs(scrapedRoutes=scrapedOSMRoutes)
-    addLastStopRefs(scrapedOSMRoutes, lastStopRefs, apiResults)
+    addLastStopRefs(scrapedOSMRoutes, lastStopRefs, apiResults, gtfsStops)
     for scrapedRoute in tqdm(scrapedOSMRoutes):
         route = scrapedRoute.route
         routeRef = scrapedRoute.routeRef
