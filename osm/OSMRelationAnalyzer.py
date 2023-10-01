@@ -309,11 +309,11 @@ def matchWayNode(previousWay: Way, currentWay: Way, otherErrors: Set[str]) -> bo
     currentEnd = currentWay.nodes[-1]
     if previousEnd == currentStart or previousEnd == currentEnd:
         if "oneway" in previousWay.tags and previousWay.tags["oneway"] == "-1":
-            otherErrors.add(osmErrorOnewayUsedWrongDirection(currentWay.id))
+            otherErrors.add(osmErrorOnewayUsedWrongDirection(previousWay.id))
         return True
     if previousStart == currentStart or previousStart == currentEnd:
         if "oneway" in previousWay.tags and previousWay.tags["oneway"] == "yes":
-            otherErrors.add(osmErrorOnewayUsedWrongDirection(currentWay.id))
+            otherErrors.add(osmErrorOnewayUsedWrongDirection(previousWay.id))
         return True
     return False
 
