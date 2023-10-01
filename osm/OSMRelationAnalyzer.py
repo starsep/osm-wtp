@@ -6,12 +6,12 @@ from httpx import Client
 from tqdm import tqdm
 
 import logger
-from distance import GeoPoint
 from logger import log_duration
 from model.gtfs import GTFSStop
 from model.osm import OSMStop
 from model.stopData import StopData
 from model.types import StopName, RouteRef, StopRef
+from osm.osmErrors import *
 from osm.overpass import (
     Node,
     Element,
@@ -234,7 +234,7 @@ def analyzeOSMRelations(
                     allOSMRefs.add(stop.ref)
                 if role.startswith("stop"):
                     if element.type != "node":
-                        otherErrors.add("Stop niebędący punktem")
+                        otherErrors.add(osmErrorStopNotBeingNode())
                     else:
                         stopNodes.add(cast(Node, element))
             elif len(role) > 0:
@@ -275,7 +275,7 @@ def validateRoute(
             validateWay(way, otherErrors, variantWayNodes, overpassResult)
             validatedWays.append(way)
         else:
-            otherErrors.add("Element bez roli niebędący linią")
+            otherErrors.add(osmErrorElementWithoutRoleWhichIsNotWay())
     validateRouteGeometry(validatedWays=validatedWays, otherErrors=otherErrors)
     checkStopNodesWithinRoute(
         stopNodes=stopNodes, variantWayNodes=variantWayNodes, otherErrors=otherErrors
@@ -289,7 +289,7 @@ def validateRouteGeometry(validatedWays: List[Way], otherErrors: Set[str]):
         if not matchWayNode(
             previousWay=previousWay, currentWay=way, otherErrors=otherErrors
         ):
-            otherErrors.add("Trasa jest niespójna")
+            otherErrors.add(osmErrorRouteHasGaps())
         previousWay = way
 
 
@@ -309,11 +309,11 @@ def matchWayNode(previousWay: Way, currentWay: Way, otherErrors: Set[str]) -> bo
     currentEnd = currentWay.nodes[-1]
     if previousEnd == currentStart or previousEnd == currentEnd:
         if "oneway" in previousWay.tags and previousWay.tags["oneway"] == "-1":
-            otherErrors.add(f"Jednokierunkowa droga używana pod prąd {currentWay.id}")
+            otherErrors.add(osmErrorOnewayUsedWrongDirection(currentWay.id))
         return True
     if previousStart == currentStart or previousStart == currentEnd:
         if "oneway" in previousWay.tags and previousWay.tags["oneway"] == "yes":
-            otherErrors.add(f"Jednokierunkowa droga używana pod prąd {currentWay.id}")
+            otherErrors.add(osmErrorOnewayUsedWrongDirection(currentWay.id))
         return True
     return False
 
@@ -328,7 +328,7 @@ def matchRoundabout(roundabout: Way, way: Way, otherErrors: Set[str]) -> bool:
     endingWayNodes = [way.nodes[0], way.nodes[-1]]
     for node in roundabout.nodes:
         if node in endingWayNodes:
-            otherErrors.add("Niepodzielone rondo jest częścią trasy")
+            otherErrors.add(osmErrorUnsplitRoundabout())
             return True
     return False
 
@@ -343,17 +343,17 @@ def validateWay(
         variantWayNodes.add(overpassResult.nodes[node])
     tags = way.tags
     if "highway" not in tags and "railway" not in tags:
-        otherErrors.add("Trasa przebiega przez element bez tagu highway/railway")
+        otherErrors.add(osmErrorWayWithoutHighwayRailwayTag())
     if "highway" in tags:
         if tags["highway"] == "construction":
-            otherErrors.add("Trasa używa highway=construction")
+            otherErrors.add(osmErrorInvalidWayTag("highway=construction"))
         if tags["highway"] == "proposed":
-            otherErrors.add("Trasa używa highway=proposed")
+            otherErrors.add(osmErrorInvalidWayTag("highway=proposed"))
     if "railway" in tags:
         if tags["railway"] == "construction":
-            otherErrors.add("Trasa używa railway=construction")
+            otherErrors.add(osmErrorInvalidWayTag("railway=construction"))
         if tags["railway"] == "proposed":
-            otherErrors.add("Trasa używa railway=proposed")
+            otherErrors.add(osmErrorInvalidWayTag("railway=proposed"))
     validateAccessTags(tags, otherErrors)
 
 
@@ -364,7 +364,7 @@ def validateAccessTags(tags, otherErrors: Set[str]):
         and ("bus" not in tags or tags["bus"] not in ["yes", "designated"])
         and ("psv" not in tags or tags["psv"] not in ["yes", "designated"])
     ):
-        otherErrors.add("access=no bez bus/psv=yes/designated")
+        otherErrors.add(osmErrorAccessNo())
 
 
 def checkStopNodesWithinRoute(
@@ -374,4 +374,4 @@ def checkStopNodesWithinRoute(
 ):
     stopsNotWithinRoute = stopNodes - variantWayNodes
     if len(stopsNotWithinRoute) > 0:
-        otherErrors.add("Punkty zatrzymania nie należą do trasy")
+        otherErrors.add(osmErrorStopsNotWithinRoute())
