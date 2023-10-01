@@ -18,6 +18,7 @@ from osm.overpass import (
     downloadOverpassData,
     Relation,
 )
+from warsaw.fetchApiRoutes import APIUMWarszawaRouteResult
 from warsaw.scrapedOSMRoute import ScrapedOSMRoute
 from warsaw.warsawConstants import WKD_WIKIDATA, KM_WIKIDATA
 from warsaw.wtpLastStopRefs import (
@@ -154,23 +155,29 @@ def scrapeOSMRoutes(overpassResult: OverpassResult) -> List[ScrapedOSMRoute]:
 def addLastStopRefs(
     scrapedRoutes: List[ScrapedOSMRoute],
     lastStopRefsResult: LastStopRefsResult,
+    apiResults: dict[RouteRef, List[APIUMWarszawaRouteResult]],
 ):
     for route in scrapedRoutes:
         route.wtpResult.stops[-1].ref = lastStopRef(
             route.wtpResult.stops[-1].name,
             route.wtpResult.stops[-2].ref,
             lastStopRefsResult,
+            route.routeRef,
+            route.wtpResult.stops,
+            apiResults,
         )
 
 
 @log_duration
-def analyzeOSMRelations() -> OSMResults:
+def analyzeOSMRelations(
+    apiResults: dict[RouteRef, List[APIUMWarszawaRouteResult]]
+) -> OSMResults:
     logger.info("🔍 Starting analyzeOSMRelations")
     results: OSMResults = {}
     overpassResult = downloadOverpassData()
     scrapedOSMRoutes = scrapeOSMRoutes(overpassResult)
     lastStopRefs = generateLastStopRefs(scrapedRoutes=scrapedOSMRoutes)
-    addLastStopRefs(scrapedOSMRoutes, lastStopRefs)
+    addLastStopRefs(scrapedOSMRoutes, lastStopRefs, apiResults)
     for scrapedRoute in tqdm(scrapedOSMRoutes):
         route = scrapedRoute.route
         routeRef = scrapedRoute.routeRef

@@ -5,6 +5,7 @@ from typing import List
 
 import httpx
 
+import logger
 from logger import log_duration
 from model.types import RouteRef, StopRef
 
@@ -41,6 +42,11 @@ def _parseApiUMData(data) -> dict[RouteRef, List[APIUMWarszawaRouteResult]]:
 
 
 def fetchApiRoutes() -> dict[RouteRef, List[APIUMWarszawaRouteResult]]:
+    if len(API_UM_WARSZAWA_API_KEY) == 0:
+        logger.error(
+            "Missing API UM Warszawa api key. Set it as API_KEY environment variable"
+        )
+        return dict()
     resourceId = "26b9ade1-f5d4-439e-84b4-9af37ab7ebf1"
     url = f"https://api.um.warszawa.pl/api/action/public_transport_routes/?apikey={API_UM_WARSZAWA_API_KEY}&resource_id={resourceId}"
     with log_duration("Downloading data from API UM Warszawa"):

@@ -1,12 +1,16 @@
+from typing import List
+
 import logger
 from model.types import RouteRef
 from osm.OSMRelationAnalyzer import VariantResult
-from warsaw.fetchApiRoutes import fetchApiRoutes
+from warsaw.fetchApiRoutes import fetchApiRoutes, APIUMWarszawaRouteResult
 
 
 # http://localhost:8111/load_object?objects=r16280027&addtags=gtfs:shape_id:like=RA%25/10/TP-WYS
-def compareApiRoutesWithOSM(osmResults: dict[RouteRef, list[VariantResult]]):
-    apiResults = fetchApiRoutes()
+def compareApiRoutesWithOSM(
+    apiResults: dict[RouteRef, List[APIUMWarszawaRouteResult]],
+    osmResults: dict[RouteRef, List[VariantResult]],
+):
     for routeRef, variants in osmResults.items():
         if routeRef not in apiResults:
             logger.warn(f"Missing {routeRef} in API UM results")

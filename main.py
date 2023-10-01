@@ -31,6 +31,7 @@ from osm.OSMRelationAnalyzer import (
     wtpLinkDuplicates,
 )
 from warsaw.compareApiRoutesWithOSM import compareApiRoutesWithOSM
+from warsaw.fetchApiRoutes import fetchApiRoutes
 from warsaw.wtpScraper import (
     WTPLink,
     wtpSeenLinks,
@@ -46,8 +47,9 @@ startTime = datetime.now()
 
 def processData():
     scrapeHomepage()
-    osmResults = analyzeOSMRelations()
-    # compareApiRoutesWithOSM(osmResults)
+    apiResults = fetchApiRoutes()
+    osmResults = analyzeOSMRelations(apiResults)
+    # compareApiRoutesWithOSM(apiResults, osmResults)
     compareResults = compareStops(osmResults=osmResults)
     notLinkedWtpUrls: Set[str] = set()
     for link in wtpSeenLinks - osmOperatorLinks:

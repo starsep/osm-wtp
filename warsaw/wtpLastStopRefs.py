@@ -7,7 +7,8 @@ import logger
 from logger import log_duration
 from configuration import MISSING_REF
 from model.stopData import StopData
-from model.types import StopName, StopRef
+from model.types import StopName, StopRef, RouteRef
+from warsaw.fetchApiRoutes import APIUMWarszawaRouteResult
 from warsaw.scrapedOSMRoute import ScrapedOSMRoute
 
 
@@ -21,7 +22,12 @@ stopNameRegex = re.compile(r"^(.*) (\d\d)$")
 
 
 def lastStopRef(
-    lastStopName: StopName, previousRef: StopRef, lastStopRefsResult: LastStopRefsResult
+    lastStopName: StopName,
+    previousRef: StopRef,
+    lastStopRefsResult: LastStopRefsResult,
+    routeRef: RouteRef,
+    stops: List[StopData],
+    apiResults: dict[RouteRef, List[APIUMWarszawaRouteResult]],
 ) -> str:
     match = re.match(stopNameRegex, lastStopName)
     if match is None:
@@ -35,6 +41,11 @@ def lastStopRef(
     elif key in lastStopRefsResult.lastStopsRefsAfter:
         return f"{lastStopRefsResult.lastStopsRefsAfter[key]}{lastStopLocalRef}"
     else:
+        if routeRef in apiResults:
+            stopRefsWithoutLastOne = [stop.ref for stop in stops[:-1]]
+            for variant in apiResults[routeRef]:
+                if variant.stopRefs[:-1] == stopRefsWithoutLastOne:
+                    return variant.stopRefs[-1]
         logger.error(
             f"Couldn't find ref for last stop {lastStopName} after {previousRef}"
         )
