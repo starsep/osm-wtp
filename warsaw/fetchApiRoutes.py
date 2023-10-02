@@ -42,7 +42,7 @@ def _parseApiUMData(data) -> dict[RouteRef, List[APIUMWarszawaRouteResult]]:
 
 
 def fetchApiRoutes() -> dict[RouteRef, List[APIUMWarszawaRouteResult]]:
-    if len(API_UM_WARSZAWA_API_KEY) == 0:
+    if API_UM_WARSZAWA_API_KEY is None:
         logger.error(
             "Missing API UM Warszawa api key. Set it as API_KEY environment variable"
         )
