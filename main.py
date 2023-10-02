@@ -92,6 +92,7 @@ def processData():
                 unexpectedLink=unexpectedLink,
                 unexpectedNetwork=unexpectedNetwork,
                 wtpLinkDuplicates=wtpLinkDuplicates,
+                ENABLE_TRAIN=ENABLE_TRAIN,
                 **sharedContext,
             )
         )
