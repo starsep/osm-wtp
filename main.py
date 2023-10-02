@@ -11,7 +11,7 @@ from jinja2 import (
 
 import logger
 from compare.comparator import compareStops
-from configuration import MISSING_REF, outputDirectory
+from configuration import MISSING_REF, outputDirectory, ENABLE_TRAIN
 from gtfs.osmGTFSStopsComparer import (
     compareOSMAndGTFSStops,
     STOP_DISTANCE_THRESHOLD,
@@ -59,18 +59,9 @@ def processData():
     notLinkedWtpUrls: Set[str] = set()
     for link in wtpSeenLinks - osmOperatorLinks:
         wtpLinkParams = WTPLink.fromTuple(link)
-        if wtpLinkParams.line not in [
-            "M1",
-            "M2",
-            "S1",
-            "S10",
-            "S2",
-            "S20",
-            "S3",
-            "S30",
-            "S4",
-            "S40",
-        ]:
+        if wtpLinkParams.line not in ["M1", "M2"] or (
+            not ENABLE_TRAIN and not wtpLinkParams.line.startswith("S")
+        ):
             notLinkedWtpUrls.add(wtpLinkParams.url())
     osmAndGTFSComparisonResult = compareOSMAndGTFSStops(gtfsStops)
     env = Environment(

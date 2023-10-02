@@ -6,6 +6,7 @@ from httpx import Client
 from tqdm import tqdm
 
 import logger
+from configuration import ENABLE_TRAIN
 from logger import log_duration
 from model.gtfs import GTFSStop
 from model.osm import OSMStop
@@ -100,7 +101,8 @@ def _scrapeOSMRoute(route: Relation, httpClient: Client) -> Optional[ScrapedOSMR
         or "route" not in tags
         or tags["type"] != "route"
         or routeRef is None
-        or tags["route"] in ["tracks", "subway", "train", "railway"]
+        or tags["route"] in ["tracks", "subway", "railway"]
+        or (not ENABLE_TRAIN and tags["route"] == "train")
     ):
         return None
     if "url" not in tags:
