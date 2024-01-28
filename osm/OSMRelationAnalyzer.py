@@ -12,7 +12,9 @@ from model.gtfs import GTFSStop
 from model.osm import OSMStop
 from model.stopData import StopData
 from model.types import StopName, RouteRef, StopRef
-from osm.osmErrors import *
+from osm.osmErrors import osmErrorInvalidWayTag, osmErrorElementWithoutRoleWhichIsNotWay, osmErrorStopNotBeingNode, \
+    osmErrorRouteHasGaps, osmErrorOnewayUsedWrongDirection, osmErrorUnsplitRoundabout, \
+    osmErrorWayWithoutHighwayRailwayTag, osmErrorAccessNo, osmErrorStopsNotWithinRoute
 from osm.overpass import (
     Node,
     Element,

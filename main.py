@@ -34,7 +34,6 @@ from osm.OSMRelationAnalyzer import (
     unexpectedStopRef,
     wtpLinkDuplicates,
 )
-from warsaw.compareApiRoutesWithOSM import compareApiRoutesWithOSM
 from warsaw.fetchApiRoutes import fetchApiRoutes
 from warsaw.wtpScraper import (
     WTPLink,
