@@ -7,12 +7,12 @@
 
     {% if farAwayStops %}
         <h2>Przystanki oddalone o siebie powyżej {{ stopDistanceThreshold }} metrów w OSM/GTFS</h2>
-        <table>
+        <table class="sortable">
             <thead><tr><th>ref</th><th>nazwa OSM</th><th>nazwa GTFS</th><th>odległość [m]</th></thead>
             {% for (ref, distance) in farAwayStops %}
                 <tr>
                     <td>{{ ref }}</td>
-                    <td>{{ osmStops[ref].name }}</td>
+                    <td><a href="{{ osmStops[ref].url }}">{{ osmStops[ref].name }}</a></td>
                     <td>{{ gtfsStops[ref].name }}</td>
                     <td>{{ distance }}</td>
                 </tr>

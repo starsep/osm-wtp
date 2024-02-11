@@ -232,6 +232,8 @@ def analyzeOSMRelations(
                             name=osmStopName,
                             lat=lat,
                             lon=lon,
+                            osmId=element.id,
+                            osmType=member.type,
                         )
                 if len(osmStops) == 0 or osmStops[-1].ref != stop.ref:
                     osmStops.append(stop)
