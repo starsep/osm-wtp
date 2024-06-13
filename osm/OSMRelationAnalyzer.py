@@ -6,7 +6,7 @@ from httpx import Client
 from tqdm import tqdm
 
 import logger
-from configuration import ENABLE_TRAIN
+from configuration import ENABLE_TRAIN, httpxTimeout
 from logger import log_duration
 from model.gtfs import GTFSStop
 from model.osm import OSMStop
@@ -143,7 +143,8 @@ def _scrapeOSMRoute(route: Relation, httpClient: Client) -> Optional[ScrapedOSMR
 def scrapeOSMRoutes(overpassResult: OverpassResult) -> List[ScrapedOSMRoute]:
     logger.info("🔧 Scraping WTP Routes")
     result = []
-    with httpx.Client() as httpClient:
+
+    with httpx.Client(timeout=httpxTimeout) as httpClient:
         for route in tqdm(overpassResult.relations.values()):
             scrapedOSMRoute = _scrapeOSMRoute(route, httpClient=httpClient)
             if scrapedOSMRoute is not None:

@@ -9,7 +9,7 @@ from httpx import Client
 
 import logger
 from logger import log_duration
-from configuration import MISSING_REF, cacheDirectory, EXPIRE_WTP_SECONDS
+from configuration import MISSING_REF, cacheDirectory, EXPIRE_WTP_SECONDS, httpxTimeout
 from model.types import StopName, StopRef
 from model.stopData import StopData
 from scraper.scraper import parseLinkArguments, fetchWebsite
@@ -194,7 +194,7 @@ def cachedParseWebsite(
 
 @wtpCache.memoize(expire=EXPIRE_WTP_SECONDS)
 def cachedScrapeHomepage() -> List[Tuple[str, str, str]]:
-    with httpx.Client() as httpClient:
+    with httpx.Client(timeout=httpxTimeout) as httpClient:
         mainContent = BeautifulSoup(
             fetchWebsite(
                 f"https://www.{wtpDomain}/rozklady-jazdy/", httpClient=httpClient
