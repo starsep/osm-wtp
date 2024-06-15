@@ -1,3 +1,4 @@
+import dataclasses
 from dataclasses import dataclass
 from typing import Optional, Tuple, List, Set
 from urllib import parse
@@ -34,7 +35,7 @@ wtpDomain = "wtp.waw.pl"
 wtpCache = Cache(cacheDirectory / "WTP")
 
 
-@dataclass
+@dataclass(frozen=True)
 class WTPLink:
     line: str
     direction: str
@@ -67,7 +68,7 @@ class WTPLink:
         )
 
 
-@dataclass
+@dataclass(frozen=True)
 class WTPResult:
     unavailable: bool
     detour: bool
@@ -76,7 +77,7 @@ class WTPResult:
     stops: List[StopData]
 
 
-@dataclass
+@dataclass(frozen=True)
 class CachedWTPResult:
     wtpResult: WTPResult
     seenLinks: Set[Tuple[str, str, str]]
@@ -213,8 +214,12 @@ def scrapeHomepage():
 
 
 def mapWtpResult(cachedWTPResult: CachedWTPResult) -> CachedWTPResult:
-    cachedWTPResult.wtpResult.stops = list(
-        map(mapWtpStop, cachedWTPResult.wtpResult.stops)
+    cachedWTPResult = dataclasses.replace(
+        cachedWTPResult,
+        wtpResult=dataclasses.replace(
+            cachedWTPResult.wtpResult,
+            stops=list(map(mapWtpStop, cachedWTPResult.wtpResult.stops)),
+        ),
     )
     return cachedWTPResult
 

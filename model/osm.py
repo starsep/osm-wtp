@@ -4,7 +4,7 @@ from distance import GeoPoint
 from model.types import StopRef, StopName
 
 
-@dataclass
+@dataclass(frozen=True)
 class OSMStop(GeoPoint):
     ref: StopRef
     name: StopName

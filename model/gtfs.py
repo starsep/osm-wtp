@@ -6,13 +6,13 @@ from model.osm import OSMStop
 from model.types import StopRef, StopName
 
 
-@dataclass
+@dataclass(frozen=True)
 class GTFSStop(GeoPoint):
     ref: StopRef
     name: StopName
 
 
-@dataclass
+@dataclass(frozen=True)
 class OSMAndGTFSComparisonResult:
     osmStops: Dict[StopRef, OSMStop]
     gtfsStops: Dict[StopRef, GTFSStop]

@@ -8,7 +8,7 @@ from model.types import StopRef, StopName, RouteRef
 from osm.OSMRelationAnalyzer import OSMResults, osmRefToName, VariantResult
 
 
-@dataclass
+@dataclass(frozen=True)
 class DiffRow:
     color: str
     refOSM: StopRef
@@ -17,14 +17,14 @@ class DiffRow:
     nameOperator: StopName
 
 
-@dataclass
+@dataclass(frozen=True)
 class RenderVariantResult:
     variant: VariantResult
     diffRows: List[DiffRow]
     otherErrors: List[str]
 
 
-@dataclass
+@dataclass(frozen=True)
 class RouteResult:
     routeMismatch: bool
     error: bool
@@ -32,7 +32,7 @@ class RouteResult:
     variantResults: List[RenderVariantResult]
 
 
-@dataclass
+@dataclass(frozen=True)
 class CompareResult:
     renderResults: Dict[RouteRef, RouteResult]
     refs: List[RouteRef]

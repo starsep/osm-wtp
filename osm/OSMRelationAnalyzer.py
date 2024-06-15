@@ -67,7 +67,7 @@ def checkOSMNameMatchesRef(stop: StopData, url: str):
         mismatchOSMNameRef.add((stop.ref, stop.name, url))
 
 
-@dataclass
+@dataclass(frozen=True)
 class VariantResult:
     ref: RouteRef
     osmName: str

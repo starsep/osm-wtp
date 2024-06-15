@@ -12,7 +12,7 @@ from model.types import RouteRef, StopRef
 API_UM_WARSZAWA_API_KEY = os.getenv("API_KEY")
 
 
-@dataclass
+@dataclass(frozen=True)
 class APIUMWarszawaRouteResult:
     routeRef: RouteRef
     variantId: str

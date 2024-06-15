@@ -3,7 +3,7 @@ from dataclasses import dataclass
 from math import sin, cos, sqrt, atan2, radians
 
 
-@dataclass
+@dataclass(frozen=True)
 class GeoPoint:
     lat: float
     lon: float
