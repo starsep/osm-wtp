@@ -1,0 +1,4 @@
+[tool.vulture]
+exclude = ["venv", ".venv"]
+ignore_names = ["test*"]
+paths = ["."]
