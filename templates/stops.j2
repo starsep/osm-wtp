@@ -79,8 +79,8 @@
 
     {% if wtpStopMapping %}
         <h2>Mapowanie przystanków WTP => Rzeczywiste (tymczasowe zmiany, błąd WTP)</h2>
-        {% for ((stopRefWTP, stopNameWTP), (actualStopRef, actualStopName)) in wtpStopMapping.items() %}
-            <span>({{ stopRefWTP }}, {{ stopNameWTP }}) => ({{ actualStopRef }}, {{ actualStopName }})</span>
+        {% for (wtpStop, actualStop) in wtpStopMapping.items() %}
+            <span>({{ wtpStop.ref }}, {{ wtpStop.name }}) => ({{ actualStop.ref }}, {{ actualStop.name }})</span>
         {% endfor %}
     {% endif %}
 

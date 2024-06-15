@@ -10,7 +10,6 @@ from httpx import Client
 import logger
 from logger import log_duration
 from configuration import MISSING_REF, cacheDirectory, EXPIRE_WTP_SECONDS, httpxTimeout
-from model.types import StopName, StopRef
 from model.stopData import StopData
 from scraper.scraper import parseLinkArguments, fetchWebsite
 from warsaw.wtpStopMapping import wtpStopMapping
@@ -80,7 +79,6 @@ class WTPResult:
 @dataclass
 class CachedWTPResult:
     wtpResult: WTPResult
-    stopRefs: Set[str]
     seenLinks: Set[Tuple[str, str, str]]
     missingLastStop: Set[str]
     manyLastStops: Set[Tuple[str, str]]
@@ -107,9 +105,11 @@ def scrapeLink(link: str, httpClient: Client) -> Optional[WTPResult]:
     if parsedLink is None:
         logger.error(f"Couldn't parse link {link}")
         return None
-    cachedResult = cachedScrapeLink(parsedLink.url(), httpClient=httpClient)
+    cachedResult = mapWtpResult(
+        cachedScrapeLink(parsedLink.url(), httpClient=httpClient)
+    )
     wtpSeenLinks.update(cachedResult.seenLinks)
-    wtpStopRefs.update(cachedResult.stopRefs)
+    wtpStopRefs.update({stop.ref for stop in cachedResult.wtpResult.stops})
     wtpMissingLastStop.update(cachedResult.missingLastStop)
     wtpManyLastStops.update(cachedResult.manyLastStops)
     wtpMissingLastStopRefNames.update(cachedResult.missingLastStopRefNames)
@@ -120,7 +120,6 @@ def cachedParseWebsite(
     htmlContent: str, inputUrl: str, httpClient: Client
 ) -> CachedWTPResult:
     parser = BeautifulSoup(htmlContent, features="html.parser")
-    stopRefs: Set[str] = set()
     seenLinks: Set[Tuple[str, str, str]] = set()
     missingLastStop: Set[str] = set()
     manyLastStops: Set[Tuple[str, str]] = set()
@@ -130,7 +129,6 @@ def cachedParseWebsite(
             wtpResult=WTPResult(
                 unavailable=True, detour=False, new=False, short=False, stops=[]
             ),
-            stopRefs=stopRefs,
             seenLinks=seenLinks,
             missingLastStop=missingLastStop,
             manyLastStops=manyLastStops,
@@ -159,8 +157,6 @@ def cachedParseWebsite(
         stopLink = stopLink.get("href")
         stopLinkArgs = parseLinkArguments(stopLink)
         stopRef = stopLinkArgs["wtp_st"][0] + stopLinkArgs["wtp_pt"][0]
-        stopRef, stopName = mapWtpStop(stopRef, stopName)
-        stopRefs.add(stopRef)
         stops.append(StopData(name=stopName, ref=stopRef))
     # handle last stop without link
     lastStop = parser.select("div.timetable-route-point.name.active.follow.disabled")
@@ -174,7 +170,6 @@ def cachedParseWebsite(
             logger.error(f"Empty stops: {inputUrl}")
             continue
         stopRef = MISSING_REF
-        stopRefs.add(stopRef)
         stops.append(StopData(name=stopName, ref=stopRef))
     return CachedWTPResult(
         WTPResult(
@@ -184,7 +179,6 @@ def cachedParseWebsite(
             short=len(parser.select("div.timetable-route-point.active.short")) > 0,
             stops=stops,
         ),
-        stopRefs=stopRefs,
         seenLinks=seenLinks,
         missingLastStop=missingLastStop,
         manyLastStops=manyLastStops,
@@ -218,14 +212,20 @@ def scrapeHomepage():
     wtpSeenLinks.update(cachedScrapeHomepage())
 
 
-def mapWtpStop(wtpStopRef: StopRef, wtpStopName: StopName) -> Tuple[StopRef, StopName]:
-    key = (wtpStopRef, wtpStopName)
-    if (wtpStopRef, wtpStopName) in wtpStopMapping:
-        return wtpStopMapping[key]
+def mapWtpResult(cachedWTPResult: CachedWTPResult) -> CachedWTPResult:
+    cachedWTPResult.wtpResult.stops = list(
+        map(mapWtpStop, cachedWTPResult.wtpResult.stops)
+    )
+    return cachedWTPResult
+
+
+def mapWtpStop(wtpStop: StopData) -> StopData:
+    if wtpStop in wtpStopMapping:
+        return wtpStopMapping[wtpStop]
     # stops 8x => 0x
-    if len(wtpStopRef) == 6 and wtpStopRef[-2] == "8":
-        return (
-            f"{wtpStopRef[:-2]}0{wtpStopRef[-1]}",
-            f"{wtpStopName[:-2]}0{wtpStopName[-1]}",
+    if len(wtpStop.ref) == 6 and wtpStop.ref[-2] == "8":
+        return StopData(
+            ref=f"{wtpStop.ref[:-2]}0{wtpStop.ref[-1]}",
+            name=f"{wtpStop.name[:-2]}0{wtpStop.name[-1]}",
         )
-    return key
+    return wtpStop

@@ -3,7 +3,7 @@ pre-commit:
   parallel: true
   commands:
     ruff:
-      run: ruff .
+      run: ruff format . && ruff check --fix .
 
 skip_output:
   - meta           # Skips lefthook version printing

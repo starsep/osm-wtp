@@ -14,7 +14,7 @@ STOP_DISTANCE_THRESHOLD = 100.0  # metres
 
 
 def compareOSMAndGTFSStops(
-    gtfsStops: Dict[StopRef, GTFSStop]
+    gtfsStops: Dict[StopRef, GTFSStop],
 ) -> OSMAndGTFSComparisonResult:
     osmStops = osmStopsWithLocation
     osmStopRefsNotInGTFS = list(sorted(osmStops.keys() - gtfsStops.keys()))

@@ -12,9 +12,17 @@ from model.gtfs import GTFSStop
 from model.osm import OSMStop
 from model.stopData import StopData
 from model.types import StopName, RouteRef, StopRef
-from osm.osmErrors import osmErrorInvalidWayTag, osmErrorElementWithoutRoleWhichIsNotWay, osmErrorStopNotBeingNode, \
-    osmErrorRouteHasGaps, osmErrorOnewayUsedWrongDirection, osmErrorUnsplitRoundabout, \
-    osmErrorWayWithoutHighwayRailwayTag, osmErrorAccessNo, osmErrorStopsNotWithinRoute
+from osm.osmErrors import (
+    osmErrorInvalidWayTag,
+    osmErrorElementWithoutRoleWhichIsNotWay,
+    osmErrorStopNotBeingNode,
+    osmErrorRouteHasGaps,
+    osmErrorOnewayUsedWrongDirection,
+    osmErrorUnsplitRoundabout,
+    osmErrorWayWithoutHighwayRailwayTag,
+    osmErrorAccessNo,
+    osmErrorStopsNotWithinRoute,
+)
 from osm.overpass import (
     Node,
     Element,
@@ -160,14 +168,17 @@ def addLastStopRefs(
     gtfsStops: Dict[StopRef, GTFSStop],
 ):
     for route in scrapedRoutes:
-        route.wtpResult.stops[-1].ref = lastStopRef(
-            route.wtpResult.stops[-1].name,
-            route.wtpResult.stops[-2].ref,
-            lastStopRefsResult,
-            route.routeRef,
-            route.wtpResult.stops,
-            apiResults,
-            gtfsStops,
+        route.wtpResult.stops[-1] = StopData(
+            ref=lastStopRef(
+                route.wtpResult.stops[-1].name,
+                route.wtpResult.stops[-2].ref,
+                lastStopRefsResult,
+                route.routeRef,
+                route.wtpResult.stops,
+                apiResults,
+                gtfsStops,
+            ),
+            name=route.wtpResult.stops[-1].name,
         )
 
 
