@@ -1,3 +1,4 @@
+import dataclasses
 from dataclasses import dataclass
 from typing import Optional, Dict, List, Set, Tuple, cast
 
@@ -39,7 +40,7 @@ from warsaw.wtpLastStopRefs import (
     generateLastStopRefs,
     lastStopRef,
 )
-from warsaw.wtpScraper import wtpDomain, WTPLink, scrapeLink
+from warsaw.wtpScraper import wtpDomain, WTPLink, scrapeLink, mapWtpStop
 
 mismatchOSMNameRef = set()
 
@@ -182,6 +183,19 @@ def addLastStopRefs(
         )
 
 
+def mapWtpStops(routes: list[ScrapedOSMRoute]) -> list[ScrapedOSMRoute]:
+    return [
+        dataclasses.replace(
+            route,
+            wtpResult=dataclasses.replace(
+                route.wtpResult,
+                stops=[mapWtpStop(stop) for stop in route.wtpResult.stops],
+            ),
+        )
+        for route in routes
+    ]
+
+
 @log_duration
 def analyzeOSMRelations(
     apiResults: dict[RouteRef, List[APIUMWarszawaRouteResult]],
@@ -193,6 +207,7 @@ def analyzeOSMRelations(
     scrapedOSMRoutes = scrapeOSMRoutes(overpassResult)
     lastStopRefs = generateLastStopRefs(scrapedRoutes=scrapedOSMRoutes)
     addLastStopRefs(scrapedOSMRoutes, lastStopRefs, apiResults, gtfsStops)
+    scrapedOSMRoutes = mapWtpStops(scrapedOSMRoutes)
     for scrapedRoute in tqdm(scrapedOSMRoutes):
         route = scrapedRoute.route
         routeRef = scrapedRoute.routeRef
