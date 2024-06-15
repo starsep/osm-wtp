@@ -1,2 +1,7 @@
+exclude = ["whitelist.py"]
+
 [lint]
 ignore = ["E501"]
+
+[lint.per-file-ignores]
+"test*" = ["E402"]

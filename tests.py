@@ -1,12 +1,16 @@
 import unittest
 
 from distance import geoDistance, GeoPoint
+from model.stopData import StopData
 from warsaw.wtpScraper import mapWtpStop
 
 
 class OSMWTPCompareTests(unittest.TestCase):
     def test_mapWtpStop(self):
-        self.assertEqual(mapWtpStop("100081", "Test 81"), ("100001", "Test 01"))
+        self.assertEqual(
+            mapWtpStop(StopData(ref="100081", name="Test 81")),
+            StopData(ref="100001", name="Test 01"),
+        )
 
 
 class GeoDistanceTests(unittest.TestCase):
