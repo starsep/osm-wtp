@@ -21,7 +21,7 @@ class DiffRow:
 class RenderVariantResult:
     variant: VariantResult
     diffRows: List[DiffRow]
-    otherErrors: Set[str]
+    otherErrors: List[str]
 
 
 @dataclass
@@ -65,7 +65,9 @@ def compareStops(osmResults: OSMResults) -> CompareResult:
             if error:
                 variantResults.append(
                     RenderVariantResult(
-                        variant=variant, diffRows=diffRows, otherErrors=otherErrors
+                        variant=variant,
+                        diffRows=diffRows,
+                        otherErrors=sorted(list(otherErrors)),
                     )
                 )
             routeMismatch |= osmRefs != operatorRefs
