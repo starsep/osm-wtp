@@ -43,9 +43,7 @@
     {% endif %}
 
     {% if missingRefsInOSM %}
-        <h2>Ref przystanków WTP, które nie występują w żadnej trasie w OSM
-            <span title="dwa ostatnie znaki są różne">ℹ️</span>
-        </h2>
+        <h2>Ref przystanków WTP, które nie występują w żadnej trasie w OSM</h2>
         {% for (ref, name) in missingRefsInOSM %}
             <span>{{ ref }}: {{ name}}</span>
         {% endfor %}
