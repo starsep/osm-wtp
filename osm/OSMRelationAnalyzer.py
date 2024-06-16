@@ -122,7 +122,12 @@ def _scrapeOSMRoute(route: Relation, httpClient: Client) -> Optional[ScrapedOSMR
     ):
         return None
     if "network" in tags:
-        if tags["network"] in ["Warszawska Kolej Dojazdowa", "KM", "Koleje Mazowieckie"]:
+        if tags["network"] in [
+            "Warszawska Kolej Dojazdowa",
+            "WKD",
+            "KM",
+            "Koleje Mazowieckie",
+        ]:
             return None
         if tags["network"] != "ZTM Warszawa":
             unexpectedNetwork.add((route.url, tags["network"]))
