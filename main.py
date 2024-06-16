@@ -110,9 +110,9 @@ def processData():
                     for ref, names in compareResults.operatorRefToName.items()
                     if len(names) > 1
                 },
-                mismatchOSMNameRefRailway=mismatchOSMNameRefRailway,
-                mismatchOSMNameRefNonRailway=mismatchOSMNameRefNonRailway,
-                missingLastStopRefNames=list(sorted(wtpMissingLastStopRefNames)),
+                mismatchOSMNameRefRailway=sorted(list(mismatchOSMNameRefRailway)),
+                mismatchOSMNameRefNonRailway=sorted(list(mismatchOSMNameRefNonRailway)),
+                missingLastStopRefNames=sorted(list(wtpMissingLastStopRefNames)),
                 missingName=missingName,
                 missingStopRef=missingStopRef,
                 missingRefsInOSM=[
