@@ -44,7 +44,7 @@
 
     {% if missingRefsInOSM %}
         <h2>Ref przystanków WTP, które nie występują w żadnej trasie w OSM
-            <span title="dwa ostatnie znaki są różne">❔</span>
+            <span title="dwa ostatnie znaki są różne">ℹ️</span>
         </h2>
         {% for (ref, name) in missingRefsInOSM %}
             <span>{{ ref }}: {{ name}}</span>
@@ -53,7 +53,7 @@
 
     {% if mismatchOSMNameRefNonRailway %}
         <h2>Przystanki niekolejowe w OSM, których nazwa nie pasuje do ref
-            <span title="dwa ostatnie znaki są różne">❔</span>
+            <span title="dwa ostatnie znaki są różne">ℹ️</span>
         </h2>
         {% for (ref, name, osmLink) in mismatchOSMNameRefNonRailway %}
             <span><a href="{{ osmLink }}">{{ name }} (ref={{ ref }})</a></span>
@@ -62,7 +62,7 @@
 
     {% if mismatchOSMNameRefRailway %}
         <h2>Przystanki kolejowe w OSM, których nazwa nie pasuje do ref
-            <span title="dwa ostatnie znaki są różne">❔</span>
+            <span title="dwa ostatnie znaki są różne">ℹ️</span>
         </h2>
         {% for (ref, name, osmLink) in mismatchOSMNameRefRailway %}
             <span><a href="{{ osmLink }}">{{ name }} (ref={{ ref }})</a></span>
