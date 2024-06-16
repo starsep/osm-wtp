@@ -121,6 +121,11 @@ def _scrapeOSMRoute(route: Relation, httpClient: Client) -> Optional[ScrapedOSMR
         or (not ENABLE_TRAIN and tags["route"] == "train")
     ):
         return None
+    if "network" in tags:
+        if tags["network"] in ["Warszawska Kolej Dojazdowa"]:
+            return None
+        if tags["network"] != "ZTM Warszawa":
+            unexpectedNetwork.add((route.url, tags["network"]))
     if "url" not in tags:
         if not (
             "operator:wikidata" in tags
@@ -128,8 +133,6 @@ def _scrapeOSMRoute(route: Relation, httpClient: Client) -> Optional[ScrapedOSMR
         ):
             missingRouteUrl.add((route.url, tags.get("name", "")))
         return None
-    if "network" in tags and tags["network"] != "ZTM Warszawa":
-        unexpectedNetwork.add((route.url, tags["network"]))
     link = tags["url"]
     if wtpDomain not in link:
         unexpectedLink.add((route.url, link))
