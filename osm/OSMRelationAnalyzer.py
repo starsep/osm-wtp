@@ -42,7 +42,8 @@ from warsaw.wtpLastStopRefs import (
 )
 from warsaw.wtpScraper import wtpDomain, WTPLink, scrapeLink, mapWtpStop
 
-mismatchOSMNameRef = set()
+mismatchOSMNameRefNonRailway: Set[Tuple[str, str, str]] = set()
+mismatchOSMNameRefRailway: Set[Tuple[str, str, str]] = set()
 
 
 def parseRef(tags) -> Optional[str]:
@@ -61,11 +62,15 @@ def parseName(tags) -> Optional[StopName]:
     return None
 
 
-def checkOSMNameMatchesRef(stop: StopData, url: str):
+def checkOSMNameMatchesRef(stop: StopData, url: str, railway: bool):
     localRef = stop.ref[-2]
     nameSuffix = stop.name[-2]
     if localRef != nameSuffix:
-        mismatchOSMNameRef.add((stop.ref, stop.name, url))
+        error = (stop.ref, stop.name, url)
+        if railway:
+            mismatchOSMNameRefRailway.add(error)
+        else:
+            mismatchOSMNameRefNonRailway.add(error)
 
 
 @dataclass(frozen=True)
@@ -248,7 +253,7 @@ def analyzeOSMRelations(
                     osmRefToName[osmStopRef] = set()
                 osmRefToName[osmStopRef].add(osmStopName)
                 stop = StopData(name=osmStopName, ref=osmStopRef)
-                checkOSMNameMatchesRef(stop, element.url)
+                checkOSMNameMatchesRef(stop, element.url, railway="railway" in tags)
                 # prefer stop to platform
                 if osmStopRef not in osmStopsWithLocation or role == "stop":
                     coords = element.center(overpassResult)

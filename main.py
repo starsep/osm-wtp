@@ -24,7 +24,8 @@ from osm.OSMRelationAnalyzer import (
     disusedStop,
     invalidOperatorVariants,
     manyLastStops,
-    mismatchOSMNameRef,
+    mismatchOSMNameRefNonRailway,
+    mismatchOSMNameRefRailway,
     missingName,
     missingRouteUrl,
     missingStopRef,
@@ -109,7 +110,8 @@ def processData():
                     for ref, names in compareResults.operatorRefToName.items()
                     if len(names) > 1
                 },
-                mismatchOSMNameRef=mismatchOSMNameRef,
+                mismatchOSMNameRefRailway=mismatchOSMNameRefRailway,
+                mismatchOSMNameRefNonRailway=mismatchOSMNameRefNonRailway,
                 missingLastStopRefNames=list(sorted(wtpMissingLastStopRefNames)),
                 missingName=missingName,
                 missingStopRef=missingStopRef,

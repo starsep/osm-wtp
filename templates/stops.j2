@@ -49,9 +49,18 @@
         {% endfor %}
     {% endif %}
 
-    {% if mismatchOSMNameRef %}
-        <h2>Przystanki w OSM, których nazwa nie pasuje do ref (dwa ostatnie znaki są różne)</h2>
-        {% for (ref, name, osmLink) in mismatchOSMNameRef %}
+    {% if mismatchOSMNameRefNonRailway %}
+        <h2>Przystanki niekolejowe w OSM, których nazwa nie pasuje do ref</h2>
+        <h4>(dwa ostatnie znaki są różne)</h4>
+        {% for (ref, name, osmLink) in mismatchOSMNameRefNonRailway %}
+            <span><a href="{{ osmLink }}">{{ name }} (ref={{ ref }})</a></span>
+        {% endfor %}
+    {% endif %}
+
+    {% if mismatchOSMNameRefRailway %}
+        <h2>Przystanki kolejowe w OSM, których nazwa nie pasuje do ref</h2>
+        <h4>(dwa ostatnie znaki są różne)</h4>
+        {% for (ref, name, osmLink) in mismatchOSMNameRefRailway %}
             <span><a href="{{ osmLink }}">{{ name }} (ref={{ ref }})</a></span>
         {% endfor %}
     {% endif %}
