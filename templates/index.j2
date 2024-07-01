@@ -43,7 +43,7 @@
             <a href="{{ variant.operatorLink }}">WTP</a>
             <a href="https://osm.org/relation/{{ variant.osmId }}">OSM</a>
             <a target="hiddenIframe" href="http://127.0.0.1:8111/load_object?new_layer=false&relation_members=true&objects=r{{ variant.osmId }}">JOSM</a>
-            {% if variant.routeType == "bus" %}
+            {% if variant.routeType in ["bus", "tram"] %}
                 <a href="https://relatify.monicz.dev/?relation={{ variant.osmId }}&load=1">Relatify</a>
             {% endif %}
         </h3>
