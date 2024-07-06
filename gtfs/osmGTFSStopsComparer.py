@@ -2,7 +2,7 @@ import csv
 from pathlib import Path
 from typing import Dict
 
-from distance import geoDistance
+from starsep_utils import haversine
 from model.gtfs import GTFSStop, OSMAndGTFSComparisonResult
 from model.types import StopRef
 from osm.OSMRelationAnalyzer import osmStopsWithLocation
@@ -22,7 +22,7 @@ def compareOSMAndGTFSStops(
     commonRefs = gtfsStops.keys() & osmStops.keys()
     farAwayStops = []
     for ref in sorted(commonRefs):
-        distance = geoDistance(osmStops[ref], gtfsStops[ref])
+        distance = haversine(osmStops[ref], gtfsStops[ref])
         if distance > STOP_DISTANCE_THRESHOLD:
             farAwayStops.append((ref, int(round(distance))))
     return OSMAndGTFSComparisonResult(

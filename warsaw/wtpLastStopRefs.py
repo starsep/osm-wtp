@@ -4,7 +4,7 @@ from itertools import groupby
 from typing import Dict, Tuple, List
 
 import logger
-from distance import geoDistance
+from starsep_utils import haversine
 from logger import log_duration
 from configuration import MISSING_REF
 from model.gtfs import GTFSStop
@@ -61,7 +61,7 @@ def lastStopRef(
             bestDistance = 20000.0
             best = None
             for gtfsStop in potentialLastGTFSStops:
-                distance = geoDistance(previousGtfsStop, gtfsStop)
+                distance = haversine(previousGtfsStop, gtfsStop)
                 if distance < bestDistance:
                     bestDistance = distance
                     best = gtfsStop

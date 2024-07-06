@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
-from distance import GeoPoint
+from starsep_utils import GeoPoint
 from model.osm import OSMStop
 from model.types import StopRef, StopName
 

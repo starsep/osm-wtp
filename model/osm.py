@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from distance import GeoPoint
+from starsep_utils import GeoPoint
 from model.types import StopRef, StopName
 
 
