@@ -7,8 +7,16 @@ import httpx
 from httpx import Client
 from tqdm import tqdm
 
-from configuration import ENABLE_TRAIN, httpxTimeout
-from starsep_utils import logDuration
+from configuration import ENABLE_TRAIN, httpxTimeout, OVERPASS_URL
+from starsep_utils import (
+    logDuration,
+    downloadOverpassData,
+    Node,
+    Element,
+    Way,
+    OverpassResult,
+    Relation,
+)
 from model.gtfs import GTFSStop
 from model.osm import OSMStop
 from model.stopData import StopData
@@ -24,17 +32,9 @@ from osm.osmErrors import (
     osmErrorAccessNo,
     osmErrorStopsNotWithinRoute,
 )
-from osm.overpass import (
-    Node,
-    Element,
-    OverpassResult,
-    Way,
-    downloadOverpassData,
-    Relation,
-)
 from warsaw.fetchApiRoutes import APIUMWarszawaRouteResult
 from warsaw.scrapedOSMRoute import ScrapedOSMRoute
-from warsaw.warsawConstants import WKD_WIKIDATA, KM_WIKIDATA
+from warsaw.warsawConstants import WKD_WIKIDATA, KM_WIKIDATA, WARSAW_PUBLIC_TRANSPORT_ID
 from warsaw.wtpLastStopRefs import (
     LastStopRefsResult,
     generateLastStopRefs,
@@ -216,7 +216,14 @@ def analyzeOSMRelations(
 ) -> OSMResults:
     logging.info("🔍 Starting analyzeOSMRelations")
     results: OSMResults = {}
-    overpassResult = downloadOverpassData()
+    query = f"""
+    (
+        relation(id:{WARSAW_PUBLIC_TRANSPORT_ID});
+    );
+    (._;>>;);
+    out body;
+    """
+    overpassResult = downloadOverpassData(query=query, overpassUrl=OVERPASS_URL)
     scrapedOSMRoutes = scrapeOSMRoutes(overpassResult)
     lastStopRefs = generateLastStopRefs(scrapedRoutes=scrapedOSMRoutes)
     addLastStopRefs(scrapedOSMRoutes, lastStopRefs, apiResults, gtfsStops)

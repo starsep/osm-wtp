@@ -1,6 +1,6 @@
 from dataclasses import dataclass
 
-from osm.overpass import Relation
+from starsep_utils import Relation
 from warsaw.wtpScraper import WTPResult
 
 
