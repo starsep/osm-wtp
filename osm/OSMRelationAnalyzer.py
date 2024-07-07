@@ -271,14 +271,13 @@ def analyzeOSMRelations(
                 checkOSMNameMatchesRef(stop, element.url, railway="railway" in tags)
                 # prefer stop to platform
                 if osmStopRef not in osmStopsWithLocation or role == "stop":
-                    coords = element.center(overpassResult)
-                    if coords is not None:
-                        lat, lon = coords
+                    center = element.center(overpassResult)
+                    if center is not None:
                         osmStopsWithLocation[osmStopRef] = OSMStop(
                             ref=osmStopRef,
                             name=osmStopName,
-                            lat=lat,
-                            lon=lon,
+                            lat=center.lat,
+                            lon=center.lon,
                             osmId=element.id,
                             osmType=member.type,
                         )
