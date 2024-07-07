@@ -1,11 +1,10 @@
+import logging
 import re
 from dataclasses import dataclass
 from itertools import groupby
 from typing import Dict, Tuple, List
 
-import logger
-from starsep_utils import haversine
-from logger import log_duration
+from starsep_utils import haversine, logDuration
 from configuration import MISSING_REF
 from model.gtfs import GTFSStop
 from model.stopData import StopData
@@ -66,17 +65,17 @@ def lastStopRef(
                     bestDistance = distance
                     best = gtfsStop
             if best is not None:
-                logger.info(
+                logging.info(
                     f"For last stop {lastStopName} after {previousRef} matched the closest stop from previous stop ({bestDistance}m) from GTFS => {best.name} {best.ref}"
                 )
                 return best.ref
-        logger.error(
+        logging.error(
             f"Couldn't find ref for last stop {lastStopName} after {previousRef}"
         )
         return MISSING_REF
 
 
-@log_duration
+@logDuration
 def generateLastStopRefs(scrapedRoutes: List[ScrapedOSMRoute]) -> LastStopRefsResult:
     lastStopsRefsAfter: Dict[Tuple[str, str], str] = dict()
 
@@ -89,7 +88,7 @@ def generateLastStopRefs(scrapedRoutes: List[ScrapedOSMRoute]) -> LastStopRefsRe
             resultKey in lastStopsRefsAfter
             and lastStopsRefsAfter[resultKey] != currentStopGroupRef
         ):
-            logger.error(
+            logging.error(
                 f"LastStopRefs conflict for key={resultKey}. Refs {lastStopsRefsAfter[resultKey]} vs {currentStopGroupRef}"
             )
         lastStopsRefsAfter[resultKey] = currentStopGroupRef

@@ -1,6 +1,5 @@
 beautifulsoup4
 diskcache
-funcy
 httpx
 jinja2
 tqdm

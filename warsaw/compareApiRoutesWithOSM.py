@@ -1,6 +1,6 @@
+import logging
 from typing import List
 
-import logger
 from model.types import RouteRef
 from osm.OSMRelationAnalyzer import VariantResult
 from warsaw.fetchApiRoutes import APIUMWarszawaRouteResult
@@ -13,7 +13,7 @@ def compareApiRoutesWithOSM(
 ):
     for routeRef, variants in osmResults.items():
         if routeRef not in apiResults:
-            logger.warn(f"Missing {routeRef} in API UM results")
+            logging.warning(f"Missing {routeRef} in API UM results")
             continue
         for variant in variants:
             variantStopRefs = [stop.ref for stop in variant.osmStops]
@@ -23,11 +23,11 @@ def compareApiRoutesWithOSM(
                     match = apiResult
                     break
             if match is None:
-                logger.warn(
+                logging.warning(
                     f"Couldn't find match for {variant.osmName} ({variant.osmId})"
                 )
             else:
-                logger.info(
+                logging.info(
                     f"Match for {variant.osmName} ({variant.osmId}) ===> {match.routeRef} {match.variantId}"
                 )
                 print(

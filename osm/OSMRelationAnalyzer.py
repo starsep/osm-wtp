@@ -1,4 +1,5 @@
 import dataclasses
+import logging
 from dataclasses import dataclass
 from typing import Optional, Dict, List, Set, Tuple, cast
 
@@ -6,9 +7,8 @@ import httpx
 from httpx import Client
 from tqdm import tqdm
 
-import logger
 from configuration import ENABLE_TRAIN, httpxTimeout
-from logger import log_duration
+from starsep_utils import logDuration
 from model.gtfs import GTFSStop
 from model.osm import OSMStop
 from model.stopData import StopData
@@ -161,9 +161,9 @@ def _scrapeOSMRoute(route: Relation, httpClient: Client) -> Optional[ScrapedOSMR
     )
 
 
-@log_duration
+@logDuration
 def scrapeOSMRoutes(overpassResult: OverpassResult) -> List[ScrapedOSMRoute]:
-    logger.info("🔧 Scraping WTP Routes")
+    logging.info("🔧 Scraping WTP Routes")
     result = []
 
     with httpx.Client(timeout=httpxTimeout) as httpClient:
@@ -174,7 +174,7 @@ def scrapeOSMRoutes(overpassResult: OverpassResult) -> List[ScrapedOSMRoute]:
     return result
 
 
-@log_duration
+@logDuration
 def addLastStopRefs(
     scrapedRoutes: List[ScrapedOSMRoute],
     lastStopRefsResult: LastStopRefsResult,
@@ -209,12 +209,12 @@ def mapWtpStops(routes: list[ScrapedOSMRoute]) -> list[ScrapedOSMRoute]:
     ]
 
 
-@log_duration
+@logDuration
 def analyzeOSMRelations(
     apiResults: dict[RouteRef, List[APIUMWarszawaRouteResult]],
     gtfsStops: Dict[StopRef, GTFSStop],
 ) -> OSMResults:
-    logger.info("🔍 Starting analyzeOSMRelations")
+    logging.info("🔍 Starting analyzeOSMRelations")
     results: OSMResults = {}
     overpassResult = downloadOverpassData()
     scrapedOSMRoutes = scrapeOSMRoutes(overpassResult)

@@ -1,7 +1,7 @@
 import unittest
 from unittest.mock import patch
 
-patch("logger.log_duration", lambda x: x).start()
+patch("starsep_utils.logDuration", lambda x: x).start()
 
 from warsaw.fetchApiRoutes import _parseApiUMData, APIUMWarszawaRouteResult
 

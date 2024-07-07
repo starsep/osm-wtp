@@ -1,4 +1,5 @@
 import dataclasses
+import logging
 from dataclasses import dataclass
 from typing import Optional, Tuple, List, Set
 from urllib import parse
@@ -8,8 +9,7 @@ from bs4 import BeautifulSoup
 from diskcache import Cache
 from httpx import Client
 
-import logger
-from logger import log_duration
+from starsep_utils import logDuration
 from configuration import MISSING_REF, cacheDirectory, EXPIRE_WTP_SECONDS, httpxTimeout
 from model.stopData import StopData
 from scraper.scraper import parseLinkArguments, fetchWebsite
@@ -104,7 +104,7 @@ def cachedScrapeLink(link: str, httpClient: Client) -> CachedWTPResult:
 def scrapeLink(link: str, httpClient: Client) -> Optional[WTPResult]:
     parsedLink = WTPLink.parseWTPRouteLink(link)
     if parsedLink is None:
-        logger.error(f"Couldn't parse link {link}")
+        logging.error(f"Couldn't parse link {link}")
         return None
     cachedResult = mapWtpResult(
         cachedScrapeLink(parsedLink.url(), httpClient=httpClient)
@@ -168,7 +168,7 @@ def cachedParseWebsite(
     for stopLink in lastStop[:1]:
         stopName = stopLink.text.strip()
         if len(stops) == 0:
-            logger.error(f"Empty stops: {inputUrl}")
+            logging.error(f"Empty stops: {inputUrl}")
             continue
         stopRef = MISSING_REF
         stops.append(StopData(name=stopName, ref=stopRef))
@@ -207,9 +207,9 @@ def cachedScrapeHomepage() -> List[Tuple[str, str, str]]:
     return result
 
 
-@log_duration
+@logDuration
 def scrapeHomepage():
-    logger.info("🔧 Scraping WTP homepage")
+    logging.info("🔧 Scraping WTP homepage")
     wtpSeenLinks.update(cachedScrapeHomepage())
 
 

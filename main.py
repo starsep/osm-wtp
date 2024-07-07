@@ -1,3 +1,4 @@
+import logging
 from datetime import datetime
 from pathlib import Path
 from typing import Set
@@ -9,7 +10,6 @@ from jinja2 import (
     StrictUndefined,
 )
 
-import logger
 from compare.comparator import compareStops
 from configuration import MISSING_REF, outputDirectory, ENABLE_TRAIN
 from gtfs.osmGTFSStopsComparer import (
@@ -131,5 +131,5 @@ def processData():
 
 
 if __name__ == "__main__":
-    logger.info("🎬 Starting osm-wtp-compare")
+    logging.info("🎬 Starting osm-wtp-compare")
     processData()

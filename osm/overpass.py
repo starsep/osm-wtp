@@ -1,12 +1,12 @@
 import abc
 import json
+import logging
 from dataclasses import dataclass
 from typing import Tuple, List, Dict
 
 import httpx
 
-import logger
-from logger import log_duration
+from starsep_utils import logDuration
 from configuration import OVERPASS_URL
 from warsaw.warsawConstants import WARSAW_PUBLIC_TRANSPORT_ID
 
@@ -93,14 +93,14 @@ def _getOverpassHttpx():
     (._;>>;);
     out body;
     """
-    with log_duration("Downloading data from Overpass"):
+    with logDuration("Downloading data from Overpass"):
         response = httpx.post(OVERPASS_URL, data=dict(data=query))
         response.raise_for_status()
-    with log_duration("Parsing Overpass JSON"):
+    with logDuration("Parsing Overpass JSON"):
         return json.loads(response.text)["elements"]
 
 
-@log_duration
+@logDuration
 def _parseOverpassData(parsedElements: List[Dict]):
     nodes, ways, relations = dict(), dict(), dict()
     for element in parsedElements:
@@ -136,5 +136,5 @@ def _parseOverpassData(parsedElements: List[Dict]):
 
 
 def downloadOverpassData():
-    logger.info("⏬ Overpass Download")
+    logging.info("⏬ Overpass Download")
     return _parseOverpassData(_getOverpassHttpx())
