@@ -2,7 +2,7 @@
 set -eu
 date=$(/bin/date '+%Y%m%d')
 ./updateGTFSWarsaw.sh
-git clone https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/starsep/osm-wtp/ --depth 1
+git clone https://$GITHUB_USERNAME:$GITHUB_TOKEN@github.com/starsep/osm-wtp/ --depth 1 --branch gh-pages
 python main.py
 (
     cd osm-wtp || exit 1
