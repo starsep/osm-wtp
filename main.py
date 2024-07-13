@@ -132,5 +132,5 @@ def processData():
 
 
 if __name__ == "__main__":
-    logging.info("🎬 Starting osm-wtp-compare")
+    logging.info("🎬 Starting osm-wtp")
     processData()
