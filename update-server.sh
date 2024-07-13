@@ -10,5 +10,5 @@ python main.py
     git config user.email "<>"
     git add -- *.html
     git commit -m "Update $date"
-    git push origin main
+    git push origin gh-pages
 )
