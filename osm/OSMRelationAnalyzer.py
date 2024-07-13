@@ -1,3 +1,4 @@
+import asyncio
 import dataclasses
 import logging
 from dataclasses import dataclass
@@ -223,7 +224,7 @@ def analyzeOSMRelations(
     (._;>>;);
     out body;
     """
-    overpassResult = downloadOverpassData(query=query, overpassUrl=OVERPASS_URL)
+    overpassResult = asyncio.run(downloadOverpassData(query=query, overpassUrl=OVERPASS_URL))
     scrapedOSMRoutes = scrapeOSMRoutes(overpassResult)
     lastStopRefs = generateLastStopRefs(scrapedRoutes=scrapedOSMRoutes)
     addLastStopRefs(scrapedOSMRoutes, lastStopRefs, apiResults, gtfsStops)
