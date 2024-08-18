@@ -56,7 +56,13 @@ def parseRef(tags) -> Optional[str]:
 
 
 def parseName(tags) -> Optional[StopName]:
-    nameKeys = ["name:wtp", "name:ztm", "name"]
+    nameKeys = [
+        "name:wtp",
+        "name:ztm",
+        "name:network:wtp",
+        "name:network:ztm", 
+        "name"
+    ]
     for nameKey in nameKeys:
         if nameKey in tags:
             return tags[nameKey]
