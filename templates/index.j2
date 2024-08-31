@@ -56,7 +56,11 @@
                     <td>{{ row.refOSM }}</td>
                     <td>{{ row.nameOSM }}</td>
                     <td>{{ row.refOperator }}</td>
-                    <td>{{ row.nameOperator }}</td>
+                    <td>
+                        {% if row.detour %}<span title="Trasa objazdowa">&#x1F7E0;</span>{% endif %}
+                        {% if row.new %}<span title="Nowa trasa">&#x1F535;</span>{% endif %}
+                        {{ row.nameOperator }}
+                    </td>
                 </tr>
             {% endfor %}
         </table>

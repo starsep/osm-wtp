@@ -75,6 +75,8 @@ class WTPResult:
     new: bool
     short: bool
     stops: List[StopData]
+    stopsDetour: List[bool]
+    stopsNew: List[bool]
 
 
 @dataclass(frozen=True)
@@ -128,7 +130,7 @@ def cachedParseWebsite(
     if variantUnavailable in htmlContent or lineUnavailable in htmlContent:
         return CachedWTPResult(
             wtpResult=WTPResult(
-                unavailable=True, detour=False, new=False, short=False, stops=[]
+                unavailable=True, detour=False, new=False, short=False, stops=[], stopsDetour=[], stopsNew=[],
             ),
             seenLinks=seenLinks,
             missingLastStop=missingLastStop,
@@ -152,13 +154,18 @@ def cachedParseWebsite(
         if parsedUrl is not None:
             seenLinks.add(parsedUrl.toTuple())
     stops = []
+    stopsDetour: list[bool] = []
+    stopsNew: list[bool] = []
     # handle stops with links
     for stopLink in parser.select("a.timetable-link.active"):
+        parent = stopLink.parent
         stopName = stopLink.text.strip()
-        stopLink = stopLink.get("href")
-        stopLinkArgs = parseLinkArguments(stopLink)
+        stopLinkUrl = stopLink.get("href")
+        stopLinkArgs = parseLinkArguments(stopLinkUrl)
         stopRef = stopLinkArgs["wtp_st"][0] + stopLinkArgs["wtp_pt"][0]
         stops.append(StopData(name=stopName, ref=stopRef))
+        stopsDetour.append(len(parent.select(".detour")) > 0)
+        stopsNew.append(len(parent.select(".new")) > 0)
     # handle last stop without link
     lastStop = parser.select("div.timetable-route-point.name.active.follow.disabled")
     if len(lastStop) == 0:
@@ -172,6 +179,8 @@ def cachedParseWebsite(
             continue
         stopRef = MISSING_REF
         stops.append(StopData(name=stopName, ref=stopRef))
+        stopsDetour.append(len(stopLink.parent.select(".detour")) > 0)
+        stopsNew.append(len(stopLink.parent.select(".new")) > 0)
     return CachedWTPResult(
         WTPResult(
             unavailable=False,
@@ -179,6 +188,8 @@ def cachedParseWebsite(
             new=len(parser.select("div.timetable-route-point.active.new")) > 0,
             short=len(parser.select("div.timetable-route-point.active.short")) > 0,
             stops=stops,
+            stopsNew=stopsNew,
+            stopsDetour=stopsDetour,
         ),
         seenLinks=seenLinks,
         missingLastStop=missingLastStop,

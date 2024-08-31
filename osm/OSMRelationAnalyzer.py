@@ -91,6 +91,8 @@ class VariantResult:
     detour: bool
     new: bool
     short: bool
+    stopsDetour: List[bool]
+    stopsNew: List[bool]
     unknownRoles: Set[str]
     otherErrors: Set[str]
     routeType: str
@@ -312,6 +314,8 @@ def analyzeOSMRelations(
                 detour=scrapingResult.detour,
                 new=scrapingResult.new,
                 short=scrapingResult.short,
+                stopsDetour=scrapingResult.stopsDetour,
+                stopsNew=scrapingResult.stopsNew,
                 unknownRoles=unknownRoles,
                 otherErrors=otherErrors,
                 routeType=route.tags["route"],

@@ -15,6 +15,8 @@ class DiffRow:
     nameOSM: StopName
     refOperator: StopRef
     nameOperator: StopName
+    detour: bool
+    new: bool
 
 
 @dataclass(frozen=True)
@@ -58,7 +60,7 @@ def compareStops(osmResults: OSMResults) -> CompareResult:
             otherErrors = variant.otherErrors
             if len(variant.unknownRoles) > 0:
                 otherErrors.add(f"Nieznane role: {variant.unknownRoles}")
-            diffRows = buildDiffRows(osmRefs, operatorRefs, operatorRefToName)
+            diffRows = buildDiffRows(osmRefs, operatorRefs, operatorRefToName, variant.stopsDetour, variant.stopsNew)
             if osmRefs != operatorRefs and (not variant.detour):
                 detourOnlyErrors = False
             error |= len(otherErrors) > 0 or len(diffRows) > 0
@@ -88,11 +90,15 @@ def buildDiffRows(
     osmRefs: List[StopRef],
     operatorRefs: List[StopRef],
     operatorRefToName: Dict[StopRef, Set[StopName]],
+    stopsDetour: List[bool],
+    stopsNew: List[bool],
 ) -> List[DiffRow]:
     diffRows = []
     if osmRefs == operatorRefs:
         return diffRows
     matcher = SequenceMatcher(None, osmRefs, operatorRefs)
+    detourRefs = {ref for ref, detour in zip(operatorRefs, stopsDetour) if detour}
+    newRefs = {ref for ref, new in zip(operatorRefs, stopsNew) if new}
 
     def writeTableRow(refOSM: StopRef, refOperator: StopRef):
         nameOSM = (
@@ -121,6 +127,8 @@ def buildDiffRows(
                 nameOSM=nameOSM,
                 refOperator=refOperator,
                 nameOperator=nameOperator,
+                detour=refOperator in detourRefs,
+                new=refOperator in newRefs,
             )
         )
 
