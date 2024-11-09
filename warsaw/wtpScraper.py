@@ -245,7 +245,7 @@ def mapWtpStop(wtpStop: StopData) -> StopData:
     if wtpStop in wtpStopMapping:
         return wtpStopMapping[wtpStop]
     # stops 8x => 0x
-    if len(wtpStop.ref) == 6 and wtpStop.ref[-2] == "8":
+    if len(wtpStop.ref) == 6 and wtpStop.ref[-2] == "8" and wtpStop.name[-2] == "8":
         return StopData(
             ref=f"{wtpStop.ref[:-2]}0{wtpStop.ref[-1]}",
             name=f"{wtpStop.name[:-2]}0{wtpStop.name[-1]}",
