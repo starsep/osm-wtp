@@ -5,7 +5,7 @@ pre-commit:
     ruff:
       run: ruff format . && ruff check --fix .
     tests:
-      run: python -m unittest
+      run: pytest
 
 skip_output:
   - meta           # Skips lefthook version printing

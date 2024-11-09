@@ -130,7 +130,13 @@ def cachedParseWebsite(
     if variantUnavailable in htmlContent or lineUnavailable in htmlContent:
         return CachedWTPResult(
             wtpResult=WTPResult(
-                unavailable=True, detour=False, new=False, short=False, stops=[], stopsDetour=[], stopsNew=[],
+                unavailable=True,
+                detour=False,
+                new=False,
+                short=False,
+                stops=[],
+                stopsDetour=[],
+                stopsNew=[],
             ),
             seenLinks=seenLinks,
             missingLastStop=missingLastStop,

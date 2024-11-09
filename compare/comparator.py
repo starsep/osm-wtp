@@ -60,7 +60,13 @@ def compareStops(osmResults: OSMResults) -> CompareResult:
             otherErrors = variant.otherErrors
             if len(variant.unknownRoles) > 0:
                 otherErrors.add(f"Nieznane role: {variant.unknownRoles}")
-            diffRows = buildDiffRows(osmRefs, operatorRefs, operatorRefToName, variant.stopsDetour, variant.stopsNew)
+            diffRows = buildDiffRows(
+                osmRefs,
+                operatorRefs,
+                operatorRefToName,
+                variant.stopsDetour,
+                variant.stopsNew,
+            )
             if osmRefs != operatorRefs and (not variant.detour):
                 detourOnlyErrors = False
             error |= len(otherErrors) > 0 or len(diffRows) > 0

@@ -2,3 +2,4 @@
 exclude = ["venv", ".venv"]
 ignore_names = ["test*"]
 paths = ["."]
+testpaths = ["test*.py"]

@@ -56,13 +56,7 @@ def parseRef(tags) -> Optional[str]:
 
 
 def parseName(tags) -> Optional[StopName]:
-    nameKeys = [
-        "name:wtp",
-        "name:ztm",
-        "name:network:wtp",
-        "name:network:ztm", 
-        "name"
-    ]
+    nameKeys = ["name:wtp", "name:ztm", "name:network:wtp", "name:network:ztm", "name"]
     for nameKey in nameKeys:
         if nameKey in tags:
             return tags[nameKey]
@@ -232,7 +226,9 @@ def analyzeOSMRelations(
     (._;>>;);
     out body;
     """
-    overpassResult = asyncio.run(downloadOverpassData(query=query, overpassUrl=OVERPASS_URL))
+    overpassResult = asyncio.run(
+        downloadOverpassData(query=query, overpassUrl=OVERPASS_URL)
+    )
     scrapedOSMRoutes = scrapeOSMRoutes(overpassResult)
     lastStopRefs = generateLastStopRefs(scrapedRoutes=scrapedOSMRoutes)
     addLastStopRefs(scrapedOSMRoutes, lastStopRefs, apiResults, gtfsStops)
