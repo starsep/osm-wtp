@@ -10,3 +10,5 @@ GTFS-Warsaw
 osm-wtp
 .dockerignore
 Dockerfile
+venv
+.venv

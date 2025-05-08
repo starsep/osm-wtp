@@ -3,9 +3,11 @@ pre-commit:
   parallel: true
   commands:
     ruff:
-      run: ruff format . && ruff check --fix .
+      run: uv run ruff format . && uv run ruff check --fix .
     tests:
-      run: pytest
+      run: uv run pytest
+    vulture:
+      run: uv run vulture
 
 skip_output:
   - meta           # Skips lefthook version printing

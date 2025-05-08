@@ -1,8 +1,0 @@
-beautifulsoup4
-diskcache
-httpx
-jinja2
-pytest
-pytest-mock
-tqdm
-starsep_utils
