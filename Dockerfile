@@ -8,6 +8,4 @@ COPY pyproject.toml uv.lock ./
 RUN pip install uv && uv sync --no-dev
 
 COPY . .
-ENV GITHUB_USERNAME=""
-ENV GITHUB_TOKEN=""
 ENTRYPOINT ["/app/update-server.sh"]
