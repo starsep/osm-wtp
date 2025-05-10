@@ -46,7 +46,7 @@ from warsaw.wtpScraper import (
     wtpStopRefs,
 )
 from warsaw.wtpStopMapping import wtpStopMapping
-from healthchecks import healthchecks
+from starsep_utils.healthchecks import healthchecks
 
 startTime = datetime.now()
 
