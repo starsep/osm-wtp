@@ -46,6 +46,7 @@ from warsaw.wtpScraper import (
     wtpStopRefs,
 )
 from warsaw.wtpStopMapping import wtpStopMapping
+from healthchecks import healthchecks
 
 startTime = datetime.now()
 
@@ -132,5 +133,7 @@ def processData():
 
 
 if __name__ == "__main__":
+    healthchecks("/start")
     logging.info("🎬 Starting osm-wtp")
     processData()
+    healthchecks()
