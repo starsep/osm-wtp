@@ -276,7 +276,11 @@ def analyzeOSMRelations(
                 checkOSMNameMatchesRef(stop, element.url, railway="railway" in tags)
                 # prefer stop to platform
                 if osmStopRef not in osmStopsWithLocation or role == "stop":
-                    center = element.center(overpassResult)
+                    if isinstance(element, Relation):
+                        logging.warning(f"Unsupported stop relation: {element.id}")
+                        center = None
+                    else:
+                        center = element.center(overpassResult)
                     if center is not None:
                         osmStopsWithLocation[osmStopRef] = OSMStop(
                             ref=osmStopRef,
