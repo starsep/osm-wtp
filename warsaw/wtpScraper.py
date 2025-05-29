@@ -4,14 +4,14 @@ from dataclasses import dataclass
 from typing import Optional, Tuple, List, Set
 from urllib import parse
 
-import httpx
 from bs4 import BeautifulSoup
 from diskcache import Cache
 from httpx import Client
 
 from starsep_utils import logDuration
-from configuration import MISSING_REF, cacheDirectory, EXPIRE_WTP_SECONDS, httpxTimeout
+from configuration import MISSING_REF, cacheDirectory, EXPIRE_WTP_SECONDS
 from model.stopData import StopData
+from scraper.httpx_client import httpxClient
 from scraper.scraper import parseLinkArguments, fetchWebsite
 from warsaw.wtpStopMapping import wtpStopMapping
 
@@ -206,7 +206,7 @@ def cachedParseWebsite(
 
 @wtpCache.memoize(expire=EXPIRE_WTP_SECONDS)
 def cachedScrapeHomepage() -> List[Tuple[str, str, str]]:
-    with httpx.Client(timeout=httpxTimeout) as httpClient:
+    with httpxClient() as httpClient:
         mainContent = BeautifulSoup(
             fetchWebsite(
                 f"https://www.{wtpDomain}/rozklady-jazdy/", httpClient=httpClient

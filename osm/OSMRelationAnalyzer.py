@@ -4,11 +4,10 @@ import logging
 from dataclasses import dataclass
 from typing import Optional, Dict, List, Set, Tuple, cast
 
-import httpx
 from httpx import Client
 from tqdm import tqdm
 
-from configuration import ENABLE_TRAIN, httpxTimeout, OVERPASS_URL
+from configuration import ENABLE_TRAIN, OVERPASS_URL
 from starsep_utils import (
     logDuration,
     downloadOverpassData,
@@ -33,6 +32,7 @@ from osm.osmErrors import (
     osmErrorAccessNo,
     osmErrorStopsNotWithinRoute,
 )
+from scraper.httpx_client import httpxClient
 from warsaw.fetchApiRoutes import APIUMWarszawaRouteResult
 from warsaw.scrapedOSMRoute import ScrapedOSMRoute
 from warsaw.warsawConstants import WKD_WIKIDATA, KM_WIKIDATA, WARSAW_PUBLIC_TRANSPORT_ID
@@ -169,7 +169,7 @@ def scrapeOSMRoutes(overpassResult: OverpassResult) -> List[ScrapedOSMRoute]:
     logging.info("🔧 Scraping WTP Routes")
     result = []
 
-    with httpx.Client(timeout=httpxTimeout) as httpClient:
+    with httpxClient() as httpClient:
         for route in tqdm(overpassResult.relations.values()):
             scrapedOSMRoute = _scrapeOSMRoute(route, httpClient=httpClient)
             if scrapedOSMRoute is not None:
