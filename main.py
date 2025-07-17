@@ -1,4 +1,4 @@
-#!/usr/bin/env python3
+#!/usr/bin/env -S uv run python
 import logging
 from datetime import datetime
 from pathlib import Path
