@@ -2,8 +2,9 @@ from dataclasses import dataclass
 from typing import Dict, List, Tuple
 
 from starsep_utils import GeoPoint
+
 from model.osm import OSMStop
-from model.types import StopRef, StopName
+from model.types import StopName, StopRef
 
 
 @dataclass(frozen=True)

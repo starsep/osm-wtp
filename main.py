@@ -6,22 +6,22 @@ from typing import Set
 
 from jinja2 import (
     Environment,
-    select_autoescape,
     FileSystemLoader,
     StrictUndefined,
+    select_autoescape,
 )
+from starsep_utils.healthchecks import healthchecks
 
 from compare.comparator import compareStops
-from configuration import MISSING_REF, outputDirectory, ENABLE_TRAIN
+from configuration import ENABLE_TRAIN, MISSING_REF, outputDirectory
 from gtfs.osmGTFSStopsComparer import (
-    compareOSMAndGTFSStops,
     STOP_DISTANCE_THRESHOLD,
+    compareOSMAndGTFSStops,
     loadGTFSStops,
 )
 from osm.OSMRelationAnalyzer import (
+    allOSMRefs,
     analyzeOSMRelations,
-    osmRefToName,
-    osmOperatorLinks,
     disusedStop,
     invalidOperatorVariants,
     manyLastStops,
@@ -30,7 +30,8 @@ from osm.OSMRelationAnalyzer import (
     missingName,
     missingRouteUrl,
     missingStopRef,
-    allOSMRefs,
+    osmOperatorLinks,
+    osmRefToName,
     unexpectedLink,
     unexpectedNetwork,
     unexpectedStopRef,
@@ -39,14 +40,13 @@ from osm.OSMRelationAnalyzer import (
 from warsaw.fetchApiRoutes import fetchApiRoutes
 from warsaw.wtpScraper import (
     WTPLink,
-    wtpSeenLinks,
     scrapeHomepage,
     wtpMissingLastStop,
     wtpMissingLastStopRefNames,
+    wtpSeenLinks,
     wtpStopRefs,
 )
 from warsaw.wtpStopMapping import wtpStopMapping
-from starsep_utils.healthchecks import healthchecks
 
 startTime = datetime.now()
 

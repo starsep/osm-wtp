@@ -5,8 +5,8 @@ from dataclasses import dataclass
 from typing import List
 
 import httpx
-
 from starsep_utils import logDuration
+
 from model.types import RouteRef, StopRef
 
 API_UM_WARSZAWA_API_KEY = os.getenv("API_KEY")

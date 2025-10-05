@@ -1,7 +1,8 @@
 from dataclasses import dataclass
 
 from starsep_utils import GeoPoint
-from model.types import StopRef, StopName
+
+from model.types import StopName, StopRef
 
 
 @dataclass(frozen=True)

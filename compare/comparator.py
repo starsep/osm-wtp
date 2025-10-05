@@ -1,11 +1,11 @@
 from dataclasses import dataclass
 from difflib import SequenceMatcher
 from itertools import zip_longest
-from typing import Dict, Set, List
+from typing import Dict, List, Set
 
 from configuration import MISSING_REF
-from model.types import StopRef, StopName, RouteRef
-from osm.OSMRelationAnalyzer import OSMResults, osmRefToName, VariantResult
+from model.types import RouteRef, StopName, StopRef
+from osm.OSMRelationAnalyzer import OSMResults, VariantResult, osmRefToName
 
 
 @dataclass(frozen=True)

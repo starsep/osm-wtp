@@ -1,18 +1,18 @@
 import dataclasses
 import logging
 from dataclasses import dataclass
-from typing import Optional, Tuple, List, Set
+from typing import List, Optional, Set, Tuple
 from urllib import parse
 
 from bs4 import BeautifulSoup
 from diskcache import Cache
 from httpx import Client
-
 from starsep_utils import logDuration
-from configuration import MISSING_REF, cacheDirectory, EXPIRE_WTP_SECONDS
+
+from configuration import EXPIRE_WTP_SECONDS, MISSING_REF, cacheDirectory
 from model.stopData import StopData
 from scraper.httpx_client import httpxClient
-from scraper.scraper import parseLinkArguments, fetchWebsite
+from scraper.scraper import fetchWebsite, parseLinkArguments
 from warsaw.wtpStopMapping import wtpStopMapping
 
 lineUnavailableToday = "Najbliższy dzień z dostępnym rozkładem dla wybranej linii to"

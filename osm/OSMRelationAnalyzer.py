@@ -2,46 +2,46 @@ import asyncio
 import dataclasses
 import logging
 from dataclasses import dataclass
-from typing import Optional, Dict, List, Set, Tuple, cast
+from typing import Dict, List, Optional, Set, Tuple, cast
 
 from httpx import Client
+from starsep_utils import (
+    Element,
+    Node,
+    OverpassResult,
+    Relation,
+    Way,
+    downloadOverpassData,
+    logDuration,
+)
 from tqdm import tqdm
 
 from configuration import ENABLE_TRAIN, OVERPASS_URL
-from starsep_utils import (
-    logDuration,
-    downloadOverpassData,
-    Node,
-    Element,
-    Way,
-    OverpassResult,
-    Relation,
-)
 from model.gtfs import GTFSStop
 from model.osm import OSMStop
 from model.stopData import StopData
-from model.types import StopName, RouteRef, StopRef
+from model.types import RouteRef, StopName, StopRef
 from osm.osmErrors import (
-    osmErrorInvalidWayTag,
+    osmErrorAccessNo,
     osmErrorElementWithoutRoleWhichIsNotWay,
-    osmErrorStopNotBeingNode,
-    osmErrorRouteHasGaps,
+    osmErrorInvalidWayTag,
     osmErrorOnewayUsedWrongDirection,
+    osmErrorRouteHasGaps,
+    osmErrorStopNotBeingNode,
+    osmErrorStopsNotWithinRoute,
     osmErrorUnsplitRoundabout,
     osmErrorWayWithoutHighwayRailwayTag,
-    osmErrorAccessNo,
-    osmErrorStopsNotWithinRoute,
 )
 from scraper.httpx_client import httpxClient
 from warsaw.fetchApiRoutes import APIUMWarszawaRouteResult
 from warsaw.scrapedOSMRoute import ScrapedOSMRoute
-from warsaw.warsawConstants import WKD_WIKIDATA, KM_WIKIDATA, WARSAW_PUBLIC_TRANSPORT_ID
+from warsaw.warsawConstants import KM_WIKIDATA, WARSAW_PUBLIC_TRANSPORT_ID, WKD_WIKIDATA
 from warsaw.wtpLastStopRefs import (
     LastStopRefsResult,
     generateLastStopRefs,
     lastStopRef,
 )
-from warsaw.wtpScraper import wtpDomain, WTPLink, scrapeLink, mapWtpStop
+from warsaw.wtpScraper import WTPLink, mapWtpStop, scrapeLink, wtpDomain
 
 mismatchOSMNameRefNonRailway: Set[Tuple[str, str, str]] = set()
 mismatchOSMNameRefRailway: Set[Tuple[str, str, str]] = set()

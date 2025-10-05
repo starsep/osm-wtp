@@ -1,4 +1,4 @@
-from warsaw.fetchApiRoutes import _parseApiUMData, APIUMWarszawaRouteResult
+from warsaw.fetchApiRoutes import APIUMWarszawaRouteResult, _parseApiUMData
 
 
 def _stopFromRef(ref: str):

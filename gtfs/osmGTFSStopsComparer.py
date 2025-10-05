@@ -3,6 +3,7 @@ from pathlib import Path
 from typing import Dict
 
 from starsep_utils import haversine
+
 from model.gtfs import GTFSStop, OSMAndGTFSComparisonResult
 from model.types import StopRef
 from osm.OSMRelationAnalyzer import osmStopsWithLocation

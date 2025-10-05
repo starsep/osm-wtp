@@ -1,6 +1,7 @@
 from dataclasses import dataclass
 
 from starsep_utils import Relation
+
 from warsaw.wtpScraper import WTPResult
 
 

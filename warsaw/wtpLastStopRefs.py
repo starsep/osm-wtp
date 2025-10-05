@@ -2,13 +2,14 @@ import logging
 import re
 from dataclasses import dataclass
 from itertools import groupby
-from typing import Dict, Tuple, List
+from typing import Dict, List, Tuple
 
 from starsep_utils import haversine, logDuration
+
 from configuration import MISSING_REF
 from model.gtfs import GTFSStop
 from model.stopData import StopData
-from model.types import StopName, StopRef, RouteRef
+from model.types import RouteRef, StopName, StopRef
 from warsaw.fetchApiRoutes import APIUMWarszawaRouteResult
 from warsaw.scrapedOSMRoute import ScrapedOSMRoute
 
