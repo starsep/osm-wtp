@@ -13,5 +13,5 @@ class OSMStop(GeoPoint):
     osmType: str
 
     @property
-    def url(self):
+    def url(self) -> str:
         return f"https://osm.org/{self.osmType}/{self.osmId}"

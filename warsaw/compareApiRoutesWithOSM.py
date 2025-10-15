@@ -9,7 +9,7 @@ from warsaw.fetchApiRoutes import APIUMWarszawaRouteResult
 def compareApiRoutesWithOSM(
     apiResults: dict[RouteRef, list[APIUMWarszawaRouteResult]],
     osmResults: dict[RouteRef, list[VariantResult]],
-):
+) -> None:
     for routeRef, variants in osmResults.items():
         if routeRef not in apiResults:
             logging.warning(f"Missing {routeRef} in API UM results")
@@ -23,12 +23,9 @@ def compareApiRoutesWithOSM(
                     break
             if match is None:
                 logging.warning(
-                    f"Couldn't find match for {variant.osmName} ({variant.osmId})"
+                    f"Couldn't find match for {variant.osmName} ({variant.osmId})",
                 )
             else:
                 logging.info(
-                    f"Match for {variant.osmName} ({variant.osmId}) ===> {match.routeRef} {match.variantId}"
-                )
-                print(
-                    f"http://localhost:8111/load_object?objects=r{variant.osmId}&addtags=gtfs:shape_id:like=RA%25/{match.routeRef}/{match.variantId}"
+                    f"Match for {variant.osmName} ({variant.osmId}) ===> {match.routeRef} {match.variantId}",
                 )

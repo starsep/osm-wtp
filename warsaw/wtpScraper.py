@@ -99,7 +99,9 @@ wtpMissingLastStopRefNames: set[tuple[str, str]] = set()
 def cachedScrapeLink(link: str, httpClient: Client) -> CachedWTPResult:
     htmlContent = fetchWebsite(link, httpClient=httpClient)
     return cachedParseWebsite(
-        htmlContent=htmlContent, inputUrl=link, httpClient=httpClient
+        htmlContent=htmlContent,
+        inputUrl=link,
+        httpClient=httpClient,
     )
 
 
@@ -109,7 +111,7 @@ def scrapeLink(link: str, httpClient: Client) -> WTPResult | None:
         logging.error(f"Couldn't parse link {link}")
         return None
     cachedResult = mapWtpResult(
-        cachedScrapeLink(parsedLink.url(), httpClient=httpClient)
+        cachedScrapeLink(parsedLink.url(), httpClient=httpClient),
     )
     wtpSeenLinks.update(cachedResult.seenLinks)
     wtpStopRefs.update({stop.ref for stop in cachedResult.wtpResult.stops})
@@ -120,7 +122,9 @@ def scrapeLink(link: str, httpClient: Client) -> WTPResult | None:
 
 
 def cachedParseWebsite(
-    htmlContent: str, inputUrl: str, httpClient: Client
+    htmlContent: str,
+    inputUrl: str,
+    httpClient: Client,
 ) -> CachedWTPResult:
     parser = BeautifulSoup(htmlContent, features="html.parser")
     seenLinks: set[tuple[str, str, str]] = set()
@@ -209,7 +213,8 @@ def cachedScrapeHomepage() -> list[tuple[str, str, str]]:
     with httpxClient() as httpClient:
         mainContent = BeautifulSoup(
             fetchWebsite(
-                f"https://www.{wtpDomain}/rozklady-jazdy/", httpClient=httpClient
+                f"https://www.{wtpDomain}/rozklady-jazdy/",
+                httpClient=httpClient,
             ),
             features="html.parser",
         )
@@ -225,20 +230,19 @@ def cachedScrapeHomepage() -> list[tuple[str, str, str]]:
 
 
 @logDuration
-def scrapeHomepage():
+def scrapeHomepage() -> None:
     logging.info("🔧 Scraping WTP homepage")
     wtpSeenLinks.update(cachedScrapeHomepage())
 
 
 def mapWtpResult(cachedWTPResult: CachedWTPResult) -> CachedWTPResult:
-    cachedWTPResult = dataclasses.replace(
+    return dataclasses.replace(
         cachedWTPResult,
         wtpResult=dataclasses.replace(
             cachedWTPResult.wtpResult,
             stops=list(map(mapWtpStop, cachedWTPResult.wtpResult.stops)),
         ),
     )
-    return cachedWTPResult
 
 
 def mapWtpStop(wtpStop: StopData) -> StopData:

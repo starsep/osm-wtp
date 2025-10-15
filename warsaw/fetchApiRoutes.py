@@ -19,12 +19,12 @@ class APIUMWarszawaRouteResult:
 
 
 @logDuration
-def _parseApiUMData(data) -> dict[RouteRef, list[APIUMWarszawaRouteResult]]:
-    result = dict()
-    for routeRef in data:
+def _parseApiUMData(data: dict) -> dict[RouteRef, list[APIUMWarszawaRouteResult]]:
+    result = {}
+    for routeRef, route in data.items():
         result[routeRef] = []
-        for variantId in data[routeRef]:
-            stops = data[routeRef][variantId]
+        for variantId in route:
+            stops = route[variantId]
             stopRefs = [
                 # ignored fields: odleglosc, ulica_id, typ
                 stop["nr_zespolu"] + stop["nr_przystanku"]
@@ -35,7 +35,7 @@ def _parseApiUMData(data) -> dict[RouteRef, list[APIUMWarszawaRouteResult]]:
                     routeRef=routeRef,
                     variantId=variantId,
                     stopRefs=stopRefs,
-                )
+                ),
             )
     return result
 
@@ -43,9 +43,9 @@ def _parseApiUMData(data) -> dict[RouteRef, list[APIUMWarszawaRouteResult]]:
 def fetchApiRoutes() -> dict[RouteRef, list[APIUMWarszawaRouteResult]]:
     if API_UM_WARSZAWA_API_KEY is None:
         logging.error(
-            "Missing API UM Warszawa api key. Set it as API_KEY environment variable"
+            "Missing API UM Warszawa api key. Set it as API_KEY environment variable",
         )
-        return dict()
+        return {}
     try:
         resourceId = "26b9ade1-f5d4-439e-84b4-9af37ab7ebf1"
         url = f"https://api.um.warszawa.pl/api/action/public_transport_routes/?apikey={API_UM_WARSZAWA_API_KEY}&resource_id={resourceId}"
@@ -55,6 +55,6 @@ def fetchApiRoutes() -> dict[RouteRef, list[APIUMWarszawaRouteResult]]:
         with logDuration("Parsing API UM Warszawa JSON"):
             data = json.loads(response.text)["result"]
         return _parseApiUMData(data)
-    except Exception as e:
-        logging.error(f"Failed to fetch data from API UM Warszawa: {e}")
-        return dict()
+    except Exception:
+        logging.exception("Failed to fetch data from API UM Warszawa")
+        return {}

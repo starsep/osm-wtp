@@ -1,7 +1,7 @@
 from warsaw.fetchApiRoutes import APIUMWarszawaRouteResult, _parseApiUMData
 
 
-def _stopFromRef(ref: str):
+def _stopFromRef(ref: str) -> dict:
     return {
         "odleglosc": 1234,
         "ulica_id": "1234",
@@ -11,7 +11,7 @@ def _stopFromRef(ref: str):
     }
 
 
-def testParseApiUMData(mocker):
+def testParseApiUMData(mocker) -> None:  # noqa: ANN001
     mocker.patch("starsep_utils.logDuration", lambda x: x)
 
     routeRef = "123"
@@ -24,8 +24,8 @@ def testParseApiUMData(mocker):
                 "3": _stopFromRef(ref=expectedRefs[2]),
                 "10": _stopFromRef(ref=expectedRefs[3]),
                 "2": _stopFromRef(ref=expectedRefs[1]),
-            }
-        }
+            },
+        },
     }
     expectedResult = {
         routeRef: [
@@ -33,8 +33,8 @@ def testParseApiUMData(mocker):
                 routeRef=routeRef,
                 variantId=variantId,
                 stopRefs=expectedRefs,
-            )
-        ]
+            ),
+        ],
     }
 
     assert _parseApiUMData(exampleData) == expectedResult

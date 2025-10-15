@@ -17,15 +17,26 @@ dependencies = [
 extend-exclude = ["whitelist.py"]
 
 [tool.ruff.lint]
-extend-select = [
-    "B", # flake8-bugbear
-    "E", # pycodestyle error
-    "F", # pyflakes
-    "I", # isort
-    "W", # pycodestyle warning
-    "UP", # pyupgrade
+extend-select = ["ALL"]
+extend-ignore = [
+    "E501", # line length
+    "N", # pep8-naming
+    "D", # pydocstyle
+    "COM", # flake8-commas
+    "LOG015", # root-logger-call
+    "TD", # flake8-todos
+    "FIX002", # Line contains TODO
+    "G004", # Logging statement uses f-string
+    "C901", # complex-structure
+    "PLR2004", # Magic value used in comparison
+    "PLR0912", # Too many branches
+    "PLR0913", # Too many arguments in function definition
+    "PLR0915", # Too many statements
+    "S101", # Use of `assert` detected
 ]
-extend-ignore = ["E501"]
+
+[tool.ty.src]
+exclude = ["whitelist.py"]
 
 [tool.vulture]
 exclude = ["venv", ".venv"]

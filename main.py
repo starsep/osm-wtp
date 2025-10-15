@@ -1,6 +1,6 @@
 #!/usr/bin/env -S uv run python
 import logging
-from datetime import datetime
+from datetime import UTC, datetime
 from pathlib import Path
 
 from jinja2 import (
@@ -47,15 +47,15 @@ from warsaw.wtpScraper import (
 )
 from warsaw.wtpStopMapping import wtpStopMapping
 
-startTime = datetime.now()
+startTime = datetime.now(UTC)
 
 
-def processData():
+def processData() -> None:
     scrapeHomepage()
     apiResults = fetchApiRoutes()
     gtfsStops = loadGTFSStops()
     osmResults = analyzeOSMRelations(apiResults, gtfsStops)
-    # compareApiRoutesWithOSM(apiResults, osmResults)
+    # currently unused: compareApiRoutesWithOSM(apiResults, osmResults)
     compareResults = compareStops(osmResults=osmResults)
     notLinkedWtpUrls: set[str] = set()
     for link in wtpSeenLinks - osmOperatorLinks:
@@ -72,12 +72,12 @@ def processData():
         lstrip_blocks=True,
         undefined=StrictUndefined,
     )
-    endTime = datetime.now()
+    endTime = datetime.now(UTC)
     generationSeconds = int((endTime - startTime).total_seconds())
-    sharedContext = dict(
-        startTime=startTime.isoformat(timespec="seconds"),
-        generationSeconds=generationSeconds,
-    )
+    sharedContext = {
+        "startTime": startTime.isoformat(timespec="seconds"),
+        "generationSeconds": generationSeconds,
+    }
     with Path(outputDirectory, "index.html").open("w") as f:
         template = env.get_template("index.j2")
         f.write(
@@ -89,13 +89,13 @@ def processData():
                 wtpManyLastStops=manyLastStops,
                 wtpMissingLastStop=wtpMissingLastStop,
                 missingRouteUrl=missingRouteUrl,
-                notLinkedWtpUrls=sorted(list(notLinkedWtpUrls)),
+                notLinkedWtpUrls=sorted(notLinkedWtpUrls),
                 unexpectedLink=unexpectedLink,
                 unexpectedNetwork=unexpectedNetwork,
                 wtpLinkDuplicates=wtpLinkDuplicates,
                 ENABLE_TRAIN=ENABLE_TRAIN,
                 **sharedContext,
-            )
+            ),
         )
     with Path(outputDirectory, "stops.html").open("w") as f:
         template = env.get_template("stops.j2")
@@ -111,13 +111,13 @@ def processData():
                     for ref, names in compareResults.operatorRefToName.items()
                     if len(names) > 1
                 },
-                mismatchOSMNameRefRailway=sorted(list(mismatchOSMNameRefRailway)),
-                mismatchOSMNameRefNonRailway=sorted(list(mismatchOSMNameRefNonRailway)),
-                missingLastStopRefNames=sorted(list(wtpMissingLastStopRefNames)),
+                mismatchOSMNameRefRailway=sorted(mismatchOSMNameRefRailway),
+                mismatchOSMNameRefNonRailway=sorted(mismatchOSMNameRefNonRailway),
+                missingLastStopRefNames=sorted(wtpMissingLastStopRefNames),
                 missingName=missingName,
                 missingStopRef=missingStopRef,
                 missingRefsInOSM=[
-                    (ref, list(compareResults.operatorRefToName[ref])[0])
+                    (ref, next(iter(compareResults.operatorRefToName[ref])))
                     for ref in sorted(wtpStopRefs - allOSMRefs - set(MISSING_REF))
                 ],
                 unexpectedStopRef=unexpectedStopRef,
@@ -127,7 +127,7 @@ def processData():
                 osmStopRefsNotInGTFS=osmAndGTFSComparisonResult.osmStopRefsNotInGTFS,
                 gtfsStopRefsNotInOSM=osmAndGTFSComparisonResult.gtfsStopRefsNotInOSM,
                 **sharedContext,
-            )
+            ),
         )
 
 

@@ -17,14 +17,14 @@ def compareOSMAndGTFSStops(
     gtfsStops: dict[StopRef, GTFSStop],
 ) -> OSMAndGTFSComparisonResult:
     osmStops = osmStopsWithLocation
-    osmStopRefsNotInGTFS = list(sorted(osmStops.keys() - gtfsStops.keys()))
-    gtfsStopRefsNotInOSM = list(sorted(gtfsStops.keys() - osmStops.keys()))
+    osmStopRefsNotInGTFS = sorted(osmStops.keys() - gtfsStops.keys())
+    gtfsStopRefsNotInOSM = sorted(gtfsStops.keys() - osmStops.keys())
     commonRefs = gtfsStops.keys() & osmStops.keys()
     farAwayStops = []
     for ref in sorted(commonRefs):
         distance = haversine(osmStops[ref], gtfsStops[ref])
         if distance > STOP_DISTANCE_THRESHOLD:
-            farAwayStops.append((ref, int(round(distance))))
+            farAwayStops.append((ref, round(distance)))
     return OSMAndGTFSComparisonResult(
         osmStops=osmStops,
         gtfsStops=gtfsStops,
@@ -39,7 +39,7 @@ def shouldIgnoreGTFSRef(ref: StopRef) -> bool:
 
 
 def loadGTFSStops() -> dict[StopRef, GTFSStop]:
-    result = dict()
+    result = {}
     with (gtfsPath / "stops.txt").open() as stopsFile:
         stopsReader = csv.DictReader(stopsFile, delimiter=",")
         for stop in stopsReader:

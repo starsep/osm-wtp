@@ -42,8 +42,8 @@ class CompareResult:
 
 def compareStops(osmResults: OSMResults) -> CompareResult:
     renderResults: dict[RouteRef, RouteResult] = {}
-    refs = list(sorted(osmResults.keys(), key=lambda x: (len(x), x)))
-    operatorRefToName: dict[StopRef, set[StopName]] = dict()
+    refs = sorted(osmResults.keys(), key=lambda x: (len(x), x))
+    operatorRefToName: dict[StopRef, set[StopName]] = {}
     for routeRef in refs:
         detourOnlyErrors = True
         variantResults = []
@@ -74,8 +74,8 @@ def compareStops(osmResults: OSMResults) -> CompareResult:
                     RenderVariantResult(
                         variant=variant,
                         diffRows=diffRows,
-                        otherErrors=sorted(list(otherErrors)),
-                    )
+                        otherErrors=sorted(otherErrors),
+                    ),
                 )
             routeMismatch |= osmRefs != operatorRefs
             renderResults[routeRef] = RouteResult(
@@ -107,12 +107,12 @@ def buildDiffRows(
     }
     newRefs = {ref for ref, new in zip(operatorRefs, stopsNew, strict=False) if new}
 
-    def writeTableRow(refOSM: StopRef, refOperator: StopRef):
+    def writeTableRow(refOSM: StopRef, refOperator: StopRef) -> None:
         nameOSM = (
-            list(osmRefToName[refOSM])[0] if refOSM != MISSING_REF else MISSING_REF
+            next(iter(osmRefToName[refOSM])) if refOSM != MISSING_REF else MISSING_REF
         )
         nameOperator = (
-            list(operatorRefToName[refOperator])[0]
+            next(iter(operatorRefToName[refOperator]))
             if refOperator != MISSING_REF
             else MISSING_REF
         )
@@ -121,7 +121,7 @@ def buildDiffRows(
             color = "inherit"
         elif refOSM == MISSING_REF:
             color = "green"
-        elif refOSM != MISSING_REF and refOperator != MISSING_REF:
+        elif MISSING_REF not in (refOSM, refOperator):
             color = "orange"
         elif refOperator == MISSING_REF and nameOperator == MISSING_REF:
             color = "red"
@@ -136,7 +136,7 @@ def buildDiffRows(
                 nameOperator=nameOperator,
                 detour=refOperator in detourRefs,
                 new=refOperator in newRefs,
-            )
+            ),
         )
 
     for tag, i1, i2, j1, j2 in matcher.get_opcodes():

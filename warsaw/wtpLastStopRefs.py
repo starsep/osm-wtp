@@ -40,47 +40,44 @@ def lastStopRef(
     key = (lastStopGroupName, previousGroupRef)
     if lastStopGroupName in lastStopRefsResult.uniqueRefForName:
         return f"{lastStopRefsResult.uniqueRefForName[lastStopGroupName]}{lastStopLocalRef}"
-    elif key in lastStopRefsResult.lastStopsRefsAfter:
+    if key in lastStopRefsResult.lastStopsRefsAfter:
         return f"{lastStopRefsResult.lastStopsRefsAfter[key]}{lastStopLocalRef}"
-    else:
-        # find last stop ref from API UM Warszawa route
-        if routeRef in apiResults:
-            stopRefsWithoutLastOne = [stop.ref for stop in stops[:-1]]
-            for variant in apiResults[routeRef]:
-                if variant.stopRefs[:-1] == stopRefsWithoutLastOne:
-                    return variant.stopRefs[-1]
-        if previousRef in gtfsStops:
-            # find the closest last stop ref from GTFS
-            previousGtfsStop = gtfsStops[previousRef]
-            potentialLastGTFSStops = [
-                gtfsStop
-                for gtfsStop in gtfsStops.values()
-                if lastStopName in gtfsStop.name
-            ]
-            bestDistance = 20000.0
-            best = None
-            for gtfsStop in potentialLastGTFSStops:
-                distance = haversine(previousGtfsStop, gtfsStop)
-                if distance < bestDistance:
-                    bestDistance = distance
-                    best = gtfsStop
-            if best is not None:
-                logging.info(
-                    f"For last stop {lastStopName} after {previousRef} matched the closest stop from previous stop ({bestDistance}m) from GTFS => {best.name} {best.ref}"
-                )
-                return best.ref
-        logging.error(
-            f"Couldn't find ref for last stop {lastStopName} after {previousRef}"
-        )
-        return MISSING_REF
+    # find last stop ref from API UM Warszawa route
+    if routeRef in apiResults:
+        stopRefsWithoutLastOne = [stop.ref for stop in stops[:-1]]
+        for variant in apiResults[routeRef]:
+            if variant.stopRefs[:-1] == stopRefsWithoutLastOne:
+                return variant.stopRefs[-1]
+    if previousRef in gtfsStops:
+        # find the closest last stop ref from GTFS
+        previousGtfsStop = gtfsStops[previousRef]
+        potentialLastGTFSStops = [
+            gtfsStop for gtfsStop in gtfsStops.values() if lastStopName in gtfsStop.name
+        ]
+        bestDistance = 20000.0
+        best = None
+        for gtfsStop in potentialLastGTFSStops:
+            distance = haversine(previousGtfsStop, gtfsStop)
+            if distance < bestDistance:
+                bestDistance = distance
+                best = gtfsStop
+        if best is not None:
+            logging.info(
+                f"For last stop {lastStopName} after {previousRef} matched the closest stop from previous stop ({bestDistance}m) from GTFS => {best.name} {best.ref}",
+            )
+            return best.ref
+    logging.error(
+        f"Couldn't find ref for last stop {lastStopName} after {previousRef}",
+    )
+    return MISSING_REF
 
 
 @logDuration
 def generateLastStopRefs(scrapedRoutes: list[ScrapedOSMRoute]) -> LastStopRefsResult:
-    lastStopsRefsAfter: dict[tuple[str, str], str] = dict()
+    lastStopsRefsAfter: dict[tuple[str, str], str] = {}
 
-    def addAdjacentStop(adjacentStop: StopData):
-        if adjacentStop.ref == MISSING_REF or currentStopGroupRef == MISSING_REF:
+    def addAdjacentStop(adjacentStop: StopData) -> None:
+        if MISSING_REF in (adjacentStop.ref, currentStopGroupRef):
             return
         adjacentStopGroupRef = adjacentStop.ref[:4]
         resultKey = (currentStopGroupName, adjacentStopGroupRef)
@@ -89,7 +86,7 @@ def generateLastStopRefs(scrapedRoutes: list[ScrapedOSMRoute]) -> LastStopRefsRe
             and lastStopsRefsAfter[resultKey] != currentStopGroupRef
         ):
             logging.error(
-                f"LastStopRefs conflict for key={resultKey}. Refs {lastStopsRefsAfter[resultKey]} vs {currentStopGroupRef}"
+                f"LastStopRefs conflict for key={resultKey}. Refs {lastStopsRefsAfter[resultKey]} vs {currentStopGroupRef}",
             )
         lastStopsRefsAfter[resultKey] = currentStopGroupRef
 
@@ -107,19 +104,20 @@ def generateLastStopRefs(scrapedRoutes: list[ScrapedOSMRoute]) -> LastStopRefsRe
             if nextStop is not None:
                 addAdjacentStop(nextStop)
     # Stop Zgoda 01 in Piaseczno is the only case where a stop group has only lines ending in it
-    uniqueRefForName: dict[str, str] = dict(Zgoda=3701)
+    uniqueRefForName: dict[str, str] = {"Zgoda": "3701"}
 
     def extractName(nameRef: tuple[str, str]) -> str:
         return nameRef[0]
 
     for stopGroupName, nameRefTuples in groupby(
-        sorted(lastStopsRefsAfter.keys(), key=extractName), key=extractName
+        sorted(lastStopsRefsAfter.keys(), key=extractName),
+        key=extractName,
     ):
-        refsForStopGroupName = set(
+        refsForStopGroupName = {
             lastStopsRefsAfter[nameRefTuple] for nameRefTuple in nameRefTuples
-        )
+        }
         if len(refsForStopGroupName) == 1:
-            uniqueRefForName[stopGroupName] = list(refsForStopGroupName)[0]
+            uniqueRefForName[stopGroupName] = next(iter(refsForStopGroupName))
             for nameRefTuple in nameRefTuples:
                 del lastStopsRefsAfter[nameRefTuple]
     return LastStopRefsResult(
