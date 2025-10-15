@@ -1,4 +1,3 @@
-from typing import cast
 from urllib import parse
 
 from httpx import Client
@@ -9,4 +8,4 @@ def fetchWebsite(link: str, httpClient: Client) -> str:
 
 
 def parseLinkArguments(link: str) -> dict[str, list[str]]:
-    return cast("dict[str, list[str]]", parse.parse_qs(parse.urlparse(link).query))
+    return parse.parse_qs(parse.urlparse(link).query)
