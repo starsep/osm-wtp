@@ -3,7 +3,7 @@ name = "osm-wtp"
 version = "0.1.0"
 description = "Add your description here"
 readme = "README.md"
-requires-python = ">=3.10"
+requires-python = ">=3.11"
 dependencies = [
     "beautifulsoup4>=4.13.4",
     "diskcache>=5.6.3",
@@ -13,13 +13,17 @@ dependencies = [
     "tqdm>=4.67.1",
 ]
 
+[tool.ruff]
+extend-exclude = ["whitelist.py"]
+
 [tool.ruff.lint]
 extend-select = [
-    "B",
-    "E",
-    "F",
-    "I",
-    "W",
+    "B", # flake8-bugbear
+    "E", # pycodestyle error
+    "F", # pyflakes
+    "I", # isort
+    "W", # pycodestyle warning
+    # "UP", # pyupgrade
 ]
 extend-ignore = ["E501"]
 

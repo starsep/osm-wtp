@@ -103,8 +103,10 @@ def buildDiffRows(
     if osmRefs == operatorRefs:
         return diffRows
     matcher = SequenceMatcher(None, osmRefs, operatorRefs)
-    detourRefs = {ref for ref, detour in zip(operatorRefs, stopsDetour) if detour}
-    newRefs = {ref for ref, new in zip(operatorRefs, stopsNew) if new}
+    detourRefs = {
+        ref for ref, detour in zip(operatorRefs, stopsDetour, strict=False) if detour
+    }
+    newRefs = {ref for ref, new in zip(operatorRefs, stopsNew, strict=False) if new}
 
     def writeTableRow(refOSM: StopRef, refOperator: StopRef):
         nameOSM = (
@@ -140,7 +142,7 @@ def buildDiffRows(
 
     for tag, i1, i2, j1, j2 in matcher.get_opcodes():
         if tag == "equal":
-            for i, j in zip(range(i1, i2), range(j1, j2)):
+            for i, j in zip(range(i1, i2), range(j1, j2), strict=False):
                 writeTableRow(refOSM=osmRefs[i], refOperator=operatorRefs[j])
         elif tag == "delete":
             for i in range(i1, i2):
