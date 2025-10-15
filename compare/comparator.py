@@ -1,7 +1,6 @@
 from dataclasses import dataclass
 from difflib import SequenceMatcher
 from itertools import zip_longest
-from typing import Dict, List, Set
 
 from configuration import MISSING_REF
 from model.types import RouteRef, StopName, StopRef
@@ -22,8 +21,8 @@ class DiffRow:
 @dataclass(frozen=True)
 class RenderVariantResult:
     variant: VariantResult
-    diffRows: List[DiffRow]
-    otherErrors: List[str]
+    diffRows: list[DiffRow]
+    otherErrors: list[str]
 
 
 @dataclass(frozen=True)
@@ -31,28 +30,28 @@ class RouteResult:
     routeMismatch: bool
     error: bool
     detourOnlyErrors: bool
-    variantResults: List[RenderVariantResult]
+    variantResults: list[RenderVariantResult]
 
 
 @dataclass(frozen=True)
 class CompareResult:
-    renderResults: Dict[RouteRef, RouteResult]
-    refs: List[RouteRef]
-    operatorRefToName: Dict[StopRef, Set[StopName]]
+    renderResults: dict[RouteRef, RouteResult]
+    refs: list[RouteRef]
+    operatorRefToName: dict[StopRef, set[StopName]]
 
 
 def compareStops(osmResults: OSMResults) -> CompareResult:
-    renderResults: Dict[RouteRef, RouteResult] = {}
+    renderResults: dict[RouteRef, RouteResult] = {}
     refs = list(sorted(osmResults.keys(), key=lambda x: (len(x), x)))
-    operatorRefToName: Dict[StopRef, Set[StopName]] = dict()
+    operatorRefToName: dict[StopRef, set[StopName]] = dict()
     for routeRef in refs:
         detourOnlyErrors = True
         variantResults = []
         routeMismatch = False
         error = False
         for variant in osmResults[routeRef]:
-            osmRefs: List[StopRef] = [stop.ref for stop in variant.osmStops]
-            operatorRefs: List[StopRef] = [stop.ref for stop in variant.operatorStops]
+            osmRefs: list[StopRef] = [stop.ref for stop in variant.osmStops]
+            operatorRefs: list[StopRef] = [stop.ref for stop in variant.operatorStops]
             for stop in variant.operatorStops:
                 if stop.ref not in operatorRefToName:
                     operatorRefToName[stop.ref] = set()
@@ -93,12 +92,12 @@ def compareStops(osmResults: OSMResults) -> CompareResult:
 
 
 def buildDiffRows(
-    osmRefs: List[StopRef],
-    operatorRefs: List[StopRef],
-    operatorRefToName: Dict[StopRef, Set[StopName]],
-    stopsDetour: List[bool],
-    stopsNew: List[bool],
-) -> List[DiffRow]:
+    osmRefs: list[StopRef],
+    operatorRefs: list[StopRef],
+    operatorRefToName: dict[StopRef, set[StopName]],
+    stopsDetour: list[bool],
+    stopsNew: list[bool],
+) -> list[DiffRow]:
     diffRows = []
     if osmRefs == operatorRefs:
         return diffRows

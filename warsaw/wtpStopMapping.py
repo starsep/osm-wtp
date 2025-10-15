@@ -1,9 +1,8 @@
-from typing import Dict
 
 from model.stopData import StopData
 
 # WTP Stop => Actual Stop
-wtpStopMapping: Dict[StopData, StopData] = {
+wtpStopMapping: dict[StopData, StopData] = {
     StopData(ref="512002", name="Kolejowa 02"): StopData(
         ref="512052", name="Kolejowa 52"
     ),

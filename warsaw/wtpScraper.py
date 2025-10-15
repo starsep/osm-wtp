@@ -1,7 +1,7 @@
 import dataclasses
 import logging
 from dataclasses import dataclass
-from typing import List, Optional, Set, Tuple
+from typing import Optional
 from urllib import parse
 
 from bs4 import BeautifulSoup
@@ -44,11 +44,11 @@ class WTPLink:
     def url(self) -> str:
         return f"https://www.{wtpDomain}/rozklady-jazdy/?{wtpModeArg}=3&{wtpLineArg}={self.line}&{wtpDirectionArg}={self.direction}&{wtpVariantArg}={self.variant}"
 
-    def toTuple(self) -> Tuple[str, str, str]:
+    def toTuple(self) -> tuple[str, str, str]:
         return self.line, self.direction, self.variant
 
     @staticmethod
-    def fromTuple(t: Tuple[str, str, str]) -> "WTPLink":
+    def fromTuple(t: tuple[str, str, str]) -> "WTPLink":
         (line, direction, variant) = t
         return WTPLink(line=line, direction=direction, variant=variant)
 
@@ -74,25 +74,25 @@ class WTPResult:
     detour: bool
     new: bool
     short: bool
-    stops: List[StopData]
-    stopsDetour: List[bool]
-    stopsNew: List[bool]
+    stops: list[StopData]
+    stopsDetour: list[bool]
+    stopsNew: list[bool]
 
 
 @dataclass(frozen=True)
 class CachedWTPResult:
     wtpResult: WTPResult
-    seenLinks: Set[Tuple[str, str, str]]
-    missingLastStop: Set[str]
-    manyLastStops: Set[Tuple[str, str]]
-    missingLastStopRefNames: Set[Tuple[str, str]]
+    seenLinks: set[tuple[str, str, str]]
+    missingLastStop: set[str]
+    manyLastStops: set[tuple[str, str]]
+    missingLastStopRefNames: set[tuple[str, str]]
 
 
-wtpSeenLinks: Set[Tuple[str, str, str]] = set()
-wtpStopRefs: Set[str] = set()
-wtpMissingLastStop: Set[str] = set()
-wtpManyLastStops: Set[Tuple[str, str]] = set()
-wtpMissingLastStopRefNames: Set[Tuple[str, str]] = set()
+wtpSeenLinks: set[tuple[str, str, str]] = set()
+wtpStopRefs: set[str] = set()
+wtpMissingLastStop: set[str] = set()
+wtpManyLastStops: set[tuple[str, str]] = set()
+wtpMissingLastStopRefNames: set[tuple[str, str]] = set()
 
 
 @wtpCache.memoize(expire=EXPIRE_WTP_SECONDS, ignore={"httpClient"})
@@ -103,7 +103,7 @@ def cachedScrapeLink(link: str, httpClient: Client) -> CachedWTPResult:
     )
 
 
-def scrapeLink(link: str, httpClient: Client) -> Optional[WTPResult]:
+def scrapeLink(link: str, httpClient: Client) -> WTPResult | None:
     parsedLink = WTPLink.parseWTPRouteLink(link)
     if parsedLink is None:
         logging.error(f"Couldn't parse link {link}")
@@ -123,10 +123,10 @@ def cachedParseWebsite(
     htmlContent: str, inputUrl: str, httpClient: Client
 ) -> CachedWTPResult:
     parser = BeautifulSoup(htmlContent, features="html.parser")
-    seenLinks: Set[Tuple[str, str, str]] = set()
-    missingLastStop: Set[str] = set()
-    manyLastStops: Set[Tuple[str, str]] = set()
-    missingLastStopRefNames: Set[Tuple[str, str]] = set()
+    seenLinks: set[tuple[str, str, str]] = set()
+    missingLastStop: set[str] = set()
+    manyLastStops: set[tuple[str, str]] = set()
+    missingLastStopRefNames: set[tuple[str, str]] = set()
     if variantUnavailable in htmlContent or lineUnavailable in htmlContent:
         return CachedWTPResult(
             wtpResult=WTPResult(
@@ -205,7 +205,7 @@ def cachedParseWebsite(
 
 
 @wtpCache.memoize(expire=EXPIRE_WTP_SECONDS)
-def cachedScrapeHomepage() -> List[Tuple[str, str, str]]:
+def cachedScrapeHomepage() -> list[tuple[str, str, str]]:
     with httpxClient() as httpClient:
         mainContent = BeautifulSoup(
             fetchWebsite(
@@ -213,7 +213,7 @@ def cachedScrapeHomepage() -> List[Tuple[str, str, str]]:
             ),
             features="html.parser",
         )
-    result: List[Tuple[str, str, str]] = []
+    result: list[tuple[str, str, str]] = []
     for wtpLink in mainContent.select("a"):
         url = wtpLink.get("href")
         if wtpDomain not in url:

@@ -23,7 +23,7 @@ extend-select = [
     "F", # pyflakes
     "I", # isort
     "W", # pycodestyle warning
-    # "UP", # pyupgrade
+    "UP", # pyupgrade
 ]
 extend-ignore = ["E501"]
 

@@ -1,5 +1,4 @@
 from dataclasses import dataclass
-from typing import Dict, List, Tuple
 
 from starsep_utils import GeoPoint
 
@@ -15,8 +14,8 @@ class GTFSStop(GeoPoint):
 
 @dataclass(frozen=True)
 class OSMAndGTFSComparisonResult:
-    osmStops: Dict[StopRef, OSMStop]
-    gtfsStops: Dict[StopRef, GTFSStop]
-    osmStopRefsNotInGTFS: List[StopRef]
-    gtfsStopRefsNotInOSM: List[StopRef]
-    farAwayStops: List[Tuple[StopRef, int]]
+    osmStops: dict[StopRef, OSMStop]
+    gtfsStops: dict[StopRef, GTFSStop]
+    osmStopRefsNotInGTFS: list[StopRef]
+    gtfsStopRefsNotInOSM: list[StopRef]
+    farAwayStops: list[tuple[StopRef, int]]

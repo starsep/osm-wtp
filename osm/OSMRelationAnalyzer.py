@@ -2,7 +2,7 @@ import asyncio
 import dataclasses
 import logging
 from dataclasses import dataclass
-from typing import Dict, List, Optional, Set, Tuple, cast
+from typing import cast
 
 from httpx import Client
 from starsep_utils import (
@@ -43,11 +43,11 @@ from warsaw.wtpLastStopRefs import (
 )
 from warsaw.wtpScraper import WTPLink, mapWtpStop, scrapeLink, wtpDomain
 
-mismatchOSMNameRefNonRailway: Set[Tuple[str, str, str]] = set()
-mismatchOSMNameRefRailway: Set[Tuple[str, str, str]] = set()
+mismatchOSMNameRefNonRailway: set[tuple[str, str, str]] = set()
+mismatchOSMNameRefRailway: set[tuple[str, str, str]] = set()
 
 
-def parseRef(tags) -> Optional[str]:
+def parseRef(tags) -> str | None:
     refKeys = ["ref:wtp", "ref:ztm", "ref"]
     for refKey in refKeys:
         if refKey in tags:
@@ -55,7 +55,7 @@ def parseRef(tags) -> Optional[str]:
     return None
 
 
-def parseName(tags) -> Optional[StopName]:
+def parseName(tags) -> StopName | None:
     nameKeys = ["name:wtp", "name:ztm", "name:network:wtp", "name:network:ztm", "name"]
     for nameKey in nameKeys:
         if nameKey in tags:
@@ -80,15 +80,15 @@ class VariantResult:
     osmName: str
     osmId: int
     operatorLink: str
-    osmStops: List[StopData]
-    operatorStops: List[StopData]
+    osmStops: list[StopData]
+    operatorStops: list[StopData]
     detour: bool
     new: bool
     short: bool
-    stopsDetour: List[bool]
-    stopsNew: List[bool]
-    unknownRoles: Set[str]
-    otherErrors: Set[str]
+    stopsDetour: list[bool]
+    stopsNew: list[bool]
+    unknownRoles: set[str]
+    otherErrors: set[str]
     routeType: str
 
 
@@ -101,18 +101,18 @@ missingStopRef = set()
 unexpectedLink = set()
 unexpectedNetwork = set()
 unexpectedStopRef = set()
-osmStopsWithLocation: Dict[StopRef, OSMStop] = dict()
+osmStopsWithLocation: dict[StopRef, OSMStop] = dict()
 
 invalidOperatorVariants = set()
-osmOperatorLinks: Set[Tuple[str, str, str]] = set()
+osmOperatorLinks: set[tuple[str, str, str]] = set()
 wtpLinkDuplicates = set()
 
-osmRefToName: Dict[StopRef, Set[StopName]] = dict()
+osmRefToName: dict[StopRef, set[StopName]] = dict()
 
-OSMResults = Dict[RouteRef, List[VariantResult]]
+OSMResults = dict[RouteRef, list[VariantResult]]
 
 
-def _scrapeOSMRoute(route: Relation, httpClient: Client) -> Optional[ScrapedOSMRoute]:
+def _scrapeOSMRoute(route: Relation, httpClient: Client) -> ScrapedOSMRoute | None:
     tags = route.tags
     routeRef = parseRef(tags)
     if (
@@ -165,7 +165,7 @@ def _scrapeOSMRoute(route: Relation, httpClient: Client) -> Optional[ScrapedOSMR
 
 
 @logDuration
-def scrapeOSMRoutes(overpassResult: OverpassResult) -> List[ScrapedOSMRoute]:
+def scrapeOSMRoutes(overpassResult: OverpassResult) -> list[ScrapedOSMRoute]:
     logging.info("🔧 Scraping WTP Routes")
     result = []
 
@@ -179,10 +179,10 @@ def scrapeOSMRoutes(overpassResult: OverpassResult) -> List[ScrapedOSMRoute]:
 
 @logDuration
 def addLastStopRefs(
-    scrapedRoutes: List[ScrapedOSMRoute],
+    scrapedRoutes: list[ScrapedOSMRoute],
     lastStopRefsResult: LastStopRefsResult,
-    apiResults: dict[RouteRef, List[APIUMWarszawaRouteResult]],
-    gtfsStops: Dict[StopRef, GTFSStop],
+    apiResults: dict[RouteRef, list[APIUMWarszawaRouteResult]],
+    gtfsStops: dict[StopRef, GTFSStop],
 ):
     for route in scrapedRoutes:
         route.wtpResult.stops[-1] = StopData(
@@ -214,8 +214,8 @@ def mapWtpStops(routes: list[ScrapedOSMRoute]) -> list[ScrapedOSMRoute]:
 
 @logDuration
 def analyzeOSMRelations(
-    apiResults: dict[RouteRef, List[APIUMWarszawaRouteResult]],
-    gtfsStops: Dict[StopRef, GTFSStop],
+    apiResults: dict[RouteRef, list[APIUMWarszawaRouteResult]],
+    gtfsStops: dict[StopRef, GTFSStop],
 ) -> OSMResults:
     logging.info("🔍 Starting analyzeOSMRelations")
     results: OSMResults = {}
@@ -240,9 +240,9 @@ def analyzeOSMRelations(
         scrapingResult = scrapedRoute.wtpResult
         osmStops = []
         unknownRoles = set()
-        otherErrors: Set[str] = set()
-        stopNodes: Set[Node] = set()
-        routeWays: List[Element] = list()
+        otherErrors: set[str] = set()
+        stopNodes: set[Node] = set()
+        routeWays: list[Element] = list()
         for member in route.members:
             role: str = member.role
             element = overpassResult.resolve(member)
@@ -325,13 +325,13 @@ def analyzeOSMRelations(
 
 
 def validateRoute(
-    routeWays: List[Element],
-    stopNodes: Set[Node],
-    otherErrors: Set[str],
+    routeWays: list[Element],
+    stopNodes: set[Node],
+    otherErrors: set[str],
     overpassResult: OverpassResult,
 ):
-    variantWayNodes: Set[Node] = set()
-    validatedWays: List[Way] = []
+    variantWayNodes: set[Node] = set()
+    validatedWays: list[Way] = []
     for way in routeWays:
         if way.type == "way":
             way = cast(Way, way)
@@ -345,7 +345,7 @@ def validateRoute(
     )
 
 
-def validateRouteGeometry(validatedWays: List[Way], otherErrors: Set[str]):
+def validateRouteGeometry(validatedWays: list[Way], otherErrors: set[str]):
     # TODO: direction
     previousWay = validatedWays[0]
     for way in validatedWays[1:]:
@@ -356,7 +356,7 @@ def validateRouteGeometry(validatedWays: List[Way], otherErrors: Set[str]):
         previousWay = way
 
 
-def matchWayNode(previousWay: Way, currentWay: Way, otherErrors: Set[str]) -> bool:
+def matchWayNode(previousWay: Way, currentWay: Way, otherErrors: set[str]) -> bool:
     if matchRoundabout(previousWay, currentWay, otherErrors) or matchRoundabout(
         currentWay, previousWay, otherErrors
     ):
@@ -381,7 +381,7 @@ def matchWayNode(previousWay: Way, currentWay: Way, otherErrors: Set[str]) -> bo
     return False
 
 
-def matchRoundabout(roundabout: Way, way: Way, otherErrors: Set[str]) -> bool:
+def matchRoundabout(roundabout: Way, way: Way, otherErrors: set[str]) -> bool:
     if (
         "junction" not in roundabout.tags
         or roundabout.tags["junction"] != "roundabout"
@@ -398,8 +398,8 @@ def matchRoundabout(roundabout: Way, way: Way, otherErrors: Set[str]) -> bool:
 
 def validateWay(
     way: Way,
-    otherErrors: Set[str],
-    variantWayNodes: Set[Node],
+    otherErrors: set[str],
+    variantWayNodes: set[Node],
     overpassResult: OverpassResult,
 ):
     for node in way.nodes:
@@ -420,7 +420,7 @@ def validateWay(
     validateAccessTags(tags, otherErrors)
 
 
-def validateAccessTags(tags, otherErrors: Set[str]):
+def validateAccessTags(tags, otherErrors: set[str]):
     if (
         "access" in tags
         and tags["access"] == "no"
@@ -431,9 +431,9 @@ def validateAccessTags(tags, otherErrors: Set[str]):
 
 
 def checkStopNodesWithinRoute(
-    stopNodes: Set[Node],
-    variantWayNodes: Set[Node],
-    otherErrors: Set[str],
+    stopNodes: set[Node],
+    variantWayNodes: set[Node],
+    otherErrors: set[str],
 ):
     stopsNotWithinRoute = stopNodes - variantWayNodes
     if len(stopsNotWithinRoute) > 0:

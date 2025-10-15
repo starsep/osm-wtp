@@ -2,7 +2,6 @@ import logging
 import re
 from dataclasses import dataclass
 from itertools import groupby
-from typing import Dict, List, Tuple
 
 from starsep_utils import haversine, logDuration
 
@@ -16,8 +15,8 @@ from warsaw.scrapedOSMRoute import ScrapedOSMRoute
 
 @dataclass(frozen=True)
 class LastStopRefsResult:
-    lastStopsRefsAfter: Dict[Tuple[str, str], str]
-    uniqueRefForName: Dict[str, str]
+    lastStopsRefsAfter: dict[tuple[str, str], str]
+    uniqueRefForName: dict[str, str]
 
 
 stopNameRegex = re.compile(r"^(.*) (\d\d)$")
@@ -28,9 +27,9 @@ def lastStopRef(
     previousRef: StopRef,
     lastStopRefsResult: LastStopRefsResult,
     routeRef: RouteRef,
-    stops: List[StopData],
-    apiResults: dict[RouteRef, List[APIUMWarszawaRouteResult]],
-    gtfsStops: Dict[StopRef, GTFSStop],
+    stops: list[StopData],
+    apiResults: dict[RouteRef, list[APIUMWarszawaRouteResult]],
+    gtfsStops: dict[StopRef, GTFSStop],
 ) -> str:
     match = re.match(stopNameRegex, lastStopName)
     if match is None:
@@ -77,8 +76,8 @@ def lastStopRef(
 
 
 @logDuration
-def generateLastStopRefs(scrapedRoutes: List[ScrapedOSMRoute]) -> LastStopRefsResult:
-    lastStopsRefsAfter: Dict[Tuple[str, str], str] = dict()
+def generateLastStopRefs(scrapedRoutes: list[ScrapedOSMRoute]) -> LastStopRefsResult:
+    lastStopsRefsAfter: dict[tuple[str, str], str] = dict()
 
     def addAdjacentStop(adjacentStop: StopData):
         if adjacentStop.ref == MISSING_REF or currentStopGroupRef == MISSING_REF:
@@ -108,9 +107,9 @@ def generateLastStopRefs(scrapedRoutes: List[ScrapedOSMRoute]) -> LastStopRefsRe
             if nextStop is not None:
                 addAdjacentStop(nextStop)
     # Stop Zgoda 01 in Piaseczno is the only case where a stop group has only lines ending in it
-    uniqueRefForName: Dict[str, str] = dict(Zgoda=3701)
+    uniqueRefForName: dict[str, str] = dict(Zgoda=3701)
 
-    def extractName(nameRef: Tuple[str, str]) -> str:
+    def extractName(nameRef: tuple[str, str]) -> str:
         return nameRef[0]
 
     for stopGroupName, nameRefTuples in groupby(

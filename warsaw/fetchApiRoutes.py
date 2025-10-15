@@ -2,7 +2,6 @@ import json
 import logging
 import os
 from dataclasses import dataclass
-from typing import List
 
 import httpx
 from starsep_utils import logDuration
@@ -16,11 +15,11 @@ API_UM_WARSZAWA_API_KEY = os.getenv("API_KEY")
 class APIUMWarszawaRouteResult:
     routeRef: RouteRef
     variantId: str
-    stopRefs: List[StopRef]
+    stopRefs: list[StopRef]
 
 
 @logDuration
-def _parseApiUMData(data) -> dict[RouteRef, List[APIUMWarszawaRouteResult]]:
+def _parseApiUMData(data) -> dict[RouteRef, list[APIUMWarszawaRouteResult]]:
     result = dict()
     for routeRef in data:
         result[routeRef] = []
@@ -41,7 +40,7 @@ def _parseApiUMData(data) -> dict[RouteRef, List[APIUMWarszawaRouteResult]]:
     return result
 
 
-def fetchApiRoutes() -> dict[RouteRef, List[APIUMWarszawaRouteResult]]:
+def fetchApiRoutes() -> dict[RouteRef, list[APIUMWarszawaRouteResult]]:
     if API_UM_WARSZAWA_API_KEY is None:
         logging.error(
             "Missing API UM Warszawa api key. Set it as API_KEY environment variable"

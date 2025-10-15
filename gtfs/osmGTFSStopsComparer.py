@@ -1,6 +1,5 @@
 import csv
 from pathlib import Path
-from typing import Dict
 
 from starsep_utils import haversine
 
@@ -15,7 +14,7 @@ STOP_DISTANCE_THRESHOLD = 100.0  # metres
 
 
 def compareOSMAndGTFSStops(
-    gtfsStops: Dict[StopRef, GTFSStop],
+    gtfsStops: dict[StopRef, GTFSStop],
 ) -> OSMAndGTFSComparisonResult:
     osmStops = osmStopsWithLocation
     osmStopRefsNotInGTFS = list(sorted(osmStops.keys() - gtfsStops.keys()))
@@ -39,7 +38,7 @@ def shouldIgnoreGTFSRef(ref: StopRef) -> bool:
     return len(ref) != 6 or not ref.isnumeric()
 
 
-def loadGTFSStops() -> Dict[StopRef, GTFSStop]:
+def loadGTFSStops() -> dict[StopRef, GTFSStop]:
     result = dict()
     with (gtfsPath / "stops.txt").open() as stopsFile:
         stopsReader = csv.DictReader(stopsFile, delimiter=",")

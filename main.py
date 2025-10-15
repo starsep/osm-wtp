@@ -2,7 +2,6 @@
 import logging
 from datetime import datetime
 from pathlib import Path
-from typing import Set
 
 from jinja2 import (
     Environment,
@@ -58,7 +57,7 @@ def processData():
     osmResults = analyzeOSMRelations(apiResults, gtfsStops)
     # compareApiRoutesWithOSM(apiResults, osmResults)
     compareResults = compareStops(osmResults=osmResults)
-    notLinkedWtpUrls: Set[str] = set()
+    notLinkedWtpUrls: set[str] = set()
     for link in wtpSeenLinks - osmOperatorLinks:
         wtpLinkParams = WTPLink.fromTuple(link)
         if wtpLinkParams.line not in ["M1", "M2"] or (
