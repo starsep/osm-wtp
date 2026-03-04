@@ -2,9 +2,12 @@ name: Docker Build
 
 on: { push: { branches: [ main ] } }
 
+runs:
+  using: 'docker'
+  image: '../../Dockerfile'
 jobs:
   build:
-    runs-on: act-latest
+    runs-on: docker
     steps:
       - uses: actions/checkout@v4
       - run: docker build -t osm-wtp .
