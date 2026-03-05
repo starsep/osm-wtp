@@ -1,0 +1,27 @@
+name: GitHub Pages
+
+on:
+  push:
+    branches:
+      - gh-pages
+
+jobs:
+  deploy:
+    runs-on: act-latest
+    steps:
+      - uses: actions/checkout@v5
+      - name: Upload files to storage
+        uses: https://github.com/SamKirkland/FTP-Deploy-Action@v4.3.6
+        with:
+          protocol: ftp
+          port: 21
+          server: storage.bunnycdn.com
+          server-dir: /
+          username: ${{ secrets.FTP_USERNAME }}
+          password: ${{ secrets.FTP_PASSWORD }}
+          local-dir: ./
+          exclude: |
+            **/.git*
+            **/.git*/**
+            .forgejo/**
+            LICENSE
