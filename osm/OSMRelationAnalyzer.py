@@ -230,7 +230,9 @@ def analyzeOSMRelations(
     out body;
     """
     overpassResult = asyncio.run(
-        downloadOverpassData(query=query, overpassUrl=OVERPASS_URL),
+        downloadOverpassData(
+            query=query, overpassUrl=OVERPASS_URL, userAgent="starsep/osm-wtp"
+        ),
     )
     scrapedOSMRoutes = scrapeOSMRoutes(overpassResult)
     lastStopRefs = generateLastStopRefs(scrapedRoutes=scrapedOSMRoutes)

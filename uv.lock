@@ -208,7 +208,7 @@ requires-dist = [
     { name = "diskcache", specifier = ">=5.6.3" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "jinja2", specifier = ">=3.1.6" },
-    { name = "starsep-utils", specifier = ">=0.9.1" },
+    { name = "starsep-utils", specifier = ">=0.9.3" },
     { name = "tqdm", specifier = ">=4.67.1" },
 ]
 
@@ -322,15 +322,15 @@ wheels = [
 
 [[package]]
 name = "starsep-utils"
-version = "0.9.2"
+version = "0.9.3"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "funcy" },
     { name = "httpx" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/08/76/2f69cd31abb97493b12b1aa140bcfc8a9c927be6614f06728508cc3df742/starsep_utils-0.9.2.tar.gz", hash = "sha256:a9a1cc5d91bfd10b2b6b05ab0c47a73254c205c240dfdf7316c2f97fdc6e12f1", size = 16847, upload-time = "2025-07-23T07:41:40.877Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/b7/d8/30e3f6a7eb0725ec69cc7ec17bc598acb5227047466c30b19fef07eefb96/starsep_utils-0.9.3.tar.gz", hash = "sha256:f906c294191d44906c70d35f9cc37c19b3936e071d5875d459780513f21c6378", size = 3538, upload-time = "2026-04-25T17:14:37.92Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ca/49/c1cd4899576082000a2f6cad3e949069764b1b9ebf9fea8d4e46cb258075/starsep_utils-0.9.2-py3-none-any.whl", hash = "sha256:3ba4919a1e4f44674902ed6685a4b1e13597d36076332deba565525e8aa27810", size = 20449, upload-time = "2025-07-23T07:41:39.61Z" },
+    { url = "https://files.pythonhosted.org/packages/9d/e9/7a9817f43b0c041afb6dace5f46b4000aef126f923a254bad06fdee7111b/starsep_utils-0.9.3-py3-none-any.whl", hash = "sha256:cbedc8238d0e6d9e6bab284fdac19229873cc01e53bde2284a4e0a125827bad1", size = 5680, upload-time = "2026-04-25T17:13:58.007Z" },
 ]
 
 [[package]]
