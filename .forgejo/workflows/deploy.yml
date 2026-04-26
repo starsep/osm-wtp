@@ -1,10 +1,8 @@
 name: GitHub Pages
-
 on:
   push:
     branches:
       - gh-pages
-
 jobs:
   deploy:
     runs-on: act-latest
@@ -25,3 +23,6 @@ jobs:
             **/.git*/**
             .forgejo/**
             LICENSE
+      - name: Purge Bunny CDN Cache
+        run: |
+          curl -X POST 'https://api.bunny.net/purge?url=https://osm-wtp.starsep.com' -H "AccessKey: ${{ secrets.BUNNYNET_API_KEY }}"
